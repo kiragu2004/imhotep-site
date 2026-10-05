@@ -1,25 +1,30 @@
 // ═══════════════════════════════════════════════════════════════
-// Imhotep frontend
+// Imhotep frontend — explicit Google Sign-In
 // ═══════════════════════════════════════════════════════════════
-const API_URL = "https://imhotep-agentic-ai.onrender.com";
+const API_URL = window.IMHOTEP_CONFIG.API_URL;
+const CLIENT_ID = window.IMHOTEP_CONFIG.GOOGLE_CLIENT_ID;
 
-const gate       = document.getElementById("signin-gate");
-const chatSec    = document.getElementById("chat");
-const userNameEl = document.getElementById("user-name");
-const messagesEl = document.getElementById("messages");
-const form       = document.getElementById("chat-form");
-const promptIn   = document.getElementById("prompt");
-const sendBtn    = document.getElementById("send-btn");
-const statusEl   = document.getElementById("status");
-const signoutBtn = document.getElementById("signout-btn");
-const signinStat = document.getElementById("signin-status");
+const gate        = document.getElementById("signin-gate");
+const chatSec     = document.getElementById("chat");
+const userNameEl  = document.getElementById("user-name");
+const messagesEl  = document.getElementById("messages");
+const form        = document.getElementById("chat-form");
+const promptIn    = document.getElementById("prompt");
+const sendBtn     = document.getElementById("send-btn");
+const statusEl    = document.getElementById("status");
+const signoutBtn  = document.getElementById("signout-btn");
+const signinStat  = document.getElementById("signin-status");
+const gsiMount    = document.getElementById("gsi-button");
+const fallbackBtn = document.getElementById("fallback-signin");
 
-async function handleGoogleSignIn(response) {
+// ── Called by Google after sign-in ──
+async function handleCredentialResponse(response) {
   if (!response || !response.credential) {
     if (signinStat) signinStat.textContent = "Sign-in failed.";
     return;
   }
   if (signinStat) signinStat.textContent = "Verifying…";
+
   try {
     const r = await fetch(`${API_URL}/auth/google`, {
       method: "POST",
@@ -29,12 +34,14 @@ async function handleGoogleSignIn(response) {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
     if (!data.ok) throw new Error(data.error || "Invalid token");
+
     localStorage.setItem("imhotep_user", JSON.stringify(data.user));
     showChat(data.user);
   } catch (e) {
     if (signinStat) signinStat.textContent = "Verification failed: " + e.message;
   }
 }
+window.handleCredentialResponse = handleCredentialResponse;
 
 function showChat(user) {
   if (gate) gate.classList.add("hidden");
@@ -53,13 +60,70 @@ function signOut() {
 }
 if (signoutBtn) signoutBtn.addEventListener("click", signOut);
 
+// ── Initialize Google Sign-In when GIS script is ready ──
+function initGoogleSignIn() {
+  if (!window.google || !google.accounts || !google.accounts.id) {
+    // GIS still loading — retry every 300 ms, up to 20 times (6 s)
+    if (!initGoogleSignIn.tries) initGoogleSignIn.tries = 0;
+    initGoogleSignIn.tries++;
+    if (initGoogleSignIn.tries < 20) {
+      setTimeout(initGoogleSignIn, 300);
+      return;
+    }
+    // Gave up — show fallback
+    console.warn("GSI failed to load. Showing fallback.");
+    if (fallbackBtn) fallbackBtn.classList.remove("hidden");
+    if (signinStat) signinStat.textContent = "Google sign-in unavailable.";
+    return;
+  }
+
+  try {
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: handleCredentialResponse,
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+
+    if (gsiMount) {
+      google.accounts.id.renderButton(gsiMount, {
+        type: "standard",
+        size: "large",
+        theme: "filled_black",
+        text: "signin_with",
+        shape: "pill",
+        logo_alignment: "left",
+        width: 280,
+      });
+    }
+  } catch (e) {
+    console.error("GSI init error:", e);
+    if (signinStat) signinStat.textContent = "Sign-in init error: " + e.message;
+  }
+}
+
+// Fallback button — if GSI never loads, use a manual trigger
+if (fallbackBtn) {
+  fallbackBtn.addEventListener("click", () => {
+    if (window.google && google.accounts && google.accounts.id) {
+      google.accounts.id.prompt();
+    } else {
+      alert("Google sign-in is not available. Check your network and reload.");
+    }
+  });
+}
+
 window.addEventListener("DOMContentLoaded", () => {
+  // Restore session if any
   const raw = localStorage.getItem("imhotep_user");
   if (raw) {
     try { showChat(JSON.parse(raw)); } catch (e) { localStorage.removeItem("imhotep_user"); }
   }
+  // Attempt to mount the Google button
+  initGoogleSignIn();
 });
 
+// ── Chat ──
 function addMsg(role, text) {
   if (!messagesEl) return;
   const div = document.createElement("div");
@@ -86,7 +150,7 @@ if (form) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt, user_id: user.email || user.sub || "guest" }),
       });
-      if (!r.ok) throw new Error(`HTTP ${r.status} — ${await r.text()}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const data = await r.json();
       addMsg("assistant", data.reply || "(no reply)");
       if (statusEl) statusEl.textContent = `${data.source || "?"} · ${data.took_ms || 0} ms`;

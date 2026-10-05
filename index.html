@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Imhotep — Multi-Agent AI</title>
-<meta name="description" content="A private multi-agent AI. Ask anything, watch agents debate, get cited answers.">
 <link rel="stylesheet" href="style.css">
+<!-- Google Identity Services — loaded with explicit onload -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -37,16 +37,14 @@
   <section id="signin-gate" class="card gate">
     <h2>Sign in to continue</h2>
     <p>Use your Google account. Free tier: 1 question per day.</p>
-    <div id="g_id_onload"
-         data-client_id="1028247630101-c87mfmfgvgu9tsvsp5nibshv4098rnnb.apps.googleusercontent.com"
-         data-callback="handleGoogleSignIn"
-         data-auto_prompt="false"></div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-size="large"
-         data-theme="filled_black"
-         data-text="signin_with"
-         data-shape="pill"></div>
+
+    <!-- Explicit button container — filled by JS -->
+    <div id="gsi-button" style="display:flex; justify-content:center;"></div>
+    <!-- Fallback if GSI fails to load -->
+    <button id="fallback-signin" class="primary-btn hidden" style="margin-top:1rem;">
+      Continue with Google
+    </button>
+
     <p class="small" id="signin-status"></p>
   </section>
 
@@ -58,7 +56,7 @@
     <div class="chat">
       <div id="messages">
         <div class="sys">Connected. Ask anything.</div>
-        <div class="a">Try: "What's the molecular weight of aspirin?" or "Weather in Nairobi."</div>
+        <div class="a">Try: "What's the molecular weight of aspirin?"</div>
       </div>
       <form class="chat-input" id="chat-form">
         <input id="prompt" placeholder="Ask Imhotep…" autocomplete="off" required>
@@ -78,12 +76,10 @@
   <section id="debate" class="debate-section">
     <h2 class="section">Agent Council — Watch Agents Debate</h2>
     <p class="lead">Enter a topic. Three agents — Proponent, Opponent, and Judge — will argue and deliver a verdict.</p>
-
     <div class="debate-input">
       <input id="debate-topic" placeholder="e.g. Should AI agents run their own money?">
       <button id="debate-btn" class="primary-btn">Start Debate</button>
     </div>
-
     <div id="debate-output" class="debate-grid hidden">
       <div class="agent-card proponent">
         <div class="agent-head"><span class="dot green"></span> Proponent</div>
@@ -107,7 +103,7 @@
   <div class="footer-inner">
     <div class="footer-col">
       <strong>Imhotep</strong>
-      <p>A private multi-agent AI for research, code, and science. Designed and built from scratch by Samuel Kiragu Kamau in Mukuyu, Murang'a, Kenya.</p>
+      <p>A private multi-agent AI for research, code, and science. Designed and built by Samuel Kiragu Kamau in Mukuyu, Murang'a, Kenya.</p>
     </div>
     <div class="footer-col">
       <strong>Explore</strong>
@@ -126,6 +122,13 @@
   <p class="footer-line">© 2026 Imhotep · Made in Kenya 🇰🇪</p>
 </footer>
 
+<script>
+  // ⚠️ Config exposed globally BEFORE app.js loads
+  window.IMHOTEP_CONFIG = {
+    API_URL: "https://imhotep-agentic-ai.onrender.com",
+    GOOGLE_CLIENT_ID: "1028247630101-c87mfmfgvgu9tsvsp5nibshv4098rnnb.apps.googleusercontent.com"
+  };
+</script>
 <script src="app.js"></script>
 </body>
 </html>
