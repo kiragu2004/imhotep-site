@@ -1,125 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Capabilities — Imhotep AI</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capabilities — Imhotep</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav>
-  <div class="nav-inner">
-    <a href="index.html" class="logo">⚡ IMHOTEP</a>
-    <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="capabilities.html" class="active">Capabilities</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="faq.html">FAQ</a>
-      <a href="about.html">About</a>
-      <div id="auth-area"></div>
-    </div>
-  </div>
+  <a href="/" class="logo">⚡ IMHOTEP</a>
+  <ul>
+    <li><a href="index.html">Chat</a></li>
+    <li><a href="capabilities.html" class="active">Capabilities</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+  </ul>
 </nav>
 
-<section class="hero" style="padding:3rem 1.5rem 1rem">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <h1>Capabilities</h1>
-    <p class="tag">Everything Imhotep can do. Every scientific claim is cited.</p>
-  </div>
+<section class="hero">
+  <h1>What Imhotep Can Do</h1>
+  <p class="tag">22 specialized agents for every task</p>
 </section>
 
-<section class="capabilities-preview">
-  <h2>🧬 Chemistry & Biology</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">🔬</div><h3>Molecule properties</h3><p>RDKit + live PubChem for MW, formula, SMILES, logP, HBD, HBA.</p></div>
-    <div class="cap-card"><div class="icon">🧪</div><h3>Docking (Agent Afya)</h3><p>AutoDock Vina, DiffDock, Smina. Up to 1000 molecules per task.</p></div>
-    <div class="cap-card"><div class="icon">🧠</div><h3>Protein folding</h3><p>ESMFold2 / Boltz-2 from sequence.</p></div>
-    <div class="cap-card"><div class="icon">📊</div><h3>ADMET profiles</h3><p>admet-ai predictions for candidate molecules.</p></div>
-    <div class="cap-card"><div class="icon">📚</div><h3>PubMed research</h3><p>Live literature search with PMIDs and URLs.</p></div>
-    <div class="cap-card"><div class="icon">🔎</div><h3>arXiv + Crossref</h3><p>Preprints and DOI cross-references.</p></div>
-  </div>
+<div class="container" style="margin: 3rem 0;">
+  <div style="max-width: 900px; margin: 0 auto;">
 
-  <h2 style="margin-top:2.5rem">📈 Mathematics & Simulation</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">∑</div><h3>Symbolic math</h3><p>SymPy: derivatives, integrals, matrices.</p></div>
-    <div class="cap-card"><div class="icon">📉</div><h3>Numeric</h3><p>NumPy, SciPy: linear algebra, stats, FFT.</p></div>
-    <div class="cap-card"><div class="icon">🌊</div><h3>ODE solver</h3><p>SIR, SEIR, SIRS, logistic, Lotka, Lorenz via scipy.</p></div>
-    <div class="cap-card"><div class="icon">🎯</div><h3>Optimization</h3><p>CVXPY (convex), PuLP (LP/MILP).</p></div>
-    <div class="cap-card"><div class="icon">🧠</div><h3>CFC networks</h3><p>Learnable time-constant neurons (Hasani 2021).</p></div>
-    <div class="cap-card"><div class="icon">🌐</div><h3>PDE & diffusion</h3><p>Py-PDE, FiPy, diffusion models.</p></div>
-  </div>
+    <h2 style="color: #00d4ff; margin-bottom: 2rem;">🧬 Science & Research</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🧪 Biochemist</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Design proteins, analyze structures, simulate reactions</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🧠 Neuroscientist</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Brain simulations, neural networks, cognitive models</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🌿 Agronomist</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Crop yields, soil analysis, climate predictions</p>
+      </div>
+    </div>
 
-  <h2 style="margin-top:2.5rem">⚛️ Quantum Computing</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">🔷</div><h3>Qiskit + Aer</h3><p>Real circuit execution and measurement counts.</p></div>
-    <div class="cap-card"><div class="icon">🔶</div><h3>Cirq</h3><p>Google's quantum framework.</p></div>
-    <div class="cap-card"><div class="icon">✨</div><h3>PennyLane</h3><p>Differentiable quantum programming.</p></div>
-    <div class="cap-card"><div class="icon">🌀</div><h3>QuTiP</h3><p>Open quantum systems.</p></div>
-    <div class="cap-card"><div class="icon">💠</div><h3>D-Wave</h3><p>Quantum annealing and QUBO.</p></div>
-    <div class="cap-card"><div class="icon">⚙️</div><h3>Qiskit Nature</h3><p>VQE for molecular ground states.</p></div>
-  </div>
+    <h2 style="color: #00d4ff; margin-bottom: 2rem;">💻 Code & Automation</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🐍 Python Dev</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Write, debug, optimize Python code</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🔧 DevOps</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Docker, Git, CI/CD, deployment strategies</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🔌 API Builder</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">REST, GraphQL, FastAPI, authentication</p>
+      </div>
+    </div>
 
-  <h2 style="margin-top:2.5rem">🌍 Climate & Agriculture</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">🛰️</div><h3>NASA POWER</h3><p>Real daily temperature, precipitation, humidity, wind.</p></div>
-    <div class="cap-card"><div class="icon">🌫️</div><h3>NOAA CO₂</h3><p>Mauna Loa live atmospheric CO₂.</p></div>
-    <div class="cap-card"><div class="icon">☀️</div><h3>OpenWeather</h3><p>Current, forecast, AQI for any city.</p></div>
-    <div class="cap-card"><div class="icon">🌾</div><h3>Growing Degree Days</h3><p>Crop development from NASA data.</p></div>
-    <div class="cap-card"><div class="icon">🗺️</div><h3>Earth Engine</h3><p>Satellite imagery (with free account).</p></div>
-    <div class="cap-card"><div class="icon">📡</div><h3>NASA EarthData</h3><p>Collection search across datasets.</p></div>
-  </div>
+    <h2 style="color: #00d4ff; margin-bottom: 2rem;">💼 Business & Finance</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">📊 Data Analyst</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Pandas, charts, forecasting, dashboards</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">💰 Economist</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Market analysis, pricing, risk assessment</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🚀 Entrepreneur</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Pitch decks, business plans, pitch coaching</p>
+      </div>
+    </div>
 
-  <h2 style="margin-top:2.5rem">💻 Code & Sandbox</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">🐧</div><h3>Linux container</h3><p>Full Ubuntu 22.04 with apt, gcc, g++, python3, node, go, java.</p></div>
-    <div class="cap-card"><div class="icon">🐍</div><h3>Python</h3><p>NumPy, Pandas, Matplotlib, scikit-learn, and 200+ others.</p></div>
-    <div class="cap-card"><div class="icon">⚙️</div><h3>C / C++ / Rust / Go</h3><p>Real compile + run with error output.</p></div>
-    <div class="cap-card"><div class="icon">☕</div><h3>Java</h3><p>Compile and run inside the sandbox.</p></div>
-    <div class="cap-card"><div class="icon">🌐</div><h3>JavaScript / Node</h3><p>Run scripts in the container.</p></div>
-    <div class="cap-card"><div class="icon">📦</div><h3>Auto-install</h3><p>Searches, installs, verifies any package.</p></div>
-  </div>
+    <h2 style="color: #00d4ff; margin-bottom: 2rem;">📚 Learning & Content</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">📖 Teacher</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Lesson plans, tutoring, study guides</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">✍️ Writer</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Articles, essays, creative writing</p>
+      </div>
+      <div style="background: #1a2633; padding: 1.5rem; border-radius: 12px; border: 1px solid #1e2a38;">
+        <h3 style="color: #00d4ff; margin-bottom: 0.5rem;">🌍 Linguist</h3>
+        <p style="color: #a8b6c5; font-size: 0.9rem;">Translation, Swahili ↔ English, localization</p>
+      </div>
+    </div>
 
-  <h2 style="margin-top:2.5rem">🧾 Kenya-Specific</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">🇰🇪</div><h3>KRA tax worksheets</h3><p>PAYE / VAT figures. PIN never leaves your phone.</p></div>
-    <div class="cap-card"><div class="icon">💳</div><h3>M-Pesa via NestLink</h3><p>Pay with your phone.</p></div>
-    <div class="cap-card"><div class="icon">📍</div><h3>Local pricing</h3><p>KES 10 → 9,999. Plans for every level.</p></div>
-  </div>
+    <div style="text-align: center; padding: 2rem; background: rgba(0,212,255,.05); border-radius: 12px; border: 1px solid #1e2a38; margin-top: 3rem;">
+      <h3 style="color: #00d4ff; margin-bottom: 1rem;">Ready to start?</h3>
+      <a href="index.html" style="
+        display: inline-block;
+        padding: 0.95rem 2rem;
+        background: linear-gradient(135deg, #00d4ff, #22b8ff);
+        color: #04131a;
+        border-radius: 8px;
+        font-weight: 700;
+      ">💬 Chat with Imhotep</a>
+      <a href="pricing.html" style="
+        display: inline-block;
+        margin-left: 1rem;
+        padding: 0.95rem 2rem;
+        background: transparent;
+        color: #00d4ff;
+        border: 1.5px solid #00d4ff;
+        border-radius: 8px;
+        font-weight: 700;
+      ">💰 View Pricing</a>
+    </div>
 
-  <h2 style="margin-top:2.5rem">🤝 Agents</h2>
-  <div class="cap-grid">
-    <div class="cap-card"><div class="icon">🛠️</div><h3>Nox</h3><p>Sandbox engineer.</p></div>
-    <div class="cap-card"><div class="icon">⌨️</div><h3>Coding</h3><p>Writes, compiles, runs code.</p></div>
-    <div class="cap-card"><div class="icon">🔎</div><h3>Information</h3><p>Searches + cites.</p></div>
-    <div class="cap-card"><div class="icon">🧮</div><h3>AgentMath</h3><p>Symbolic + numeric.</p></div>
-    <div class="cap-card"><div class="icon">🩺</div><h3>AgentHealth + Afya</h3><p>Biomedical + drug discovery.</p></div>
-    <div class="cap-card"><div class="icon">⚛️</div><h3>AgentQuantum</h3><p>Quantum circuits.</p></div>
-    <div class="cap-card"><div class="icon">🧠</div><h3>AgentCFC</h3><p>Learnable time constants.</p></div>
-    <div class="cap-card"><div class="icon">🌍</div><h3>AgentClimate</h3><p>NASA / NOAA / OpenWeather.</p></div>
-    <div class="cap-card"><div class="icon">📈</div><h3>AgentODE</h3><p>Epidemic + chaos models.</p></div>
-    <div class="cap-card"><div class="icon">🌾</div><h3>AgentAgriculture</h3><p>GDD + weather windows.</p></div>
-    <div class="cap-card"><div class="icon">💊</div><h3>AgentAfya</h3><p>Serious drug discovery.</p></div>
-    <div class="cap-card"><div class="icon">🧬</div><h3>AgentSam</h3><p>Code corrector.</p></div>
-    <div class="cap-card"><div class="icon">🗣️</div><h3>Proponent / Opponent / Judge</h3><p>Live debate panel.</p></div>
   </div>
-</section>
+</div>
 
 <footer>
-  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+  <p>© 2026 Imhotep · Made in Kenya 🇰🇪 · <a href="https://github.com/kiragu2004/imhotep-ai">GitHub</a></p>
 </footer>
 
-<script src="config.js"></script>
-<script src="app.js"></script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register("./sw.js").catch(function(){});
-  });
-}
-</script>
 </body>
 </html>
