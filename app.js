@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════════════════
-// Imhotep frontend — explicit Google Sign-In
+// Imhotep frontend
 // ═══════════════════════════════════════════════════════════════
-const API_URL = window.IMHOTEP_CONFIG.API_URL;
-const CLIENT_ID = window.IMHOTEP_CONFIG.GOOGLE_CLIENT_ID;
+const API_URL    = window.IMHOTEP_CONFIG.API_URL;
+const CLIENT_ID  = window.IMHOTEP_CONFIG.GOOGLE_CLIENT_ID;
 
-const gate        = document.getElementById("signin-gate");
+const authGate    = document.getElementById("auth-gate");
 const chatSec     = document.getElementById("chat");
 const userNameEl  = document.getElementById("user-name");
 const messagesEl  = document.getElementById("messages");
@@ -13,18 +13,42 @@ const promptIn    = document.getElementById("prompt");
 const sendBtn     = document.getElementById("send-btn");
 const statusEl    = document.getElementById("status");
 const signoutBtn  = document.getElementById("signout-btn");
-const signinStat  = document.getElementById("signin-status");
+const authStat    = document.getElementById("auth-status");
 const gsiMount    = document.getElementById("gsi-button");
 const fallbackBtn = document.getElementById("fallback-signin");
 
-// ── Called by Google after sign-in ──
+// ── Session ──
+function saveSession(token, user) {
+  localStorage.setItem("imhotep_token", token);
+  localStorage.setItem("imhotep_user", JSON.stringify(user));
+}
+function clearSession() {
+  localStorage.removeItem("imhotep_token");
+  localStorage.removeItem("imhotep_user");
+}
+function getToken() { return localStorage.getItem("imhotep_token"); }
+function getUser() {
+  try { return JSON.parse(localStorage.getItem("imhotep_user") || "null"); }
+  catch (e) { return null; }
+}
+
+function showChat(user) {
+  if (authGate) authGate.classList.add("hidden");
+  if (chatSec)  chatSec.classList.remove("hidden");
+  if (userNameEl) userNameEl.textContent = user.name || user.email || "user";
+}
+function showGate() {
+  if (chatSec)  chatSec.classList.add("hidden");
+  if (authGate) authGate.classList.remove("hidden");
+}
+
+// ── Google sign-in ──
 async function handleCredentialResponse(response) {
   if (!response || !response.credential) {
-    if (signinStat) signinStat.textContent = "Sign-in failed.";
+    if (authStat) authStat.textContent = "Sign-in failed.";
     return;
   }
-  if (signinStat) signinStat.textContent = "Verifying…";
-
+  if (authStat) authStat.textContent = "Verifying…";
   try {
     const r = await fetch(`${API_URL}/auth/google`, {
       method: "POST",
@@ -34,92 +58,121 @@ async function handleCredentialResponse(response) {
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const data = await r.json();
     if (!data.ok) throw new Error(data.error || "Invalid token");
-
-    localStorage.setItem("imhotep_user", JSON.stringify(data.user));
+    saveSession(data.token, data.user);
     showChat(data.user);
   } catch (e) {
-    if (signinStat) signinStat.textContent = "Verification failed: " + e.message;
+    if (authStat) authStat.textContent = "Verification failed: " + e.message;
   }
 }
 window.handleCredentialResponse = handleCredentialResponse;
 
-function showChat(user) {
-  if (gate) gate.classList.add("hidden");
-  if (chatSec) chatSec.classList.remove("hidden");
-  if (userNameEl) userNameEl.textContent = user.name || user.email || "user";
-}
-
-function signOut() {
-  localStorage.removeItem("imhotep_user");
-  if (window.google && google.accounts && google.accounts.id) {
-    google.accounts.id.disableAutoSelect();
-  }
-  if (chatSec) chatSec.classList.add("hidden");
-  if (gate) gate.classList.remove("hidden");
-  if (signinStat) signinStat.textContent = "";
-}
-if (signoutBtn) signoutBtn.addEventListener("click", signOut);
-
-// ── Initialize Google Sign-In when GIS script is ready ──
 function initGoogleSignIn() {
   if (!window.google || !google.accounts || !google.accounts.id) {
-    // GIS still loading — retry every 300 ms, up to 20 times (6 s)
-    if (!initGoogleSignIn.tries) initGoogleSignIn.tries = 0;
-    initGoogleSignIn.tries++;
-    if (initGoogleSignIn.tries < 20) {
-      setTimeout(initGoogleSignIn, 300);
-      return;
-    }
-    // Gave up — show fallback
-    console.warn("GSI failed to load. Showing fallback.");
+    initGoogleSignIn.tries = (initGoogleSignIn.tries || 0) + 1;
+    if (initGoogleSignIn.tries < 20) return setTimeout(initGoogleSignIn, 300);
     if (fallbackBtn) fallbackBtn.classList.remove("hidden");
-    if (signinStat) signinStat.textContent = "Google sign-in unavailable.";
+    if (authStat) authStat.textContent = "Google sign-in unavailable.";
     return;
   }
-
   try {
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
       callback: handleCredentialResponse,
       auto_select: false,
-      cancel_on_tap_outside: true,
     });
-
     if (gsiMount) {
       google.accounts.id.renderButton(gsiMount, {
-        type: "standard",
-        size: "large",
-        theme: "filled_black",
-        text: "signin_with",
-        shape: "pill",
-        logo_alignment: "left",
-        width: 280,
+        type: "standard", size: "large", theme: "filled_black",
+        text: "signin_with", shape: "pill", logo_alignment: "left", width: 280,
       });
     }
   } catch (e) {
     console.error("GSI init error:", e);
-    if (signinStat) signinStat.textContent = "Sign-in init error: " + e.message;
+    if (authStat) authStat.textContent = "Init error: " + e.message;
   }
 }
 
-// Fallback button — if GSI never loads, use a manual trigger
 if (fallbackBtn) {
   fallbackBtn.addEventListener("click", () => {
     if (window.google && google.accounts && google.accounts.id) {
       google.accounts.id.prompt();
     } else {
-      alert("Google sign-in is not available. Check your network and reload.");
+      alert("Google sign-in unavailable.");
     }
   });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  // Restore session if any
-  const raw = localStorage.getItem("imhotep_user");
-  if (raw) {
-    try { showChat(JSON.parse(raw)); } catch (e) { localStorage.removeItem("imhotep_user"); }
+// ── Email / password ──
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    const which = tab.dataset.tab;
+    document.getElementById("signin-form").classList.toggle("hidden", which !== "signin");
+    document.getElementById("signup-form").classList.toggle("hidden", which !== "signup");
+  });
+});
+
+const signinForm = document.getElementById("signin-form");
+if (signinForm) {
+  signinForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("si-email").value.trim();
+    const password = document.getElementById("si-password").value;
+    if (authStat) authStat.textContent = "Signing in…";
+    try {
+      const r = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.ok) throw new Error(data.detail || data.error || `HTTP ${r.status}`);
+      saveSession(data.token, data.user);
+      showChat(data.user);
+    } catch (e) {
+      if (authStat) authStat.textContent = "Error: " + e.message;
+    }
+  });
+}
+
+const signupForm = document.getElementById("signup-form");
+if (signupForm) {
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("su-name").value.trim();
+    const email = document.getElementById("su-email").value.trim();
+    const password = document.getElementById("su-password").value;
+    if (authStat) authStat.textContent = "Creating account…";
+    try {
+      const r = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.ok) throw new Error(data.detail || data.error || `HTTP ${r.status}`);
+      saveSession(data.token, data.user);
+      showChat(data.user);
+    } catch (e) {
+      if (authStat) authStat.textContent = "Error: " + e.message;
+    }
+  });
+}
+
+function signOut() {
+  clearSession();
+  if (window.google && google.accounts && google.accounts.id) {
+    google.accounts.id.disableAutoSelect();
   }
-  // Attempt to mount the Google button
+  showGate();
+  if (authStat) authStat.textContent = "";
+}
+if (signoutBtn) signoutBtn.addEventListener("click", signOut);
+
+window.addEventListener("DOMContentLoaded", () => {
+  const user = getUser();
+  if (user && getToken()) showChat(user);
   initGoogleSignIn();
 });
 
@@ -138,7 +191,7 @@ if (form) {
     e.preventDefault();
     const prompt = promptIn.value.trim();
     if (!prompt) return;
-    const user = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
+    const user = getUser() || {};
     promptIn.value = "";
     promptIn.disabled = true;
     sendBtn.disabled = true;
@@ -148,7 +201,7 @@ if (form) {
       const r = await fetch(`${API_URL}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, user_id: user.email || user.sub || "guest" }),
+        body: JSON.stringify({ prompt, user_id: user.email || "guest" }),
       });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       const data = await r.json();
