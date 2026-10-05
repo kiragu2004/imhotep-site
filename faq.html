@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Imhotep AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">⚡ IMHOTEP</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="capabilities.html">Capabilities</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="faq.html" class="active">FAQ</a>
+      <a href="about.html">About</a>
+      <div id="auth-area"></div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" style="padding:3rem 1.5rem 1rem">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1>FAQ</h1>
+    <p class="tag">Everything you might want to know.</p>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="faq-item open">
+    <div class="faq-q">What is Imhotep?</div>
+    <div class="faq-a">Imhotep is a multi-agent AI assistant built by Samuel Kiragu Kamau in Murang'a, Kenya. It combines 22 specialist agents with real scientific tools (RDKit, PubMed, NASA, Qiskit, and more). Every factual claim is cited with a real source URL.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How do I start using it?</div>
+    <div class="faq-a">Sign in with your Google account, then choose a plan. Your chat unlocks immediately after payment.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How does payment work?</div>
+    <div class="faq-a">We use NestLink for M-Pesa payments. Click any plan — it opens a secure NestLink page. Enter your M-Pesa number and confirm the prompt on your phone. Credits apply automatically within 1–2 minutes.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What are the available plans?</div>
+    <div class="faq-a">Quick (10 KES / 3 chats), Weekly Unlimited (99 KES / 7 days), Pro Monthly (999 KES / 30 days), Pro Annual (9,999 KES / year), and Enterprise (custom).</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do my credits expire?</div>
+    <div class="faq-a">Quick credits never expire. Weekly and Pro plans are time-based; unused time at expiry doesn't roll over.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Is my data private?</div>
+    <div class="faq-a">Yes. Your sign-in uses Google OAuth. Chat history is stored only in your own browser — never on our servers.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can the AI install its own tools?</div>
+    <div class="faq-a">Yes. Inside its Linux sandbox, Imhotep can install packages via apt, pip, and npm, then use them — all automatically. It only installs legitimate research and development tools.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What happens if a payment doesn't appear?</div>
+    <div class="faq-a">Wait 2 minutes, then click "I've paid — check now" on the chat screen. If it still doesn't appear, email <a href="mailto:kiragukamau2004@gmail.com">kiragukamau2004@gmail.com</a> with your M-Pesa confirmation code.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do you offer refunds?</div>
+    <div class="faq-a">If no chats have been used on your account, contact support within 24 hours for a full refund.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I get an Enterprise plan?</div>
+    <div class="faq-a">Yes. Email <a href="mailto:kiragukamau2004@gmail.com?subject=Imhotep%20Enterprise">kiragukamau2004@gmail.com</a> with your use case. Plans start from 9,999 KES/month.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Is the AI safe?</div>
+    <div class="faq-a">Yes. Every request passes a safety filter. Pathogen enhancement, harmful chemistry, and cyber-attack content are refused and logged. See our <a href="safety.html">Safety page</a> for details.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Who built this?</div>
+    <div class="faq-a">Samuel Kiragu Kamau — alone, in his bedroom in Mukuyu, Murang'a, Kenya. See <a href="about.html">About</a>.</div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
+</body>
+</html>

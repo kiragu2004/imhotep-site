@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — Imhotep AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">⚡ IMHOTEP</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="capabilities.html">Capabilities</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About</a>
+      <div id="auth-area"></div>
+    </div>
+  </div>
+</nav>
+
+<section class="dashboard">
+  <div class="dash-hero">
+    <h1>Your Dashboard</h1>
+    <p style="color:var(--text-4);margin-top:.5rem">
+      Conversation history, usage, and credits — stored only in this browser.
+    </p>
+  </div>
+
+  <div id="dash-gate" style="text-align:center;padding:3rem 1rem">
+    <p style="color:var(--text-4);margin-bottom:1rem">Sign in to view your dashboard.</p>
+    <button class="signin-nav-btn" onclick="openAuthModal()">Sign in with Google</button>
+  </div>
+
+  <div id="dash-content" style="display:none">
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="num" id="dash-credits">0</div>
+        <div class="lbl">Credits</div>
+      </div>
+      <div class="dash-card">
+        <div class="num" id="dash-unlimited">—</div>
+        <div class="lbl">Plan</div>
+      </div>
+      <div class="dash-card">
+        <div class="num" id="dash-chats">0</div>
+        <div class="lbl">Chat messages</div>
+      </div>
+      <div class="dash-card">
+        <div class="num" id="dash-since">—</div>
+        <div class="lbl">Member since</div>
+      </div>
+    </div>
+
+    <div class="history">
+      <h2>Recent conversations</h2>
+      <div id="history-list"></div>
+    </div>
+
+    <div style="text-align:center;padding:1rem 0">
+      <button class="signin-nav-btn" onclick="clearHistory()" style="border-color:var(--error);color:var(--error)">
+        Clear history
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+</footer>
+
+<div class="modal-backdrop" id="auth-modal" onclick="if(event.target===this)closeAuthModal()">
+  <div class="modal">
+    <h2>Sign in to Imhotep</h2>
+    <p>Use your Google account to view your dashboard.</p>
+    <div class="google-btn-wrap"><div id="google-btn"></div></div>
+    <button class="close" onclick="closeAuthModal()">Cancel</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+function renderDashboard() {
+  const gate = document.getElementById("dash-gate");
+  const content = document.getElementById("dash-content");
+  if (!State.user) { gate.style.display = "block"; content.style.display = "none"; return; }
+  gate.style.display = "none";
+  content.style.display = "block";
+
+  document.getElementById("dash-credits").textContent = State.unlimited ? "∞" : State.credits;
+  document.getElementById("dash-unlimited").textContent = State.unlimited ? "Unlimited" : "Pay per use";
+
+  const key = "imhotep_history_" + State.user.email;
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem(key) || "[]"); } catch(e) {}
+
+  const chats = history.filter(h => h.role === "user").length;
+  document.getElementById("dash-chats").textContent = chats;
+
+  if (history.length > 0) {
+    const first = new Date(history[0].ts);
+    document.getElementById("dash-since").textContent =
+      first.toLocaleDateString("en-GB", { day:"numeric", month:"short" });
+  }
+
+  const list = document.getElementById("history-list");
+  if (history.length === 0) {
+    list.innerHTML = '<p style="color:var(--text-5);font-size:.9rem">No conversations yet. ' +
+      '<a href="index.html">Start chatting →</a></p>';
+    return;
+  }
+  // Group into Q+A pairs
+  const rows = [];
+  for (let i = 0; i < history.length; i++) {
+    if (history[i].role === "user") {
+      const next = history[i+1] && history[i+1].role === "assistant" ? history[i+1] : null;
+      rows.push({ q: history[i].text, a: next ? next.text : "(no reply)", ts: history[i].ts });
+    }
+  }
+  list.innerHTML = rows.slice(-20).reverse().map(function(r) {
+    const d = new Date(r.ts).toLocaleString("en-GB", { timeZone:"Africa/Nairobi" });
+    return '<div class="history-entry">' +
+      '<div class="q">Q: ' + escapeHtml(r.q.slice(0,120)) + '</div>' +
+      '<div class="a">' + escapeHtml(r.a.slice(0,220)) + '</div>' +
+      '<div class="ts">' + d + '</div></div>';
+  }).join("");
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, function(c) {
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+
+function clearHistory() {
+  if (!State.user) return;
+  if (!confirm("Clear all conversation history? This cannot be undone.")) return;
+  localStorage.removeItem("imhotep_history_" + State.user.email);
+  renderDashboard();
+  toast("History cleared.", "success");
+}
+
+// Override refreshCredits to also redraw dashboard
+const _origRefresh = window.refreshCredits;
+window.refreshCredits = async function() {
+  if (typeof _origRefresh === "function") await _origRefresh();
+  renderDashboard();
+};
+
+window.addEventListener("DOMContentLoaded", function() {
+  setTimeout(function() {
+    renderDashboard();
+    if (State.user) refreshCredits();
+  }, 200);
+});
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
+</body>
+</html>

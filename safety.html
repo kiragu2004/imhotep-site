@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Safety — Imhotep AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">⚡ IMHOTEP</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="capabilities.html">Capabilities</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About</a>
+      <div id="auth-area"></div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" style="padding:3rem 1.5rem 1rem">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1>Safety & Ethics</h1>
+    <p class="tag">Every request passes a hard filter before it reaches the model. Refusals are logged.</p>
+  </div>
+</section>
+
+<section class="capabilities-preview" style="max-width:800px">
+  <h2>Refused categories</h2>
+  <div class="cap-grid" style="grid-template-columns:1fr">
+    <div class="cap-card"><h3>Pathogen enhancement</h3><p>Gain-of-function, weaponizing pathogens, select agents.</p></div>
+    <div class="cap-card"><h3>Harmful chemistry</h3><p>Nerve agents, ricin, botulinum synthesis.</p></div>
+    <div class="cap-card"><h3>Cyber harm</h3><p>Ransomware, exploit kits, credential theft.</p></div>
+    <div class="cap-card"><h3>Self-harm assistance</h3><p>Any method suggestions.</p></div>
+  </div>
+
+  <h2 style="margin-top:2rem">Supported research</h2>
+  <div class="cap-grid" style="grid-template-columns:1fr">
+    <div class="cap-card"><h3>Molecular docking</h3><p>Therapeutic compounds only.</p></div>
+    <div class="cap-card"><h3>Protein structure</h3><p>Legitimate folding tasks.</p></div>
+    <div class="cap-card"><h3>Epidemiology</h3><p>Public health modeling.</p></div>
+    <div class="cap-card"><h3>Climate & Agriculture</h3><p>Real data with citations.</p></div>
+  </div>
+
+  <h2 style="margin-top:2rem">Our commitments</h2>
+  <ul style="color:var(--text-4);line-height:1.9;padding-left:1.25rem;margin-top:.75rem">
+    <li>Every refusal is logged to a timestamped audit file</li>
+    <li>Model weights are read-only — even approved evolution cannot touch them</li>
+    <li>iTax PIN and ID never leave the user's phone</li>
+    <li>Emails from Imhotep route replies to the administrator only</li>
+  </ul>
+</section>
+
+<footer>
+  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
+</body>
+</html>

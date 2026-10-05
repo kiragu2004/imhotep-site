@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capabilities — Imhotep AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">⚡ IMHOTEP</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="capabilities.html" class="active">Capabilities</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About</a>
+      <div id="auth-area"></div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" style="padding:3rem 1.5rem 1rem">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1>Capabilities</h1>
+    <p class="tag">Everything Imhotep can do. Every scientific claim is cited.</p>
+  </div>
+</section>
+
+<section class="capabilities-preview">
+  <h2>🧬 Chemistry & Biology</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">🔬</div><h3>Molecule properties</h3><p>RDKit + live PubChem for MW, formula, SMILES, logP, HBD, HBA.</p></div>
+    <div class="cap-card"><div class="icon">🧪</div><h3>Docking (Agent Afya)</h3><p>AutoDock Vina, DiffDock, Smina. Up to 1000 molecules per task.</p></div>
+    <div class="cap-card"><div class="icon">🧠</div><h3>Protein folding</h3><p>ESMFold2 / Boltz-2 from sequence.</p></div>
+    <div class="cap-card"><div class="icon">📊</div><h3>ADMET profiles</h3><p>admet-ai predictions for candidate molecules.</p></div>
+    <div class="cap-card"><div class="icon">📚</div><h3>PubMed research</h3><p>Live literature search with PMIDs and URLs.</p></div>
+    <div class="cap-card"><div class="icon">🔎</div><h3>arXiv + Crossref</h3><p>Preprints and DOI cross-references.</p></div>
+  </div>
+
+  <h2 style="margin-top:2.5rem">📈 Mathematics & Simulation</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">∑</div><h3>Symbolic math</h3><p>SymPy: derivatives, integrals, matrices.</p></div>
+    <div class="cap-card"><div class="icon">📉</div><h3>Numeric</h3><p>NumPy, SciPy: linear algebra, stats, FFT.</p></div>
+    <div class="cap-card"><div class="icon">🌊</div><h3>ODE solver</h3><p>SIR, SEIR, SIRS, logistic, Lotka, Lorenz via scipy.</p></div>
+    <div class="cap-card"><div class="icon">🎯</div><h3>Optimization</h3><p>CVXPY (convex), PuLP (LP/MILP).</p></div>
+    <div class="cap-card"><div class="icon">🧠</div><h3>CFC networks</h3><p>Learnable time-constant neurons (Hasani 2021).</p></div>
+    <div class="cap-card"><div class="icon">🌐</div><h3>PDE & diffusion</h3><p>Py-PDE, FiPy, diffusion models.</p></div>
+  </div>
+
+  <h2 style="margin-top:2.5rem">⚛️ Quantum Computing</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">🔷</div><h3>Qiskit + Aer</h3><p>Real circuit execution and measurement counts.</p></div>
+    <div class="cap-card"><div class="icon">🔶</div><h3>Cirq</h3><p>Google's quantum framework.</p></div>
+    <div class="cap-card"><div class="icon">✨</div><h3>PennyLane</h3><p>Differentiable quantum programming.</p></div>
+    <div class="cap-card"><div class="icon">🌀</div><h3>QuTiP</h3><p>Open quantum systems.</p></div>
+    <div class="cap-card"><div class="icon">💠</div><h3>D-Wave</h3><p>Quantum annealing and QUBO.</p></div>
+    <div class="cap-card"><div class="icon">⚙️</div><h3>Qiskit Nature</h3><p>VQE for molecular ground states.</p></div>
+  </div>
+
+  <h2 style="margin-top:2.5rem">🌍 Climate & Agriculture</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">🛰️</div><h3>NASA POWER</h3><p>Real daily temperature, precipitation, humidity, wind.</p></div>
+    <div class="cap-card"><div class="icon">🌫️</div><h3>NOAA CO₂</h3><p>Mauna Loa live atmospheric CO₂.</p></div>
+    <div class="cap-card"><div class="icon">☀️</div><h3>OpenWeather</h3><p>Current, forecast, AQI for any city.</p></div>
+    <div class="cap-card"><div class="icon">🌾</div><h3>Growing Degree Days</h3><p>Crop development from NASA data.</p></div>
+    <div class="cap-card"><div class="icon">🗺️</div><h3>Earth Engine</h3><p>Satellite imagery (with free account).</p></div>
+    <div class="cap-card"><div class="icon">📡</div><h3>NASA EarthData</h3><p>Collection search across datasets.</p></div>
+  </div>
+
+  <h2 style="margin-top:2.5rem">💻 Code & Sandbox</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">🐧</div><h3>Linux container</h3><p>Full Ubuntu 22.04 with apt, gcc, g++, python3, node, go, java.</p></div>
+    <div class="cap-card"><div class="icon">🐍</div><h3>Python</h3><p>NumPy, Pandas, Matplotlib, scikit-learn, and 200+ others.</p></div>
+    <div class="cap-card"><div class="icon">⚙️</div><h3>C / C++ / Rust / Go</h3><p>Real compile + run with error output.</p></div>
+    <div class="cap-card"><div class="icon">☕</div><h3>Java</h3><p>Compile and run inside the sandbox.</p></div>
+    <div class="cap-card"><div class="icon">🌐</div><h3>JavaScript / Node</h3><p>Run scripts in the container.</p></div>
+    <div class="cap-card"><div class="icon">📦</div><h3>Auto-install</h3><p>Searches, installs, verifies any package.</p></div>
+  </div>
+
+  <h2 style="margin-top:2.5rem">🧾 Kenya-Specific</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">🇰🇪</div><h3>KRA tax worksheets</h3><p>PAYE / VAT figures. PIN never leaves your phone.</p></div>
+    <div class="cap-card"><div class="icon">💳</div><h3>M-Pesa via NestLink</h3><p>Pay with your phone.</p></div>
+    <div class="cap-card"><div class="icon">📍</div><h3>Local pricing</h3><p>KES 10 → 9,999. Plans for every level.</p></div>
+  </div>
+
+  <h2 style="margin-top:2.5rem">🤝 Agents</h2>
+  <div class="cap-grid">
+    <div class="cap-card"><div class="icon">🛠️</div><h3>Nox</h3><p>Sandbox engineer.</p></div>
+    <div class="cap-card"><div class="icon">⌨️</div><h3>Coding</h3><p>Writes, compiles, runs code.</p></div>
+    <div class="cap-card"><div class="icon">🔎</div><h3>Information</h3><p>Searches + cites.</p></div>
+    <div class="cap-card"><div class="icon">🧮</div><h3>AgentMath</h3><p>Symbolic + numeric.</p></div>
+    <div class="cap-card"><div class="icon">🩺</div><h3>AgentHealth + Afya</h3><p>Biomedical + drug discovery.</p></div>
+    <div class="cap-card"><div class="icon">⚛️</div><h3>AgentQuantum</h3><p>Quantum circuits.</p></div>
+    <div class="cap-card"><div class="icon">🧠</div><h3>AgentCFC</h3><p>Learnable time constants.</p></div>
+    <div class="cap-card"><div class="icon">🌍</div><h3>AgentClimate</h3><p>NASA / NOAA / OpenWeather.</p></div>
+    <div class="cap-card"><div class="icon">📈</div><h3>AgentODE</h3><p>Epidemic + chaos models.</p></div>
+    <div class="cap-card"><div class="icon">🌾</div><h3>AgentAgriculture</h3><p>GDD + weather windows.</p></div>
+    <div class="cap-card"><div class="icon">💊</div><h3>AgentAfya</h3><p>Serious drug discovery.</p></div>
+    <div class="cap-card"><div class="icon">🧬</div><h3>AgentSam</h3><p>Code corrector.</p></div>
+    <div class="cap-card"><div class="icon">🗣️</div><h3>Proponent / Opponent / Judge</h3><p>Live debate panel.</p></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
+</body>
+</html>

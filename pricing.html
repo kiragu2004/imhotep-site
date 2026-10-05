@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Imhotep AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">⚡ IMHOTEP</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="capabilities.html">Capabilities</a>
+      <a href="pricing.html" class="active">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About</a>
+      <div id="auth-area"></div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" style="padding:3rem 1.5rem 1rem">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1>Pricing</h1>
+    <p class="tag">Pay with M-Pesa via NestLink. No credit card, no subscriptions.</p>
+  </div>
+</section>
+
+<section class="home-pricing">
+  <div class="pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+    <div class="price-card">
+      <h3>Quick</h3>
+      <div class="plan-note">3 chats · no expiry</div>
+      <div class="amount">10 <small>KES</small></div>
+      <ul>
+        <li>3 chat messages</li>
+        <li>All 22 agents</li>
+        <li>Every claim cited</li>
+        <li>Works on any device</li>
+      </ul>
+      <a class="cta" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 10 KES</a>
+    </div>
+
+    <div class="price-card featured">
+      <h3>Weekly Unlimited</h3>
+      <div class="plan-note">7 days · most popular</div>
+      <div class="amount">99 <small>KES / week</small></div>
+      <ul>
+        <li>Unlimited chats for 7 days</li>
+        <li>All 22 agents</li>
+        <li>Priority queue</li>
+        <li>Email notifications</li>
+        <li>Cancel anytime</li>
+      </ul>
+      <a class="cta" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 99 KES</a>
+    </div>
+
+    <div class="price-card pro">
+      <h3>Pro Monthly</h3>
+      <div class="plan-note">30 days · power users</div>
+      <div class="amount">999 <small>KES / month</small></div>
+      <ul>
+        <li>Unlimited for 30 days</li>
+        <li>Highest priority queue</li>
+        <li>API access (coming soon)</li>
+        <li>Email support</li>
+        <li>Dashboard & history</li>
+      </ul>
+      <a class="cta outline" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 999 KES</a>
+    </div>
+
+    <div class="price-card">
+      <h3>Pro Annual</h3>
+      <div class="plan-note">Save 17% vs monthly</div>
+      <div class="amount">9,999 <small>KES / year</small></div>
+      <ul>
+        <li>Everything in Pro</li>
+        <li>365 days access</li>
+        <li>Best value per chat</li>
+        <li>Priority support</li>
+      </ul>
+      <a class="cta outline" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 9,999 KES</a>
+    </div>
+  </div>
+
+  <div style="max-width:900px;margin:2rem auto 0;padding:1.5rem;background:var(--bg-1);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-md)">
+    <h3 style="color:var(--accent);margin-bottom:.75rem;font-size:1rem">Enterprise</h3>
+    <p style="color:var(--text-4);font-size:.9rem;line-height:1.7;margin-bottom:.75rem">
+      For teams, institutions, and research labs. Custom volume, SLAs, dedicated support,
+      on-premise deployment options. Pricing starts from <b>9,999 KES/month</b> and scales with usage.
+    </p>
+    <a href="mailto:kiragukamau2004@gmail.com?subject=Imhotep%20Enterprise"
+       class="cta outline" style="display:inline-block;padding:.7rem 1.4rem;
+       border:1.5px solid var(--accent);color:var(--accent);border-radius:10px;font-weight:700">
+      Contact us →
+    </a>
+  </div>
+
+  <div style="max-width:900px;margin:2rem auto 0;padding:1.5rem;background:var(--bg-1);border:1px solid var(--border);border-radius:14px">
+    <h3 style="color:var(--accent);margin-bottom:.75rem;font-size:1rem">How payment works</h3>
+    <ol style="color:var(--text-4);font-size:.9rem;padding-left:1.25rem;line-height:1.9">
+      <li>Click a plan — opens NestLink's secure payment page</li>
+      <li>Enter your M-Pesa number</li>
+      <li>Confirm the amount (10, 99, 999, or 9,999 KES)</li>
+      <li>Confirm the M-Pesa prompt on your phone</li>
+      <li>Return to Imhotep — credits apply automatically within 1–2 min</li>
+    </ol>
+    <p style="color:var(--text-5);font-size:.8rem;margin-top:1rem">
+      Questions? <a href="mailto:kiragukamau2004@gmail.com">kiragukamau2004@gmail.com</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
+</body>
+</html>

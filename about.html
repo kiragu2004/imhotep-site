@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Imhotep AI</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">⚡ IMHOTEP</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="capabilities.html">Capabilities</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html" class="active">About</a>
+      <div id="auth-area"></div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero" style="padding:3rem 1.5rem 1rem">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1>The Story</h1>
+    <p class="tag">Imhotep was built by one person. No team, no funding — just a laptop in Mukuyu, Murang'a.</p>
+  </div>
+</section>
+
+<section class="capabilities-preview" style="max-width:800px">
+  <div class="cap-card" style="padding:2rem">
+    <h3 style="font-size:1.2rem;margin-bottom:.75rem">Samuel Kiragu Kamau</h3>
+    <p style="color:var(--text-4);line-height:1.7">
+      I'm Samuel Kiragu Kamau. I built Imhotep alone, in my bedroom, in Mukuyu village,
+      Murang'a County, Kenya. No co-founders. No investors. No lab. Just curiosity and a laptop.
+    </p>
+  </div>
+  <div class="cap-card" style="padding:2rem;margin-top:1rem">
+    <h3 style="font-size:1.2rem;margin-bottom:.75rem">What Imhotep does</h3>
+    <p style="color:var(--text-4);line-height:1.7">
+      22 specialist agents run inside a Linux sandbox. They install their own tools, run real
+      chemistry and physics simulations, cite every source, and never fabricate numbers. Every
+      claim ends with <code style="background:var(--bg-2);padding:.15rem .4rem;border-radius:4px;color:var(--accent)">[source: URL]</code>.
+    </p>
+  </div>
+  <div class="cap-card" style="padding:2rem;margin-top:1rem">
+    <h3 style="font-size:1.2rem;margin-bottom:.75rem">Why "Imhotep"?</h3>
+    <p style="color:var(--text-4);line-height:1.7">
+      Imhotep was the ancient Egyptian architect, physician, and polymath — the first person
+      in history celebrated across multiple disciplines. This project aims for the same: one
+      intelligence, many skills, built to help people.
+    </p>
+  </div>
+  <div class="cap-card" style="padding:2rem;margin-top:1rem">
+    <h3 style="font-size:1.2rem;margin-bottom:.75rem">Contact</h3>
+    <p style="color:var(--text-4);line-height:1.7">
+      <a href="mailto:kiragukamau2004@gmail.com">kiragukamau2004@gmail.com</a>
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
+</footer>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
