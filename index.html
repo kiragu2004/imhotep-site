@@ -3,250 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Imhotep AI — Multi-Agent Intelligence from Kenya</title>
-<meta name="description" content="Imhotep — 22 agents, real scientific tools, cited sources. Built in Murang'a, Kenya.">
-<meta property="og:title" content="Imhotep AI">
-<meta property="og:description" content="22 agents, real tools, cited sources.">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Imhotep AI",
-"applicationCategory":"AIApplication","offers":{"@type":"Offer","price":"10","priceCurrency":"KES"}}
-</script>
+<title>Imhotep — Multi-Agent AI</title>
+<meta name="description" content="A private multi-agent AI. Ask anything, watch agents debate, get cited answers.">
 <link rel="stylesheet" href="style.css">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
 <nav>
-  <div class="nav-inner">
-    <a href="index.html" class="logo">⚡ IMHOTEP</a>
-    <div class="nav-links">
-      <a href="index.html" class="active">Home</a>
-      <a href="capabilities.html">Capabilities</a>
-      <a href="pricing.html">Pricing</a>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="faq.html">FAQ</a>
-      <a href="about.html">About</a>
-      <div id="auth-area"></div>
-    </div>
-  </div>
+  <a href="/" class="logo">⚡ IMHOTEP</a>
+  <ul>
+    <li><a href="#chat">Chat</a></li>
+    <li><a href="#debate">Debate</a></li>
+    <li><a href="capabilities.html">Capabilities</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
 </nav>
 
 <section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <div class="hero-live-badge"><span class="badge-dot"></span><span>Live from Nairobi</span></div>
-    <h1>Imhotep</h1>
-    <p class="tag">
-      A multi-agent intelligence that installs its own tools, runs real science,
-      and cites every source.<br>
-      <strong>Built alone in Mukuyu, Murang'a, Kenya.</strong>
-    </p>
-    <div class="hero-badges">
-      <span class="badge">22 Agents</span>
-      <span class="badge">200+ Tools</span>
-      <span class="badge">Real Citations</span>
-      <span class="badge">Private</span>
-    </div>
+  <h1>The Future of Research Intelligence</h1>
+  <p class="tag">22 specialized agents. Real citations. Live debates. Ask anything and get an answer backed by evidence.</p>
+  <div class="badges">
+    <span class="badge live">● Live</span>
+    <span class="badge">Multi-agent debate</span>
+    <span class="badge">Real citations</span>
+    <span class="badge">Kenya-built</span>
   </div>
 </section>
 
-<div class="trust-bar">
-  <div class="trust-item"><span class="icon">🔒</span> Encrypted</div>
-  <div class="trust-item"><span class="icon">🇰🇪</span> Built in Kenya</div>
-  <div class="trust-item"><span class="icon">💳</span> M-Pesa secured</div>
-  <div class="trust-item"><span class="icon">📚</span> Every claim cited</div>
-  <div class="trust-item"><span class="icon">⚡</span> No account lock-in</div>
-</div>
+<div class="container">
 
-<div class="main-container">
-  <aside class="thinking-section">
-    <div class="thinking-header">
-      <h2>Model Thinking</h2>
-      <p>Live intelligence processing</p>
+  <section id="signin-gate" class="card gate">
+    <h2>Sign in to continue</h2>
+    <p>Use your Google account. Free tier: 1 question per day.</p>
+    <div id="g_id_onload"
+         data-client_id="1028247630101-c87mfmfgvgu9tsvsp5nibshv4098rnnb.apps.googleusercontent.com"
+         data-callback="handleGoogleSignIn"
+         data-auto_prompt="false"></div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="filled_black"
+         data-text="signin_with"
+         data-shape="pill"></div>
+    <p class="small" id="signin-status"></p>
+  </section>
+
+  <section id="chat" class="hidden">
+    <div class="chat-head">
+      <span class="user-chip"><span id="user-name">guest</span></span>
+      <button id="signout-btn" class="ghost small-btn">Sign out</button>
     </div>
-
-    <div class="peace-panel">
-      <div class="peace-word" id="peace-word" style="opacity:1">Amani</div>
-      <div class="peace-lang" id="peace-lang">— Kiswahili —</div>
-      <div class="peace-caption">Peace, in every language</div>
-    </div>
-
-    <div class="clock-panel">
-      <div class="clock-time" id="clock-time">--:--:--</div>
-      <div class="clock-date" id="clock-date">Loading…</div>
-      <div class="clock-tz">Nairobi (EAT)</div>
-    </div>
-
-    <div class="model-stats">
-      <div class="stat"><div class="stat-val">22</div><div class="stat-lbl">Agents</div></div>
-      <div class="stat"><div class="stat-val">200+</div><div class="stat-lbl">Tools</div></div>
-      <div class="stat"><div class="stat-val">19</div><div class="stat-lbl">CFC nets</div></div>
-    </div>
-  </aside>
-
-  <section class="chat-section">
-    <div class="chat-container">
-      <div class="chat-header">
-        <h2>How can I help you?</h2>
-        <p>Ask anything — code, research, analysis, simulation.</p>
+    <div class="chat">
+      <div id="messages">
+        <div class="sys">Connected. Ask anything.</div>
+        <div class="a">Try: "What's the molecular weight of aspirin?" or "Weather in Nairobi."</div>
       </div>
-
-      <div class="chat-messages" id="chat-messages">
-        <div class="msg assistant">Hi — I'm Imhotep.
-
-I'm an AI assistant powered by NVIDIA NIM, built by Samuel Kiragu Kamau in Mukuyu, Murang'a. I can help with answering questions, writing, coding, brainstorming — and yes, I can roast you (politely).
-
-Sign in with Google and top up to start chatting.</div>
-      </div>
-
-      <div class="chat-locked" id="chat-locked" style="display:none"></div>
-
-      <div id="chat-form-wrap" style="display:none">
-        <form class="chat-form" id="chat-form">
-          <div class="input-wrap">
-            <input type="text" id="chat-input" placeholder="Ask Imhotep anything…" required>
-            <button type="submit" class="send-btn" id="send-btn">Send →</button>
-          </div>
-          <div class="form-hint">Every scientific claim is cited with [source: URL]</div>
-        </form>
-      </div>
-
-      <div id="payment-poll"></div>
+      <form class="chat-input" id="chat-form">
+        <input id="prompt" placeholder="Ask Imhotep…" autocomplete="off" required>
+        <button type="submit" id="send-btn" aria-label="Send">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+      <p class="status" id="status"></p>
     </div>
   </section>
+
+  <section id="debate" class="debate-section">
+    <h2 class="section">Agent Council — Watch Agents Debate</h2>
+    <p class="lead">Enter a topic. Three agents — Proponent, Opponent, and Judge — will argue and deliver a verdict.</p>
+
+    <div class="debate-input">
+      <input id="debate-topic" placeholder="e.g. Should AI agents run their own money?">
+      <button id="debate-btn" class="primary-btn">Start Debate</button>
+    </div>
+
+    <div id="debate-output" class="debate-grid hidden">
+      <div class="agent-card proponent">
+        <div class="agent-head"><span class="dot green"></span> Proponent</div>
+        <p id="pro-text">…</p>
+      </div>
+      <div class="agent-card opponent">
+        <div class="agent-head"><span class="dot red"></span> Opponent</div>
+        <p id="opp-text">…</p>
+      </div>
+      <div class="agent-card judge">
+        <div class="agent-head"><span class="dot gold"></span> Judge</div>
+        <p id="judge-text">…</p>
+      </div>
+    </div>
+    <p class="status" id="debate-status"></p>
+  </section>
+
 </div>
-
-<section class="home-pricing">
-  <h2>Simple pricing</h2>
-  <div class="pricing-grid">
-    <div class="price-card">
-      <h3>Quick</h3>
-      <div class="plan-note">Try it out</div>
-      <div class="amount">10 <small>KES</small></div>
-      <ul>
-        <li>3 chat messages</li>
-        <li>All 22 agents</li>
-        <li>Sources cited</li>
-        <li>No expiry</li>
-      </ul>
-      <a class="cta" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 10 KES</a>
-    </div>
-
-    <div class="price-card featured">
-      <h3>Weekly Unlimited</h3>
-      <div class="plan-note">Best for casual use</div>
-      <div class="amount">99 <small>KES / week</small></div>
-      <ul>
-        <li>Unlimited chats for 7 days</li>
-        <li>All 22 agents</li>
-        <li>Priority queue</li>
-        <li>Email notifications</li>
-      </ul>
-      <a class="cta" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 99 KES</a>
-    </div>
-
-    <div class="price-card pro">
-      <h3>Pro Monthly</h3>
-      <div class="plan-note">For power users</div>
-      <div class="amount">999 <small>KES / month</small></div>
-      <ul>
-        <li>Unlimited for 30 days</li>
-        <li>Priority queue (top of stack)</li>
-        <li>API access (coming soon)</li>
-        <li>Email support</li>
-        <li>Dashboard & history</li>
-      </ul>
-      <a class="cta outline" href="https://me.nestlink.co.ke/Imhotepagenticai" target="_blank">Pay 999 KES</a>
-    </div>
-  </div>
-  <p style="text-align:center;margin-top:1.5rem">
-    <a href="pricing.html">See all plans including Enterprise →</a>
-  </p>
-</section>
-
-<section class="testimonials">
-  <h2>What people say</h2>
-  <div class="testimonial-grid">
-    <div class="testimonial">
-      <div class="quote">"The only AI I've used that actually cites sources — every answer has a URL I can check."</div>
-      <div class="author">A research scientist</div>
-      <div class="role">Nairobi</div>
-    </div>
-    <div class="testimonial">
-      <div class="quote">"Built by one person in Murang'a. That alone makes me want to see it succeed."</div>
-      <div class="author">A software engineer</div>
-      <div class="role">Mombasa</div>
-    </div>
-    <div class="testimonial">
-      <div class="quote">"The M-Pesa flow is seamless. Paid 99 KES, chat worked in seconds."</div>
-      <div class="author">A startup founder</div>
-      <div class="role">Kisumu</div>
-    </div>
-  </div>
-</section>
-
-<section class="faq">
-  <h2>Frequently asked questions</h2>
-  <div class="faq-item">
-    <div class="faq-q">How do I pay?</div>
-    <div class="faq-a">Click any plan. It opens NestLink's secure payment page. Enter your M-Pesa number, confirm the prompt on your phone, and return here. Credits apply automatically within 1–2 minutes.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">What is a "chat message"?</div>
-    <div class="faq-a">One question and its answer counts as one chat message. Long answers and follow-ups each count separately.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">Do my credits expire?</div>
-    <div class="faq-a">Quick (10 KES) credits never expire. Weekly and Pro plans are time-based — unused time at expiry doesn't roll over.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">Is my data private?</div>
-    <div class="faq-a">Yes. Your sign-in is handled by Google. Chat history is stored only in your own browser, never on our servers.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">What if a payment doesn't show up?</div>
-    <div class="faq-a">Wait 2 minutes, then click "I've paid — check now". If it still doesn't appear, email kiragukamau2004@gmail.com with your M-Pesa confirmation code.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">Can I get a refund?</div>
-    <div class="faq-a">If we haven't delivered any chats on your account, contact support within 24 hours for a refund.</div>
-  </div>
-  <div class="faq-item">
-    <div class="faq-q">Is there an Enterprise plan?</div>
-    <div class="faq-a">Yes. For team access, SLAs, or volume pricing, email kiragukamau2004@gmail.com. Plans start from 9,999 KES/month.</div>
-  </div>
-</section>
 
 <footer>
-  <p>© 2026 Imhotep AI · Built in Mukuyu, Murang'a, Kenya</p>
-  <p style="margin-top:.5rem">
-    <a href="about.html">About</a> ·
-    <a href="faq.html">FAQ</a> ·
-    <a href="pricing.html">Pricing</a> ·
-    <a href="capabilities.html">Capabilities</a> ·
-    <a href="dashboard.html">Dashboard</a>
-  </p>
+  <div class="footer-inner">
+    <div class="footer-col">
+      <strong>Imhotep</strong>
+      <p>A private multi-agent AI for research, code, and science. Designed and built from scratch by Samuel Kiragu Kamau in Mukuyu, Murang'a, Kenya.</p>
+    </div>
+    <div class="footer-col">
+      <strong>Explore</strong>
+      <a href="#chat">Chat</a>
+      <a href="#debate">Debate</a>
+      <a href="capabilities.html">Capabilities</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="footer-col">
+      <strong>Contact</strong>
+      <a href="mailto:kiragukamau2004@gmail.com">kiragukamau2004@gmail.com</a>
+      <a href="https://github.com/kiragu2004">github.com/kiragu2004</a>
+    </div>
+  </div>
+  <p class="footer-line">© 2026 Imhotep · Made in Kenya 🇰🇪</p>
 </footer>
 
-<div class="modal-backdrop" id="auth-modal" onclick="if(event.target===this)closeAuthModal()">
-  <div class="modal">
-    <h2>Sign in to Imhotep</h2>
-    <p>Use your Google account to start chatting.</p>
-    <div class="google-btn-wrap"><div id="google-btn"></div></div>
-    <button class="close" onclick="closeAuthModal()">Cancel</button>
-  </div>
-</div>
-
-<script src="config.js"></script>
 <script src="app.js"></script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register("./sw.js").catch(function(){});
-  });
-}
-</script>
 </body>
 </html>
