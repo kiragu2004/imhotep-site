@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — Imhotep</title>
@@ -184,7 +185,7 @@
 
 <script>
 async function buy(tier) {
-  const API = "https://imhotep-agentic-ai.onrender.com";
+  const API = window.IMHOTEP_CONFIG.API_BASE;
   let email = "";
   try {
     const u = JSON.parse(localStorage.getItem("imhotep_user") || "null");

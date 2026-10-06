@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script src="config.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Imhotep — Autonomous Scientist</title>
@@ -108,7 +109,7 @@
 </footer>
 
 <script>
-const API = "https://imhotep-agentic-ai.onrender.com";
+const API = window.IMHOTEP_CONFIG.API_BASE;
 
 async function sendChat() {
   const email = document.getElementById("email").value;
