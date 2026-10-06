@@ -1,80 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — Imhotep</title>
 <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<nav>
-  <div class="logo">⚡ IMHOTEP</div>
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="capabilities.html">Capabilities</a></li>
-    <li><a href="debate.html">Debate</a></li>
-    <li><a href="pricing.html" class="active">Pricing</a></li>
-  </ul>
-  <div class="nav-buttons">
-    <button class="nav-btn" onclick="window.location.href='auth.html'">Sign In</button>
-    <button class="nav-btn primary" onclick="window.location.href='chat.html'">Start Free</button>
-  </div>
-</nav>
+</head><body>
+<nav><div class="logo">⚡ IMHOTEP</div><ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="capabilities.html">Capabilities</a></li>
+<li><a href="debate.html">Debate</a></li>
+<li><a href="pricing.html" class="active">Pricing</a></li>
+</ul><div class="nav-buttons">
+<button class="nav-btn" onclick="window.location.href='auth.html'">Sign In</button>
+<button class="nav-btn primary" onclick="window.location.href='chat.html'">Start Free</button>
+</div></nav>
 <section class="hero" style="min-height:auto; padding:5rem 2rem 1rem;">
-  <div class="hero-content">
-    <h1>Simple pricing</h1>
-    <p class="tag">Pay with M-Pesa. Cancel anytime. All tiers include all 22 agents and cited answers.</p>
-  </div>
+<div class="hero-content">
+<h1>Simple pricing</h1>
+<p class="tag">Pay with M-Pesa. Cancel anytime. All tiers include all 22 agents and cited answers.</p>
+</div></section>
+<section class="container"><div class="pricing-grid">
+
+<div class="pricing-card">
+<h3>Free</h3><div class="desc">Try before you pay</div>
+<div class="price">KES 0</div><div class="price-period">forever</div>
+<ul><li>3 chats per day</li><li>All 22 agents</li><li>Every claim cited</li><li>Live debates</li></ul>
+<a href="chat.html" class="price-btn">Start free</a>
+</div>
+
+<div class="pricing-card">
+<h3>Starter</h3><div class="desc">Pay as you go</div>
+<div class="price">KES 10</div><div class="price-period">for 3 chats · never expires</div>
+<ul><li>3 chats</li><li>Never expires</li><li>All 22 agents</li><li>Every claim cited</li><li>Live debates</li></ul>
+<button class="price-btn" onclick="buy('starter')">Buy starter</button>
+</div>
+
+<div class="pricing-card featured">
+<h3>Weekly Unlimited</h3><div class="desc">For a project sprint</div>
+<div class="price">KES 99 <small>/ week</small></div><div class="price-period">7 days</div>
+<ul><li>Unlimited chats</li><li>Priority queue</li><li>All 22 agents</li><li>Live debates</li><li>Cancel anytime</li></ul>
+<button class="price-btn" onclick="buy('weekly')">Go weekly</button>
+</div>
+
+<div class="pricing-card">
+<h3>Pro Monthly</h3><div class="desc">Most popular plan</div>
+<div class="price">KES 199 <small>/ month</small></div><div class="price-period">30 days</div>
+<ul><li>Unlimited chats</li><li>Priority queue</li><li>All 22 agents</li><li>Live debates</li><li>Email notifications</li><li>Cancel anytime</li></ul>
+<button class="price-btn" onclick="buy('monthly')">Go monthly</button>
+</div>
+
+<div class="pricing-card">
+<h3>Pro Yearly</h3><div class="desc">Best value</div>
+<div class="price">KES 1,999 <small>/ year</small></div><div class="price-period">365 days · save 16%</div>
+<ul><li>Everything in Pro Monthly</li><li>Two months free</li><li>Priority support</li><li>Early access to new agents</li></ul>
+<button class="price-btn" onclick="buy('yearly')">Go yearly</button>
+</div>
+
+</div>
+<p style="text-align:center; color:var(--text-muted); font-size:.85rem; margin-top:2rem;">All prices in Kenyan Shillings · Payment via M-Pesa through NestLink</p>
 </section>
-<section class="container">
-  <div class="pricing-grid">
-    <div class="pricing-card">
-      <h3>Free</h3><div class="desc">Try before you pay</div>
-      <div class="price">KES 0</div><div class="price-period">forever</div>
-      <ul><li>5 chats per day</li><li>All 22 agents</li><li>Every claim cited</li><li>Live debates</li></ul>
-      <a href="chat.html" class="price-btn">Start free</a>
-    </div>
-    <div class="pricing-card">
-      <h3>Starter</h3><div class="desc">Pay once, no subscription</div>
-      <div class="price">KES 199</div><div class="price-period">one-time</div>
-      <ul><li>50 chats</li><li>Never expires</li><li>All 22 agents</li><li>Every claim cited</li><li>Live debates</li></ul>
-      <button class="price-btn" onclick="buy('starter')">Buy starter</button>
-    </div>
-    <div class="pricing-card featured">
-      <h3>Weekly Unlimited</h3><div class="desc">For a project sprint</div>
-      <div class="price">KES 299 <small>/ week</small></div><div class="price-period">7 days</div>
-      <ul><li>Unlimited chats</li><li>Priority queue</li><li>All 22 agents</li><li>Live debates</li><li>Cancel anytime</li></ul>
-      <button class="price-btn" onclick="buy('weekly')">Go weekly</button>
-    </div>
-    <div class="pricing-card">
-      <h3>Pro Monthly</h3><div class="desc">For power users</div>
-      <div class="price">KES 999 <small>/ month</small></div><div class="price-period">30 days</div>
-      <ul><li>Unlimited chats</li><li>Priority queue</li><li>All 22 agents</li><li>Live debates</li><li>Email notifications</li><li>Cancel anytime</li></ul>
-      <button class="price-btn" onclick="buy('monthly')">Go monthly</button>
-    </div>
-    <div class="pricing-card">
-      <h3>Pro Yearly</h3><div class="desc">Best value</div>
-      <div class="price">KES 9,999 <small>/ year</small></div><div class="price-period">365 days · save 16%</div>
-      <ul><li>Everything in Pro Monthly</li><li>Two months free</li><li>Priority support</li><li>Early access to new agents</li></ul>
-      <button class="price-btn" onclick="buy('yearly')">Go yearly</button>
-    </div>
-  </div>
-  <p style="text-align:center; color:var(--text-muted); font-size:.85rem; margin-top:2rem;">All prices in Kenyan Shillings · Payment via M-Pesa through NestLink</p>
-</section>
-<footer><p>© 2026 Imhotep · Made in Kenya 🇰🇪</p></footer>
+<footer><p>© 2026 Imhotep · Built by Samuel Kiragu 🇰🇪</p></footer>
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
-async function buy(tier) {
-  let email = "";
-  try { const u = JSON.parse(localStorage.getItem("imhotep_user") || "null"); if (u && u.email) email = u.email; } catch (e) {}
-  if (!email) { email = prompt("Enter your email for the receipt:"); if (!email || !email.includes("@")) return; }
-  try {
-    const r = await fetch(API + "/checkout", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ tier, email }) });
-    const data = await r.json();
-    if (data.payment_url) window.location.href = data.payment_url;
-    else alert("Payment link unavailable. Try again later.");
-  } catch (e) { alert("Error: " + e.message); }
-}
+async function buy(tier){
+let email="";
+try{const u=JSON.parse(localStorage.getItem("imhotep_user")||"null");if(u&&u.email)email=u.email;}catch(e){}
+if(!email){email=prompt("Enter your email for the receipt:");if(!email||!email.includes("@"))return;}
+try{const r=await fetch(API+"/checkout",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tier,email})});
+const data=await r.json();
+if(data.payment_url)window.location.href=data.payment_url;
+else alert("Payment link unavailable. Try again later.");}catch(e){alert("Error: "+e.message);}}
 </script>
-</body>
-</html>
+</body></html>

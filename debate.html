@@ -1,97 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agentic Debate — Imhotep</title>
 <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<nav>
-  <div class="logo">⚡ IMHOTEP</div>
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="capabilities.html">Capabilities</a></li>
-    <li><a href="debate.html" class="active">Debate</a></li>
-    <li><a href="pricing.html">Pricing</a></li>
-  </ul>
-  <div class="nav-buttons">
-    <button class="nav-btn" onclick="window.location.href='auth.html'">Sign In</button>
-    <button class="nav-btn primary" onclick="window.location.href='chat.html'">Start Free</button>
-  </div>
-</nav>
+</head><body>
+<nav><div class="logo">⚡ IMHOTEP</div><ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="capabilities.html">Capabilities</a></li>
+<li><a href="debate.html" class="active">Debate</a></li>
+<li><a href="pricing.html">Pricing</a></li>
+</ul><div class="nav-buttons">
+<button class="nav-btn" onclick="window.location.href='auth.html'">Sign In</button>
+<button class="nav-btn primary" onclick="window.location.href='chat.html'">Start Free</button>
+</div></nav>
 <section class="debate-section" style="min-height:80vh;">
-  <h1 class="section-title">⚔️ Agentic Debate Arena</h1>
-  <p class="section-subtitle">Watch AI agents engage in rigorous debate. See both sides of any argument.</p>
-  <div class="debate-input-box">
-    <textarea id="proposition" placeholder="Enter any proposition for debate...&#10;&#10;Examples:&#10;• AI will create more jobs than it destroys&#10;• Remote work is the future of employment&#10;• Renewable energy is cost-effective today"></textarea>
-    <div class="agent-selector">
-      <div class="agent-select-box">
-        <label>PRO Agent</label>
-        <select id="pro-agent">
-          <option value="scientist">🧬 Scientist</option>
-          <option value="economist">💰 Economist</option>
-          <option value="philosopher">🤔 Philosopher</option>
-          <option value="entrepreneur">🚀 Entrepreneur</option>
-          <option value="activist">✊ Activist</option>
-        </select>
-      </div>
-      <div class="agent-select-box">
-        <label>CON Agent</label>
-        <select id="con-agent">
-          <option value="economist">💰 Economist</option>
-          <option value="scientist">🧬 Scientist</option>
-          <option value="philosopher">🤔 Philosopher</option>
-          <option value="entrepreneur">🚀 Entrepreneur</option>
-          <option value="activist">✊ Activist</option>
-        </select>
-      </div>
-    </div>
-    <button class="debate-btn" onclick="startDebate()" id="debate-cta">⚡ Start Debate</button>
-  </div>
-  <div id="debate-results" style="display:none;">
-    <div class="debate-results">
-      <div class="debate-side pro"><h3>👍 PRO ARGUMENT</h3><div id="pro-agent-label" style="font-size:.8rem; color:var(--accent-lime); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.1em;"></div><p id="pro-text"></p></div>
-      <div class="debate-side con"><h3>👎 CON ARGUMENT</h3><div id="con-agent-label" style="font-size:.8rem; color:var(--accent-magenta); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.1em;"></div><p id="con-text"></p></div>
-      <div class="debate-side judge"><h3>⚖️ JUDGE'S VERDICT</h3><div style="font-size:.8rem; color:var(--accent-purple); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.1em;">Analysis</div><p id="judge-text"></p></div>
-    </div>
-    <button class="debate-btn" onclick="resetDebate()" style="margin-top:2rem; background:rgba(0,217,255,.1); color:var(--accent-cyan); border:2px solid var(--accent-cyan);">🔄 Another Debate</button>
-  </div>
+<h1 class="section-title">⚔️ Agentic Debate Arena</h1>
+<p class="section-subtitle">Watch AI agents engage in rigorous debate. See both sides of any argument.</p>
+<div class="debate-input-box">
+<textarea id="proposition" placeholder="Enter any proposition for debate...">AI will create more jobs than it destroys</textarea>
+<div class="agent-selector">
+<div class="agent-select-box">
+<label>PRO Agent</label>
+<select id="pro-agent">
+<option value="scientist">🧬 Scientist</option>
+<option value="economist">💰 Economist</option>
+<option value="philosopher">🤔 Philosopher</option>
+<option value="entrepreneur">🚀 Entrepreneur</option>
+<option value="activist">✊ Activist</option>
+<option value="generalist">🤖 Generalist</option>
+<option value="coder">💻 Developer</option>
+<option value="writer">✍️ Writer</option>
+<option value="analyst">📊 Analyst</option>
+<option value="legal">⚖️ Legal</option>
+<option value="designer">🎨 Designer</option>
+<option value="psychologist">🧠 Psychologist</option>
+<option value="geographer">🌍 Geographer</option>
+<option value="historian">📜 Historian</option>
+<option value="tutor">🎓 Tutor</option>
+<option value="medic">🩺 Medic</option>
+<option value="engineer">🛠️ Engineer</option>
+<option value="agronomist">🌾 Agronomist</option>
+<option value="inventor">💡 Inventor</option>
+<option value="civic">🏛️ Civic</option>
+<option value="marketer">📣 Marketer</option>
+<option value="media">🎥 Media</option>
+</select>
+</div>
+<div class="agent-select-box">
+<label>CON Agent</label>
+<select id="con-agent">
+<option value="economist">💰 Economist</option>
+<option value="scientist">🧬 Scientist</option>
+<option value="philosopher">🤔 Philosopher</option>
+<option value="entrepreneur">🚀 Entrepreneur</option>
+<option value="activist">✊ Activist</option>
+<option value="generalist">🤖 Generalist</option>
+<option value="coder">💻 Developer</option>
+<option value="writer">✍️ Writer</option>
+<option value="analyst">📊 Analyst</option>
+<option value="legal">⚖️ Legal</option>
+<option value="designer">🎨 Designer</option>
+<option value="psychologist">🧠 Psychologist</option>
+<option value="geographer">🌍 Geographer</option>
+<option value="historian">📜 Historian</option>
+<option value="tutor">🎓 Tutor</option>
+<option value="medic">🩺 Medic</option>
+<option value="engineer">🛠️ Engineer</option>
+<option value="agronomist">🌾 Agronomist</option>
+<option value="inventor">💡 Inventor</option>
+<option value="civic">🏛️ Civic</option>
+<option value="marketer">📣 Marketer</option>
+<option value="media">🎥 Media</option>
+</select>
+</div>
+</div>
+<button class="debate-btn" onclick="startDebate()" id="debate-cta">⚡ Start Debate</button>
+</div>
+<div id="debate-results" style="display:none;">
+<div class="debate-results">
+<div class="debate-side pro"><h3>👍 PRO ARGUMENT</h3>
+<div id="pro-agent-label" style="font-size:.8rem; color:var(--accent-lime); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.1em;"></div>
+<p id="pro-text"></p></div>
+<div class="debate-side con"><h3>👎 CON ARGUMENT</h3>
+<div id="con-agent-label" style="font-size:.8rem; color:var(--accent-magenta); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.1em;"></div>
+<p id="con-text"></p></div>
+<div class="debate-side judge"><h3>⚖️ JUDGE'S VERDICT</h3>
+<div style="font-size:.8rem; color:var(--accent-purple); margin-bottom:.75rem; text-transform:uppercase; letter-spacing:.1em;">Analysis</div>
+<p id="judge-text"></p></div>
+</div>
+<button class="debate-btn" onclick="resetDebate()" style="margin-top:2rem; background:rgba(0,217,255,.1); color:var(--accent-cyan); border:2px solid var(--accent-cyan);">🔄 Another Debate</button>
+</div>
 </section>
-<footer><p>© 2026 Imhotep AI. Built in Kenya 🇰🇪</p></footer>
+<footer><p>© 2026 Imhotep AI. Built by Samuel Kiragu 🇰🇪</p></footer>
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
-async function startDebate() {
-  const prop = document.getElementById("proposition").value.trim();
-  const proAgent = document.getElementById("pro-agent").value;
-  const conAgent = document.getElementById("con-agent").value;
-  const cta = document.getElementById("debate-cta");
-  if (!prop) { alert("Enter a proposition"); return; }
-  document.getElementById("debate-results").style.display = "none";
-  cta.textContent = "⏳ Debating...";
-  cta.disabled = true;
-  try {
-    const r = await fetch(API + "/debate", {
-      method: "POST", headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ proposition: prop, agents: [proAgent, conAgent] })
-    });
-    const data = await r.json();
-    if (data.ok) {
-      document.getElementById("pro-agent-label").textContent = "Agent: " + proAgent;
-      document.getElementById("con-agent-label").textContent = "Agent: " + conAgent;
-      document.getElementById("pro-text").textContent = data.proponent;
-      document.getElementById("con-text").textContent = data.opponent;
-      document.getElementById("judge-text").textContent = data.judge;
-      document.getElementById("debate-results").style.display = "block";
-      document.getElementById("debate-results").scrollIntoView({behavior: "smooth"});
-    } else alert("Debate failed: " + (data.error || "unknown"));
-  } catch (e) { alert("Error: " + e.message); }
-  finally { cta.textContent = "⚡ Start Debate"; cta.disabled = false; }
+async function startDebate(){
+const prop=document.getElementById("proposition").value.trim();
+const proAgent=document.getElementById("pro-agent").value;
+const conAgent=document.getElementById("con-agent").value;
+const cta=document.getElementById("debate-cta");
+if(!prop){alert("Enter a proposition");return;}
+document.getElementById("debate-results").style.display="none";
+cta.textContent="⏳ Debating...";cta.disabled=true;
+try{
+const r=await fetch(API+"/debate",{method:"POST",headers:{"Content-Type":"application/json"},
+body:JSON.stringify({proposition:prop,agents:[proAgent,conAgent]})});
+const data=await r.json();
+if(data.ok){
+document.getElementById("pro-agent-label").textContent="Agent: "+proAgent;
+document.getElementById("con-agent-label").textContent="Agent: "+conAgent;
+document.getElementById("pro-text").textContent=data.proponent;
+document.getElementById("con-text").textContent=data.opponent;
+document.getElementById("judge-text").textContent=data.judge;
+document.getElementById("debate-results").style.display="block";
+document.getElementById("debate-results").scrollIntoView({behavior:"smooth"});
+}else alert("Debate failed: "+(data.error||"unknown"));
+}catch(e){alert("Error: "+e.message);}
+finally{cta.textContent="⚡ Start Debate";cta.disabled=false;}
 }
-function resetDebate() {
-  document.getElementById("proposition").value = "";
-  document.getElementById("debate-results").style.display = "none";
+function resetDebate(){
+document.getElementById("proposition").value="AI will create more jobs than it destroys";
+document.getElementById("debate-results").style.display="none";
 }
 </script>
-</body>
-</html>
+</body></html>
