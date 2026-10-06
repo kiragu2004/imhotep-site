@@ -22,55 +22,33 @@
 <div class="agent-select-box">
 <label>PRO Agent</label>
 <select id="pro-agent">
-<option value="scientist">🧬 Scientist</option>
-<option value="economist">💰 Economist</option>
-<option value="philosopher">🤔 Philosopher</option>
-<option value="entrepreneur">🚀 Entrepreneur</option>
-<option value="activist">✊ Activist</option>
-<option value="generalist">🤖 Generalist</option>
-<option value="coder">💻 Developer</option>
-<option value="writer">✍️ Writer</option>
-<option value="analyst">📊 Analyst</option>
-<option value="legal">⚖️ Legal</option>
-<option value="designer">🎨 Designer</option>
-<option value="psychologist">🧠 Psychologist</option>
-<option value="geographer">🌍 Geographer</option>
-<option value="historian">📜 Historian</option>
-<option value="tutor">🎓 Tutor</option>
-<option value="medic">🩺 Medic</option>
-<option value="engineer">🛠️ Engineer</option>
-<option value="agronomist">🌾 Agronomist</option>
-<option value="inventor">💡 Inventor</option>
-<option value="civic">🏛️ Civic</option>
-<option value="marketer">📣 Marketer</option>
-<option value="media">🎥 Media</option>
+<option value="scientist">🧬 Scientist</option><option value="economist">💰 Economist</option>
+<option value="philosopher">🤔 Philosopher</option><option value="entrepreneur">🚀 Entrepreneur</option>
+<option value="activist">✊ Activist</option><option value="generalist">🤖 Generalist</option>
+<option value="coder">💻 Developer</option><option value="writer">✍️ Writer</option>
+<option value="analyst">📊 Analyst</option><option value="legal">⚖️ Legal</option>
+<option value="designer">🎨 Designer</option><option value="psychologist">🧠 Psychologist</option>
+<option value="geographer">🌍 Geographer</option><option value="historian">📜 Historian</option>
+<option value="tutor">🎓 Tutor</option><option value="medic">🩺 Medic</option>
+<option value="engineer">🛠️ Engineer</option><option value="agronomist">🌾 Agronomist</option>
+<option value="inventor">💡 Inventor</option><option value="civic">🏛️ Civic</option>
+<option value="marketer">📣 Marketer</option><option value="media">🎥 Media</option>
 </select>
 </div>
 <div class="agent-select-box">
 <label>CON Agent</label>
 <select id="con-agent">
-<option value="economist">💰 Economist</option>
-<option value="scientist">🧬 Scientist</option>
-<option value="philosopher">🤔 Philosopher</option>
-<option value="entrepreneur">🚀 Entrepreneur</option>
-<option value="activist">✊ Activist</option>
-<option value="generalist">🤖 Generalist</option>
-<option value="coder">💻 Developer</option>
-<option value="writer">✍️ Writer</option>
-<option value="analyst">📊 Analyst</option>
-<option value="legal">⚖️ Legal</option>
-<option value="designer">🎨 Designer</option>
-<option value="psychologist">🧠 Psychologist</option>
-<option value="geographer">🌍 Geographer</option>
-<option value="historian">📜 Historian</option>
-<option value="tutor">🎓 Tutor</option>
-<option value="medic">🩺 Medic</option>
-<option value="engineer">🛠️ Engineer</option>
-<option value="agronomist">🌾 Agronomist</option>
-<option value="inventor">💡 Inventor</option>
-<option value="civic">🏛️ Civic</option>
-<option value="marketer">📣 Marketer</option>
-<option value="media">🎥 Media</option>
+<option value="economist">💰 Economist</option><option value="scientist">🧬 Scientist</option>
+<option value="philosopher">🤔 Philosopher</option><option value="entrepreneur">🚀 Entrepreneur</option>
+<option value="activist">✊ Activist</option><option value="generalist">🤖 Generalist</option>
+<option value="coder">💻 Developer</option><option value="writer">✍️ Writer</option>
+<option value="analyst">📊 Analyst</option><option value="legal">⚖️ Legal</option>
+<option value="designer">🎨 Designer</option><option value="psychologist">🧠 Psychologist</option>
+<option value="geographer">🌍 Geographer</option><option value="historian">📜 Historian</option>
+<option value="tutor">🎓 Tutor</option><option value="medic">🩺 Medic</option>
+<option value="engineer">🛠️ Engineer</option><option value="agronomist">🌾 Agronomist</option>
+<option value="inventor">💡 Inventor</option><option value="civic">🏛️ Civic</option>
+<option value="marketer">📣 Marketer</option><option value="media">🎥 Media</option>
 </select>
 </div>
 </div>
@@ -102,17 +80,20 @@ const cta=document.getElementById("debate-cta");
 if(!prop){alert("Enter a proposition");return;}
 document.getElementById("debate-results").style.display="none";
 cta.textContent="⏳ Debating...";cta.disabled=true;
+document.getElementById("pro-agent-label").textContent="AGENT: "+proAgent.toUpperCase();
+document.getElementById("con-agent-label").textContent="AGENT: "+conAgent.toUpperCase();
+document.getElementById("pro-text").textContent="…";
+document.getElementById("con-text").textContent="…";
+document.getElementById("judge-text").textContent="…";
+document.getElementById("debate-results").style.display="block";
 try{
 const r=await fetch(API+"/debate",{method:"POST",headers:{"Content-Type":"application/json"},
 body:JSON.stringify({proposition:prop,agents:[proAgent,conAgent]})});
 const data=await r.json();
 if(data.ok){
-document.getElementById("pro-agent-label").textContent="Agent: "+proAgent;
-document.getElementById("con-agent-label").textContent="Agent: "+conAgent;
 document.getElementById("pro-text").textContent=data.proponent;
 document.getElementById("con-text").textContent=data.opponent;
 document.getElementById("judge-text").textContent=data.judge;
-document.getElementById("debate-results").style.display="block";
 document.getElementById("debate-results").scrollIntoView({behavior:"smooth"});
 }else alert("Debate failed: "+(data.error||"unknown"));
 }catch(e){alert("Error: "+e.message);}

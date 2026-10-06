@@ -3,6 +3,25 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chat — Imhotep</title>
 <link rel="stylesheet" href="style.css">
+<style>
+  .agent-bar { display:flex; gap:.5rem; overflow-x:auto; padding:.5rem 0; margin-bottom:.5rem; scrollbar-width:none; }
+  .agent-bar::-webkit-scrollbar { display:none; }
+  .agent-bar .chip {
+    flex:0 0 auto; padding:.35rem .7rem; font-size:.78rem;
+    border-radius:999px; border:1px solid rgba(0,217,255,.25);
+    background:rgba(0,217,255,.06); color:var(--text-secondary);
+    cursor:pointer; white-space:nowrap; transition:all .2s;
+  }
+  .agent-bar .chip.active {
+    background:var(--gradient-neon); color:var(--bg-primary);
+    border-color:transparent; font-weight:700;
+  }
+  .typing { display:inline-block; }
+  .typing span { display:inline-block; width:6px; height:6px; margin:0 1px; border-radius:50%; background:var(--accent-cyan); animation:blink 1.2s infinite; }
+  .typing span:nth-child(2){animation-delay:.2s;}
+  .typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink { 0%,80%,100%{opacity:.2;} 40%{opacity:1;} }
+</style>
 </head><body>
 <nav><div class="logo">⚡ IMHOTEP</div><ul>
 <li><a href="index.html">Home</a></li>
@@ -14,6 +33,7 @@
 <span id="user-display" style="color:var(--text-secondary); font-size:.9rem;">Guest</span>
 <button class="nav-btn" onclick="logout()">Sign Out</button>
 </div></nav>
+
 <div class="sidebar" id="sidebar">
 <h3>💾 Session</h3>
 <div class="credits-card">
@@ -26,21 +46,48 @@
 <div style="color:var(--text-muted); font-size:.8rem;">No chats yet</div>
 </div></div>
 <button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+
 <div class="chat-container with-sidebar" id="chat-container">
 <div class="chat-messages" id="messages">
-<div id="welcome" style="text-align:center; margin:auto; max-width:620px;">
+<div id="welcome" style="text-align:center; margin:auto; max-width:640px; padding:1rem;">
 <h2 style="background:var(--gradient-neon); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-size:2rem; margin-bottom:1rem;">Welcome to Imhotep</h2>
-<p style="color:var(--text-secondary); line-height:1.8;">22 agents. Built by Samuel Kiragu. Real reasoning.</p>
-<div style="margin-top:2rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; max-width:520px; margin-inline:auto;">
-<button class="agent-pick" onclick="pickAgent('generalist'); sendPrompt('Hello Imhotep!')"><div class="emoji">🤖</div><div class="name">Generalist</div></button>
-<button class="agent-pick" onclick="pickAgent('scientist'); sendPrompt('Explain CRISPR gene editing')"><div class="emoji">🧬</div><div class="name">Scientist</div></button>
-<button class="agent-pick" onclick="pickAgent('coder'); sendPrompt('React hooks best practices')"><div class="emoji">💻</div><div class="name">Developer</div></button>
-<button class="agent-pick" onclick="pickAgent('philosopher'); sendPrompt('What is the nature of consciousness?')"><div class="emoji">🤔</div><div class="name">Philosopher</div></button>
-<button class="agent-pick" onclick="pickAgent('activist'); sendPrompt('How do we fight climate change?')"><div class="emoji">✊</div><div class="name">Activist</div></button>
-<button class="agent-pick" onclick="pickAgent('writer'); sendPrompt('Write about Nairobi sunsets')"><div class="emoji">✍️</div><div class="name">Writer</div></button>
-</div></div></div>
+<p style="color:var(--text-secondary); line-height:1.8;">22 agents. Built by Samuel Kiragu. Real reasoning, cited answers.</p>
+<div id="agent-grid" style="margin-top:2rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:.75rem; max-width:520px; margin-inline:auto;">
+<button class="agent-pick" onclick="pickAgent('generalist');sendPrompt('Hello Imhotep!')"><div class="emoji">🤖</div><div class="name">Generalist</div></button>
+<button class="agent-pick" onclick="pickAgent('scientist');sendPrompt('Explain CRISPR gene editing')"><div class="emoji">🧬</div><div class="name">Scientist</div></button>
+<button class="agent-pick" onclick="pickAgent('coder');sendPrompt('Show me a Python async pattern')"><div class="emoji">💻</div><div class="name">Developer</div></button>
+<button class="agent-pick" onclick="pickAgent('philosopher');sendPrompt('What is the nature of consciousness?')"><div class="emoji">🤔</div><div class="name">Philosopher</div></button>
+<button class="agent-pick" onclick="pickAgent('activist');sendPrompt('How do we fight climate change?')"><div class="emoji">✊</div><div class="name">Activist</div></button>
+<button class="agent-pick" onclick="pickAgent('writer');sendPrompt('Write about Nairobi at dusk')"><div class="emoji">✍️</div><div class="name">Writer</div></button>
+</div>
+</div>
+</div>
 <div class="chat-input-area">
 <div class="chat-input-field">
+<div class="agent-bar" id="agent-bar">
+<button class="chip active" data-agent="generalist" onclick="pickAgent('generalist')">🤖 Generalist</button>
+<button class="chip" data-agent="scientist" onclick="pickAgent('scientist')">🧬 Scientist</button>
+<button class="chip" data-agent="coder" onclick="pickAgent('coder')">💻 Developer</button>
+<button class="chip" data-agent="economist" onclick="pickAgent('economist')">💰 Economist</button>
+<button class="chip" data-agent="entrepreneur" onclick="pickAgent('entrepreneur')">🚀 Entrepreneur</button>
+<button class="chip" data-agent="philosopher" onclick="pickAgent('philosopher')">🤔 Philosopher</button>
+<button class="chip" data-agent="writer" onclick="pickAgent('writer')">✍️ Writer</button>
+<button class="chip" data-agent="analyst" onclick="pickAgent('analyst')">📊 Analyst</button>
+<button class="chip" data-agent="legal" onclick="pickAgent('legal')">⚖️ Legal</button>
+<button class="chip" data-agent="designer" onclick="pickAgent('designer')">🎨 Designer</button>
+<button class="chip" data-agent="psychologist" onclick="pickAgent('psychologist')">🧠 Psychologist</button>
+<button class="chip" data-agent="geographer" onclick="pickAgent('geographer')">🌍 Geographer</button>
+<button class="chip" data-agent="historian" onclick="pickAgent('historian')">📜 Historian</button>
+<button class="chip" data-agent="tutor" onclick="pickAgent('tutor')">🎓 Tutor</button>
+<button class="chip" data-agent="medic" onclick="pickAgent('medic')">🩺 Medic</button>
+<button class="chip" data-agent="engineer" onclick="pickAgent('engineer')">🛠️ Engineer</button>
+<button class="chip" data-agent="agronomist" onclick="pickAgent('agronomist')">🌾 Agronomist</button>
+<button class="chip" data-agent="inventor" onclick="pickAgent('inventor')">💡 Inventor</button>
+<button class="chip" data-agent="civic" onclick="pickAgent('civic')">🏛️ Civic</button>
+<button class="chip" data-agent="marketer" onclick="pickAgent('marketer')">📣 Marketer</button>
+<button class="chip" data-agent="media" onclick="pickAgent('media')">🎥 Media</button>
+<button class="chip" data-agent="activist" onclick="pickAgent('activist')">✊ Activist</button>
+</div>
 <div class="rate-bar" id="rate-bar" style="display:none;">
 <span id="rate-label">—</span>
 <div class="track"><div class="fill" id="rate-fill"></div></div>
@@ -55,35 +102,7 @@
 <div style="color:var(--text-muted); font-size:.78rem;" id="w-hum">—</div>
 </div></div>
 <div class="temp-control">
-<label for="agent-select">Agent</label>
-<select id="agent-select" onchange="pickAgent(this.value)"
-style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(0,217,255,0.2); color:#fff; padding:.4rem .6rem; border-radius:6px; font-family:inherit; font-size:.82rem; cursor:pointer;">
-<option value="generalist">🤖 Generalist</option>
-<option value="scientist">🧬 Scientist</option>
-<option value="coder">💻 Developer</option>
-<option value="economist">💰 Economist</option>
-<option value="entrepreneur">🚀 Entrepreneur</option>
-<option value="philosopher">🤔 Philosopher</option>
-<option value="writer">✍️ Writer</option>
-<option value="analyst">📊 Analyst</option>
-<option value="legal">⚖️ Legal</option>
-<option value="designer">🎨 Designer</option>
-<option value="psychologist">🧠 Psychologist</option>
-<option value="geographer">🌍 Geographer</option>
-<option value="historian">📜 Historian</option>
-<option value="tutor">🎓 Tutor</option>
-<option value="medic">🩺 Medic</option>
-<option value="engineer">🛠️ Engineer</option>
-<option value="agronomist">🌾 Agronomist</option>
-<option value="inventor">💡 Inventor</option>
-<option value="civic">🏛️ Civic</option>
-<option value="marketer">📣 Marketer</option>
-<option value="media">🎥 Media</option>
-<option value="activist">✊ Activist</option>
-</select>
-</div>
-<div class="temp-control">
-<label for="temp">Temperature</label>
+<label for="temp">Temp</label>
 <input id="temp" type="range" min="0" max="2" step="0.1" value="0.7">
 <span class="temp-val" id="temp-val">0.7</span>
 </div>
@@ -91,6 +110,7 @@ style="flex:1; background:rgba(255,255,255,0.05); border:1px solid rgba(0,217,25
 </div>
 <button class="send-btn" id="send-btn" onclick="sendChat()">Send</button>
 </div></div>
+
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
 let selectedAgent = "generalist";
@@ -98,58 +118,67 @@ let userLocation = null;
 let sidebarOpen = true;
 const tempEl = document.getElementById("temp");
 const tempVal = document.getElementById("temp-val");
-tempEl.addEventListener("input", e => { tempVal.textContent = parseFloat(e.target.value).toFixed(1); });
+tempEl.addEventListener("input", e => tempVal.textContent = parseFloat(e.target.value).toFixed(1));
+
 function toggleSidebar(){
 sidebarOpen = !sidebarOpen;
 document.getElementById("sidebar").classList.toggle("hidden");
 document.getElementById("chat-container").classList.toggle("with-sidebar");
 }
-if (navigator.geolocation) {
+if (navigator.geolocation){
 navigator.geolocation.getCurrentPosition(
-pos => { userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude }; document.getElementById("weather-widget").style.display = "flex"; },
-() => {}, { timeout: 6000 });
+pos => { userLocation = {lat:pos.coords.latitude,lon:pos.coords.longitude};
+         document.getElementById("weather-widget").style.display = "flex"; },
+() => {}, {timeout:6000});
 }
 async function checkAuth(){
 const token = localStorage.getItem("imhotep_token");
 const user = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
 document.getElementById("user-display").textContent = token ? (user.name || "User") : "Guest";
-const userId = localStorage.getItem("imhotep_user_id");
-if (userId) {
-try {
-const r = await fetch(API + "/user/profile?user_id=" + userId);
-const data = await r.json();
-if (data.ok) {
-document.getElementById("credits-num").textContent = data.credits.remaining;
-document.getElementById("credits-sub").textContent = data.credits.used + "/" + data.credits.limit;
+const uid = localStorage.getItem("imhotep_user_id");
+if (uid){
+try{
+const r = await fetch(API + "/user/profile?user_id=" + uid);
+const d = await r.json();
+if (d.ok){
+document.getElementById("credits-num").textContent = d.credits.remaining;
+document.getElementById("credits-sub").textContent = d.credits.used + "/" + d.credits.limit;
 }
-} catch (e) { console.log(e); }
+}catch(e){}
 loadChatHistory();
 }
 }
 async function loadChatHistory(){
-const userId = localStorage.getItem("imhotep_user_id");
-if (!userId) return;
-try {
-const r = await fetch(API + "/chat/history?user_id=" + userId);
-const data = await r.json();
+const uid = localStorage.getItem("imhotep_user_id");
+if (!uid) return;
+try{
+const r = await fetch(API + "/chat/history?user_id=" + uid);
+const d = await r.json();
 const list = document.getElementById("history-list");
-if (data.ok && data.history.length > 0) {
+if (d.ok && d.history.length > 0){
 list.innerHTML = "";
-data.history.slice(-20).reverse().forEach(item => {
+d.history.slice(-20).reverse().forEach(item => {
 const div = document.createElement("div");
 div.className = "history-item";
 div.onclick = () => sendPrompt(item.prompt);
-div.innerHTML = '<div class="agent">' + escapeHtml(item.agent || "generalist") + '</div><div class="text">' + escapeHtml(item.prompt).substring(0, 60) + '…</div>';
+div.innerHTML = '<div class="agent">' + escapeHtml(item.agent || "generalist") +
+'</div><div class="text">' + escapeHtml(item.prompt).substring(0,60) + '…</div>';
 list.appendChild(div);
 });
 }
-} catch (e) { console.log(e); }
+}catch(e){}
 }
-function pickAgent(a) {
+function pickAgent(a){
 selectedAgent = a;
-document.getElementById("agent-select").value = a;
+document.querySelectorAll(".agent-bar .chip").forEach(c => {
+c.classList.toggle("active", c.dataset.agent === a);
+});
 }
-async function sendChat(){ const v = document.getElementById("prompt").value.trim(); if (!v) return; await sendPrompt(v); }
+async function sendChat(){
+const v = document.getElementById("prompt").value.trim();
+if (!v) return;
+await sendPrompt(v);
+}
 async function sendPrompt(prompt){
 const messages = document.getElementById("messages");
 const welcome = document.getElementById("welcome");
@@ -161,25 +190,25 @@ messages.appendChild(u);
 messages.scrollTop = messages.scrollHeight;
 document.getElementById("prompt").value = "";
 const skel = document.createElement("div");
-skel.className = "message imhotep skeleton";
-skel.style.width = "180px"; skel.style.height = "44px";
-skel.innerHTML = "&nbsp;";
+skel.className = "message imhotep";
+skel.innerHTML = '<span class="typing"><span></span><span></span><span></span></span>';
 messages.appendChild(skel);
 messages.scrollTop = messages.scrollHeight;
 const btn = document.getElementById("send-btn");
-btn.disabled = true; btn.textContent = "…";
-try {
-const userId = localStorage.getItem("imhotep_user_id");
+btn.disabled = true;
+btn.textContent = "…";
+try{
+const uid = localStorage.getItem("imhotep_user_id");
 const temperature = parseFloat(tempEl.value);
 const r = await fetch(API + "/chat", {
-method: "POST", headers: { "Content-Type": "application/json" },
-body: JSON.stringify({ prompt, agent: selectedAgent, user_id: userId, temperature, location: userLocation }),
+method:"POST", headers:{"Content-Type":"application/json"},
+body: JSON.stringify({prompt, agent:selectedAgent, user_id:uid, temperature, location:userLocation})
 });
-if (!r.ok) { const text = await r.text(); throw new Error("HTTP " + r.status + ": " + text.slice(0, 200)); }
+if (!r.ok){ const t = await r.text(); throw new Error("HTTP " + r.status + ": " + t.slice(0,200)); }
 const data = await r.json();
 skel.remove();
 if (!data.ok) throw new Error(data.error || "unknown");
-if (data.thoughts && data.thoughts.length > 5) {
+if (data.thoughts && data.thoughts.length > 5){
 const t = document.createElement("div");
 t.className = "thoughts-panel";
 t.textContent = data.thoughts;
@@ -187,41 +216,51 @@ messages.appendChild(t);
 }
 const a = document.createElement("div");
 a.className = "message imhotep";
-a.innerHTML = escapeHtml(data.reply).replace(/\n/g, "<br>").replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank" rel="noopener">[source]</a>');
+a.innerHTML = escapeHtml(data.reply)
+.replace(/\n/g, "<br>")
+.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank" rel="noopener">[source]</a>');
 messages.appendChild(a);
-if (data.weather) {
+if (data.weather){
 const w = data.weather;
 document.getElementById("weather-widget").style.display = "flex";
 document.getElementById("w-temp").textContent = w.temp + "°C";
 document.getElementById("w-cond").textContent = w.condition || "";
 document.getElementById("w-city").textContent = w.city || "Your area";
-document.getElementById("w-hum").textContent = (w.humidity || "—") + "% humidity";
+document.getElementById("w-hum").textContent = (w.humidity || "—") + "%";
 document.getElementById("w-emoji").textContent = /cloud/i.test(w.condition) ? "☁️" : /rain|drizzle/i.test(w.condition) ? "🌧️" : /clear|sun/i.test(w.condition) ? "☀️" : "🌤️";
 }
-if (data.credits) {
+if (data.credits){
 document.getElementById("credits-num").textContent = data.credits.remaining;
 document.getElementById("credits-sub").textContent = data.credits.used + "/" + data.credits.limit;
 const pct = data.credits.limit ? Math.min(100, (data.credits.used / data.credits.limit) * 100) : 0;
 document.getElementById("rate-bar").style.display = "flex";
 document.getElementById("rate-fill").style.width = pct + "%";
 document.getElementById("rate-label").textContent = data.credits.remaining + " left · " + data.credits.used + "/" + data.credits.limit;
-if (!data.credits.allowed) { alert("⚠️ No credits left. Upgrade to continue chatting."); setTimeout(() => window.location.href = "pricing.html", 1000); }
+if (!data.credits.allowed){
+alert("⚠️ No credits left. Upgrade to continue.");
+setTimeout(() => window.location.href = "pricing.html", 1000);
+}
 }
 loadChatHistory();
-} catch (err) {
+}catch(err){
 skel.remove();
 const e = document.createElement("div");
-e.className = "message imhotep"; e.style.color = "#ff6b6b";
+e.className = "message imhotep";
+e.style.color = "#ff6b6b";
 e.textContent = "Error: " + err.message;
 messages.appendChild(e);
-} finally {
-btn.disabled = false; btn.textContent = "Send";
+}finally{
+btn.disabled = false;
+btn.textContent = "Send";
 messages.scrollTop = messages.scrollHeight;
 }
 }
-function escapeHtml(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-function onKey(e){ if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }
-function logout(){ ["imhotep_token","imhotep_user_id","imhotep_user","imhotep_mode"].forEach(k => localStorage.removeItem(k)); window.location.href = "auth.html"; }
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function onKey(e){ if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendChat(); } }
+function logout(){
+["imhotep_token","imhotep_user_id","imhotep_user","imhotep_mode"].forEach(k => localStorage.removeItem(k));
+window.location.href = "auth.html";
+}
 checkAuth();
 </script>
 </body></html>
