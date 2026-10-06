@@ -5,107 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sign In — Imhotep</title>
 <link rel="stylesheet" href="style.css">
-<script src="config.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 <nav>
-  <a href="/" class="logo">⚡ IMHOTEP</a>
+  <div class="logo">⚡ IMHOTEP</div>
   <ul>
-    <li><a href="index.html">Chat</a></li>
+    <li><a href="index.html">Home</a></li>
     <li><a href="capabilities.html">Capabilities</a></li>
-    <li><a href="debate.html">Debate</a></li>
     <li><a href="pricing.html">Pricing</a></li>
   </ul>
 </nav>
-
-<section class="hero">
-  <h1>Welcome Back</h1>
-  <p class="tag">Sign in to start chatting with Imhotep</p>
-</section>
-
-<div class="login-container">
-  <form class="auth-form" onsubmit="handleEmailAuth(event)">
-    <h2>Email</h2>
-    <input type="text" id="name" placeholder="Your name" required>
-    <input type="email" id="email" placeholder="your@email.com" required>
-    <button type="submit">Sign In / Sign Up</button>
-  </form>
-
-  <div class="divider">OR</div>
-
-  <div class="auth-form">
-    <h2 style="margin:0;">Google</h2>
-    <div id="g_id_onload"
-         data-client_id=""
-         data-callback="handleGoogleSignIn"></div>
-    <div class="g_id_signin" data-type="standard"></div>
-  </div>
-
-  <div class="divider">OR</div>
-
-  <div class="auth-form">
-    <h2 style="margin:0;">Guest</h2>
-    <p style="color:var(--text-muted);font-size:.9rem;text-align:center;">3 free chats, no signup</p>
-    <button type="button" onclick="handleGuestAuth()"
-            style="background:rgba(0,212,255,.1);border:1.5px solid var(--accent);color:var(--accent);">
-      Start as Guest
-    </button>
+<div class="auth-container">
+  <div class="auth-box">
+    <h1>Welcome Back</h1>
+    <p class="subtitle">Sign in to access all 22 agents and start chatting</p>
+    <form class="auth-form" onsubmit="handleEmailAuth(event)">
+      <div class="form-group"><label>Email Address</label><input type="email" id="email" placeholder="you@example.com" required autocomplete="email"></div>
+      <div class="form-group"><label>Name</label><input type="text" id="name" placeholder="Your name" required autocomplete="name"></div>
+      <button type="submit" class="auth-submit">Sign In / Sign Up</button>
+    </form>
+    <div class="auth-divider">— OR —</div>
+    <div style="margin-bottom:1rem;">
+      <div id="g_id_onload" data-client_id="YOUR_GOOGLE_CLIENT_ID" data-callback="handleGoogleSignIn"></div>
+      <div class="g_id_signin" data-type="standard" data-size="large" data-theme="dark"></div>
+    </div>
+    <div class="auth-divider">— OR —</div>
+    <button type="button" class="ghost-btn" onclick="handleGuestAuth()">👤 Continue as Guest (3 free chats)</button>
+    <p style="text-align:center; color:var(--text-muted); font-size:.8rem; margin-top:1.5rem;">By signing in, you agree to our Terms & Privacy Policy</p>
   </div>
 </div>
-
-<footer><p>© 2026 Imhotep · Made in Kenya 🇰🇪</p></footer>
-
+<footer><p>© 2026 Imhotep AI • Built in Kenya 🇰🇪</p></footer>
 <script>
-const API = window.IMHOTEP_CONFIG.API_BASE;
-
-// Inject Google Client ID into the sign-in widget
-document.addEventListener("DOMContentLoaded", () => {
-  const el = document.getElementById("g_id_onload");
-  if (el) el.setAttribute("data-client_id", window.IMHOTEP_CONFIG.GOOGLE_CLIENT_ID);
-});
-
+const API = "https://imhotep-agentic-ai.onrender.com";
 async function handleEmailAuth(e) {
   e.preventDefault();
-  const name  = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
+  const name = document.getElementById("name").value.trim();
   try {
-    const r = await fetch(API + "/auth/signup", {
-      method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({name, email})
-    });
-    const d = await r.json();
-    if (d.ok) {
-      localStorage.setItem("imhotep_token", d.token);
-      localStorage.setItem("imhotep_user_id", d.user_id);
-      localStorage.setItem("imhotep_user", JSON.stringify({name, email}));
-      location.href = "index.html";
-    } else alert(d.error);
-  } catch(e){ alert(e.message); }
+    const r = await fetch(API + "/auth/signup", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ email, name }) });
+    const data = await r.json();
+    if (data.ok) {
+      localStorage.setItem("imhotep_token", data.token);
+      localStorage.setItem("imhotep_user_id", data.user_id);
+      localStorage.setItem("imhotep_user", JSON.stringify({ name, email }));
+      window.location.href = "chat.html";
+    } else alert("Error: " + (data.error || "signup failed"));
+  } catch (e) { alert("Error: " + e.message); }
 }
-
 async function handleGuestAuth() {
-  const r = await fetch(API + "/auth/guest");
-  const d = await r.json();
-  if (d.ok) {
-    localStorage.setItem("imhotep_token", d.token);
-    localStorage.setItem("imhotep_user_id", d.user_id);
-    localStorage.setItem("imhotep_mode", "guest");
-    location.href = "index.html";
-  }
+  try {
+    const r = await fetch(API + "/auth/guest");
+    const data = await r.json();
+    if (data.ok) {
+      localStorage.setItem("imhotep_token", data.token);
+      localStorage.setItem("imhotep_user_id", data.user_id);
+      localStorage.setItem("imhotep_user", JSON.stringify({ name: "Guest" }));
+      localStorage.setItem("imhotep_mode", "guest");
+      window.location.href = "chat.html";
+    } else alert("Guest login failed");
+  } catch (e) { alert("Error: " + e.message); }
 }
-
-async function handleGoogleSignIn(resp) {
-  const r = await fetch(API + "/auth/google", {
-    method: "POST", headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({id_token: resp.credential})
-  });
-  const d = await r.json();
-  if (d.ok) {
-    localStorage.setItem("imhotep_token", d.token);
-    localStorage.setItem("imhotep_user_id", d.user_id);
-    location.href = "index.html";
-  } else alert(d.error);
+async function handleGoogleSignIn(response) {
+  try {
+    const r = await fetch(API + "/auth/google", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ id_token: response.credential }) });
+    const data = await r.json();
+    if (data.ok) {
+      localStorage.setItem("imhotep_token", data.token);
+      localStorage.setItem("imhotep_user_id", data.user_id);
+      localStorage.setItem("imhotep_user", JSON.stringify(data.user || {}));
+      window.location.href = "chat.html";
+    } else alert("Google sign-in failed");
+  } catch (e) { alert("Error: " + e.message); }
 }
 </script>
 </body>

@@ -1,215 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="config.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing — Imhotep</title>
 <link rel="stylesheet" href="style.css">
-<style>
-  .tiers {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.25rem;
-    margin-top: 2rem;
-  }
-  .tier {
-    background: linear-gradient(180deg, #0d141c, rgba(13,20,28,.7));
-    border: 1px solid #1e2a38;
-    border-radius: 20px;
-    padding: 2rem 1.75rem;
-    display: flex;
-    flex-direction: column;
-    transition: transform .2s, border-color .2s;
-  }
-  .tier:hover { transform: translateY(-3px); border-color: #00d4ff55; }
-  .tier.featured {
-    border: 2px solid #00d4ff;
-    box-shadow: 0 0 40px -8px rgba(0,212,255,.3);
-    position: relative;
-  }
-  .tier.featured::before {
-    content: "MOST POPULAR";
-    position: absolute;
-    top: -10px; left: 50%; transform: translateX(-50%);
-    background: #00d4ff; color: #04131a;
-    padding: 3px 12px; border-radius: 999px;
-    font-size: .65rem; font-weight: 800; letter-spacing: .1em;
-  }
-  .tier h3 { font-size: 1.15rem; margin-bottom: .25rem; font-weight: 700; }
-  .tier .desc { color: #6e7f8f; font-size: .85rem; margin-bottom: 1.25rem; }
-  .tier .price {
-    font-size: 2.4rem; font-weight: 900; color: #eef;
-    letter-spacing: -0.03em; line-height: 1;
-  }
-  .tier .price small {
-    font-size: .9rem; color: #6e7f8f; font-weight: 400;
-    letter-spacing: 0;
-  }
-  .tier .period { color: #6e7f8f; font-size: .8rem; margin-top: .35rem; }
-  .tier ul { list-style: none; margin: 1.5rem 0 2rem; flex: 1; padding: 0; }
-  .tier ul li {
-    padding: .45rem 0; font-size: .9rem; color: #a8b6c5;
-    display: flex; align-items: flex-start; gap: .6rem;
-  }
-  .tier ul li::before {
-    content: "✓"; color: #00c87a; font-weight: 800; flex-shrink: 0;
-  }
-  .tier .cta {
-    display: block; padding: .95rem 1rem; text-align: center;
-    background: linear-gradient(135deg, #00d4ff, #22b8ff);
-    color: #04131a; font-weight: 700; border-radius: 12px;
-    text-decoration: none; letter-spacing: .3px;
-    box-shadow: 0 8px 24px -8px rgba(0,212,255,.4);
-    transition: transform .2s;
-  }
-  .tier .cta:hover { transform: translateY(-1px); }
-  .tier .cta.ghost {
-    background: transparent; color: #00d4ff;
-    border: 1.5px solid #00d4ff;
-    box-shadow: none;
-  }
-  .tier .cta.ghost:hover { background: rgba(0,212,255,.08); }
-</style>
 </head>
 <body>
-
 <nav>
-  <a href="/" class="logo">⚡ IMHOTEP</a>
+  <div class="logo">⚡ IMHOTEP</div>
   <ul>
-    <li><a href="index.html">Chat</a></li>
+    <li><a href="index.html">Home</a></li>
     <li><a href="capabilities.html">Capabilities</a></li>
+    <li><a href="debate.html">Debate</a></li>
     <li><a href="pricing.html" class="active">Pricing</a></li>
   </ul>
-</nav>
-
-<section class="hero">
-  <h1>Simple pricing</h1>
-  <p class="tag">Pay with M-Pesa. Cancel anytime. All tiers include all 22 agents and cited answers.</p>
-</section>
-
-<div class="container">
-  <div class="tiers">
-
-    <!-- FREE -->
-    <div class="tier">
-      <h3>Free</h3>
-      <div class="desc">Try before you pay</div>
-      <div class="price">KES 0</div>
-      <div class="period">forever</div>
-      <ul>
-        <li>5 chats per day</li>
-        <li>All 22 agents</li>
-        <li>Every claim cited</li>
-        <li>Live debates</li>
-      </ul>
-      <a href="index.html" class="cta ghost">Start free</a>
-    </div>
-
-    <!-- STARTER -->
-    <div class="tier">
-      <h3>Starter</h3>
-      <div class="desc">Pay once, no subscription</div>
-      <div class="price">KES 199</div>
-      <div class="period">one-time</div>
-      <ul>
-        <li>50 chats</li>
-        <li>Never expires</li>
-        <li>All 22 agents</li>
-        <li>Every claim cited</li>
-        <li>Live debates</li>
-      </ul>
-      <a href="#" class="cta" onclick="buy('starter');return false;">Buy starter</a>
-    </div>
-
-    <!-- WEEKLY -->
-    <div class="tier featured">
-      <h3>Weekly Unlimited</h3>
-      <div class="desc">For a project sprint</div>
-      <div class="price">KES 299 <small>/ week</small></div>
-      <div class="period">7 days</div>
-      <ul>
-        <li>Unlimited chats</li>
-        <li>Priority queue</li>
-        <li>All 22 agents</li>
-        <li>Live debates</li>
-        <li>Cancel anytime</li>
-      </ul>
-      <a href="#" class="cta" onclick="buy('weekly');return false;">Go weekly</a>
-    </div>
-
-    <!-- MONTHLY PRO -->
-    <div class="tier">
-      <h3>Pro Monthly</h3>
-      <div class="desc">For power users</div>
-      <div class="price">KES 999 <small>/ month</small></div>
-      <div class="period">30 days</div>
-      <ul>
-        <li>Unlimited chats</li>
-        <li>Priority queue</li>
-        <li>All 22 agents</li>
-        <li>Live debates</li>
-        <li>Email notifications</li>
-        <li>Cancel anytime</li>
-      </ul>
-      <a href="#" class="cta" onclick="buy('monthly');return false;">Go monthly</a>
-    </div>
-
-    <!-- YEARLY -->
-    <div class="tier">
-      <h3>Pro Yearly</h3>
-      <div class="desc">Best value</div>
-      <div class="price">KES 9,999 <small>/ year</small></div>
-      <div class="period">365 days · save 16%</div>
-      <ul>
-        <li>Everything in Pro Monthly</li>
-        <li>Two months free</li>
-        <li>Priority support</li>
-        <li>Early access to new agents</li>
-      </ul>
-      <a href="#" class="cta" onclick="buy('yearly');return false;">Go yearly</a>
-    </div>
-
+  <div class="nav-buttons">
+    <button class="nav-btn" onclick="window.location.href='auth.html'">Sign In</button>
+    <button class="nav-btn primary" onclick="window.location.href='chat.html'">Start Free</button>
   </div>
-
-  <p style="text-align:center;color:#6e7f8f;font-size:.85rem;margin-top:2rem">
-    All prices in Kenyan Shillings · Payment via M-Pesa through NestLink
-  </p>
-</div>
-
-<footer>
-  <p style="text-align:center;color:#6e7f8f;font-size:.85rem;padding:2rem">
-    © 2026 Imhotep · Made in Kenya 🇰🇪
-  </p>
-</footer>
-
+</nav>
+<section class="hero" style="min-height:auto; padding:5rem 2rem 1rem;">
+  <div class="hero-content">
+    <h1>Simple pricing</h1>
+    <p class="tag">Pay with M-Pesa. Cancel anytime. All tiers include all 22 agents and cited answers.</p>
+  </div>
+</section>
+<section class="container">
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Free</h3><div class="desc">Try before you pay</div>
+      <div class="price">KES 0</div><div class="price-period">forever</div>
+      <ul><li>5 chats per day</li><li>All 22 agents</li><li>Every claim cited</li><li>Live debates</li></ul>
+      <a href="chat.html" class="price-btn">Start free</a>
+    </div>
+    <div class="pricing-card">
+      <h3>Starter</h3><div class="desc">Pay once, no subscription</div>
+      <div class="price">KES 199</div><div class="price-period">one-time</div>
+      <ul><li>50 chats</li><li>Never expires</li><li>All 22 agents</li><li>Every claim cited</li><li>Live debates</li></ul>
+      <button class="price-btn" onclick="buy('starter')">Buy starter</button>
+    </div>
+    <div class="pricing-card featured">
+      <h3>Weekly Unlimited</h3><div class="desc">For a project sprint</div>
+      <div class="price">KES 299 <small>/ week</small></div><div class="price-period">7 days</div>
+      <ul><li>Unlimited chats</li><li>Priority queue</li><li>All 22 agents</li><li>Live debates</li><li>Cancel anytime</li></ul>
+      <button class="price-btn" onclick="buy('weekly')">Go weekly</button>
+    </div>
+    <div class="pricing-card">
+      <h3>Pro Monthly</h3><div class="desc">For power users</div>
+      <div class="price">KES 999 <small>/ month</small></div><div class="price-period">30 days</div>
+      <ul><li>Unlimited chats</li><li>Priority queue</li><li>All 22 agents</li><li>Live debates</li><li>Email notifications</li><li>Cancel anytime</li></ul>
+      <button class="price-btn" onclick="buy('monthly')">Go monthly</button>
+    </div>
+    <div class="pricing-card">
+      <h3>Pro Yearly</h3><div class="desc">Best value</div>
+      <div class="price">KES 9,999 <small>/ year</small></div><div class="price-period">365 days · save 16%</div>
+      <ul><li>Everything in Pro Monthly</li><li>Two months free</li><li>Priority support</li><li>Early access to new agents</li></ul>
+      <button class="price-btn" onclick="buy('yearly')">Go yearly</button>
+    </div>
+  </div>
+  <p style="text-align:center; color:var(--text-muted); font-size:.85rem; margin-top:2rem;">All prices in Kenyan Shillings · Payment via M-Pesa through NestLink</p>
+</section>
+<footer><p>© 2026 Imhotep · Made in Kenya 🇰🇪</p></footer>
 <script>
+const API = "https://imhotep-agentic-ai.onrender.com";
 async function buy(tier) {
-  const API = window.IMHOTEP_CONFIG.API_BASE;
   let email = "";
+  try { const u = JSON.parse(localStorage.getItem("imhotep_user") || "null"); if (u && u.email) email = u.email; } catch (e) {}
+  if (!email) { email = prompt("Enter your email for the receipt:"); if (!email || !email.includes("@")) return; }
   try {
-    const u = JSON.parse(localStorage.getItem("imhotep_user") || "null");
-    if (u && u.email) email = u.email;
-  } catch(e) {}
-  if (!email) {
-    email = prompt("Enter your email for the receipt:");
-    if (!email || !email.includes("@")) return;
-  }
-  try {
-    const r = await fetch(API + "/checkout", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ tier, email })
-    });
+    const r = await fetch(API + "/checkout", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ tier, email }) });
     const data = await r.json();
-    if (data.payment_url) {
-      window.location.href = data.payment_url;
-    } else {
-      alert("Payment link unavailable. Try again later.");
-    }
-  } catch(e) {
-    alert("Error: " + e.message);
-  }
+    if (data.payment_url) window.location.href = data.payment_url;
+    else alert("Payment link unavailable. Try again later.");
+  } catch (e) { alert("Error: " + e.message); }
 }
 </script>
 </body>
