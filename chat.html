@@ -1,266 +1,423 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Chat — Imhotep</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  .agent-bar { display:flex; gap:.5rem; overflow-x:auto; padding:.5rem 0; margin-bottom:.5rem; scrollbar-width:none; }
-  .agent-bar::-webkit-scrollbar { display:none; }
-  .agent-bar .chip {
-    flex:0 0 auto; padding:.35rem .7rem; font-size:.78rem;
-    border-radius:999px; border:1px solid rgba(0,217,255,.25);
-    background:rgba(0,217,255,.06); color:var(--text-secondary);
-    cursor:pointer; white-space:nowrap; transition:all .2s;
+  /* chat.html scoped additions — do not touch style.css */
+  .chat-shell {
+    display: flex; flex-direction: column;
+    max-width: 900px; margin: 0 auto;
+    height: calc(100vh - 74px);
+    height: calc(100dvh - 74px);
+    background: var(--bg-primary);
   }
-  .agent-bar .chip.active {
-    background:var(--gradient-neon); color:var(--bg-primary);
-    border-color:transparent; font-weight:700;
+  .chat-scroll {
+    flex: 1; overflow-y: auto;
+    padding: 1rem 1rem 0.5rem;
+    display: flex; flex-direction: column; gap: 0.9rem;
+    scroll-behavior: smooth;
   }
-  .typing { display:inline-block; }
-  .typing span { display:inline-block; width:6px; height:6px; margin:0 1px; border-radius:50%; background:var(--accent-cyan); animation:blink 1.2s infinite; }
-  .typing span:nth-child(2){animation-delay:.2s;}
-  .typing span:nth-child(3){animation-delay:.4s;}
-  @keyframes blink { 0%,80%,100%{opacity:.2;} 40%{opacity:1;} }
+  .chat-scroll::-webkit-scrollbar { width: 6px; }
+  .chat-scroll::-webkit-scrollbar-thumb { background: rgba(0,217,255,.25); border-radius: 3px; }
+
+  .bubble {
+    max-width: 85%;
+    padding: 0.75rem 1rem;
+    border-radius: 16px;
+    line-height: 1.55;
+    font-size: 0.94rem;
+    word-wrap: break-word;
+    animation: fadeIn 0.25s ease-out;
+    white-space: pre-wrap;
+  }
+  .bubble.user {
+    align-self: flex-end;
+    background: var(--gradient-neon);
+    color: var(--bg-primary);
+    font-weight: 600;
+    border-radius: 16px 16px 4px 16px;
+  }
+  .bubble.bot {
+    align-self: flex-start;
+    background: var(--bg-glass);
+    border: 1px solid rgba(0,217,255,0.18);
+    color: var(--text-secondary);
+    border-radius: 16px 16px 16px 4px;
+  }
+  .bubble.bot a { color: var(--accent-cyan); text-decoration: underline; }
+  .bubble.error { border-color: #ff6b6b; color: #ff9c9c; }
+
+  .reasoning {
+    align-self: flex-start;
+    max-width: 85%;
+    background: rgba(0,217,255,0.04);
+    border: 1px dashed rgba(0,217,255,0.25);
+    border-radius: 12px;
+    padding: 0.7rem 0.9rem 0.7rem 2.2rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    position: relative;
+  }
+  .reasoning::before {
+    content: "🧠";
+    position: absolute; left: 0.7rem; top: 0.65rem;
+    font-size: 1rem;
+  }
+
+  /* Thinking indicator with rotating earth */
+  .thinking {
+    align-self: flex-start;
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 1rem;
+    background: var(--bg-glass);
+    border: 1px solid rgba(0,217,255,0.18);
+    border-radius: 16px 16px 16px 4px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+  .earth {
+    display: inline-block;
+    font-size: 1.15rem;
+    animation: spinEarth 2.2s linear infinite;
+  }
+  @keyframes spinEarth { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .dots { display: inline-flex; gap: 2px; }
+  .dots i {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent-cyan);
+    animation: blinkDot 1.2s infinite;
+  }
+  .dots i:nth-child(2) { animation-delay: .2s; }
+  .dots i:nth-child(3) { animation-delay: .4s; }
+  @keyframes blinkDot { 0%,80%,100% { opacity:.2; } 40% { opacity:1; } }
+
+  /* Agent strip */
+  .agent-strip {
+    display: flex; gap: 0.4rem; overflow-x: auto;
+    padding: 0.5rem 0.75rem;
+    scrollbar-width: none;
+    background: var(--bg-secondary);
+    border-top: 1px solid rgba(0,217,255,0.08);
+    border-bottom: 1px solid rgba(0,217,255,0.08);
+  }
+  .agent-strip::-webkit-scrollbar { display: none; }
+  .agent-strip .chip {
+    flex: 0 0 auto;
+    padding: 0.32rem 0.7rem;
+    font-size: 0.75rem;
+    border-radius: 999px;
+    border: 1px solid rgba(0,217,255,0.22);
+    background: rgba(0,217,255,0.05);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .agent-strip .chip.active {
+    background: var(--gradient-neon);
+    color: var(--bg-primary);
+    border-color: transparent;
+    font-weight: 700;
+  }
+
+  /* Input row */
+  .input-row {
+    display: flex; gap: 0.5rem;
+    padding: 0.65rem 0.75rem calc(0.65rem + env(safe-area-inset-bottom));
+    background: var(--bg-secondary);
+    border-top: 1px solid rgba(0,217,255,0.12);
+    align-items: flex-end;
+  }
+  .input-row textarea {
+    flex: 1;
+    padding: 0.7rem 0.9rem;
+    background: var(--bg-tertiary);
+    border: 1px solid rgba(0,217,255,0.18);
+    color: var(--text-primary);
+    border-radius: 22px;
+    resize: none;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    min-height: 42px;
+    max-height: 130px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .input-row textarea:focus { border-color: var(--accent-cyan); }
+  .send-btn-v3 {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: var(--gradient-neon);
+    color: var(--bg-primary);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(0,217,255,0.3);
+    transition: transform .15s ease, box-shadow .2s;
+  }
+  .send-btn-v3:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,217,255,0.45); }
+  .send-btn-v3:disabled { opacity: 0.55; transform: none; cursor: wait; }
+
+  /* Welcome card */
+  .welcome {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    max-width: 520px;
+    margin: auto;
+  }
+  .welcome h2 {
+    font-size: 1.7rem;
+    background: var(--gradient-neon);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .welcome p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; }
+  .quick-grid {
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.6rem;
+  }
+  .quick {
+    padding: 0.7rem 0.5rem;
+    background: var(--bg-glass);
+    border: 1px solid rgba(0,217,255,0.18);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    color: inherit;
+  }
+  .quick:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+  .quick .e { font-size: 1.25rem; }
+  .quick .n { font-size: 0.78rem; color: var(--accent-cyan); font-weight: 600; margin-top: 0.2rem; }
 </style>
-</head><body>
-<nav><div class="logo">⚡ IMHOTEP</div><ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="capabilities.html">Capabilities</a></li>
-<li><a href="debate.html">Debate</a></li>
-<li><a href="pricing.html">Pricing</a></li>
-</ul><div class="nav-buttons">
-<span class="engine-badge">Imhotep Engine</span>
-<span id="user-display" style="color:var(--text-secondary); font-size:.9rem;">Guest</span>
-<button class="nav-btn" onclick="logout()">Sign Out</button>
-</div></nav>
+</head>
+<body>
 
-<div class="sidebar" id="sidebar">
-<h3>💾 Session</h3>
-<div class="credits-card">
-<div class="label">Credits Remaining</div>
-<div class="number" id="credits-num">—</div>
-<div class="sub" id="credits-sub">— / —</div>
-</div>
-<h3 style="margin-top:1.5rem;">📜 History</h3>
-<div class="history-list" id="history-list">
-<div style="color:var(--text-muted); font-size:.8rem;">No chats yet</div>
-</div></div>
-<button class="toggle-sidebar" onclick="toggleSidebar()">☰</button>
+<nav>
+  <div class="logo">⚡ IMHOTEP</div>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="capabilities.html">Capabilities</a></li>
+    <li><a href="debate.html">Debate</a></li>
+    <li><a href="pricing.html">Pricing</a></li>
+  </ul>
+  <div class="nav-buttons">
+    <span class="engine-badge">Imhotep Engine</span>
+    <span id="user-display" style="color:var(--text-secondary); font-size:.85rem;">Guest</span>
+    <button class="nav-btn" onclick="logout()" style="padding:.5rem 1rem;font-size:.82rem;">Sign Out</button>
+  </div>
+</nav>
 
-<div class="chat-container with-sidebar" id="chat-container">
-<div class="chat-messages" id="messages">
-<div id="welcome" style="text-align:center; margin:auto; max-width:640px; padding:1rem;">
-<h2 style="background:var(--gradient-neon); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-size:2rem; margin-bottom:1rem;">Welcome to Imhotep</h2>
-<p style="color:var(--text-secondary); line-height:1.8;">22 agents. Built by Samuel Kiragu. Real reasoning, cited answers.</p>
-<div id="agent-grid" style="margin-top:2rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:.75rem; max-width:520px; margin-inline:auto;">
-<button class="agent-pick" onclick="pickAgent('generalist');sendPrompt('Hello Imhotep!')"><div class="emoji">🤖</div><div class="name">Generalist</div></button>
-<button class="agent-pick" onclick="pickAgent('scientist');sendPrompt('Explain CRISPR gene editing')"><div class="emoji">🧬</div><div class="name">Scientist</div></button>
-<button class="agent-pick" onclick="pickAgent('coder');sendPrompt('Show me a Python async pattern')"><div class="emoji">💻</div><div class="name">Developer</div></button>
-<button class="agent-pick" onclick="pickAgent('philosopher');sendPrompt('What is the nature of consciousness?')"><div class="emoji">🤔</div><div class="name">Philosopher</div></button>
-<button class="agent-pick" onclick="pickAgent('activist');sendPrompt('How do we fight climate change?')"><div class="emoji">✊</div><div class="name">Activist</div></button>
-<button class="agent-pick" onclick="pickAgent('writer');sendPrompt('Write about Nairobi at dusk')"><div class="emoji">✍️</div><div class="name">Writer</div></button>
+<div class="chat-shell">
+  <div class="chat-scroll" id="messages">
+    <div class="welcome" id="welcome">
+      <h2>Welcome to Imhotep</h2>
+      <p>Pick an agent below, or just type your question. I'll reason step by step and cite sources.</p>
+      <div class="quick-grid">
+        <button class="quick" onclick="pickAgent('generalist');sendPrompt('Hello Imhotep!')"><div class="e">🤖</div><div class="n">Generalist</div></button>
+        <button class="quick" onclick="pickAgent('scientist');sendPrompt('Explain CRISPR gene editing')"><div class="e">🧬</div><div class="n">Scientist</div></button>
+        <button class="quick" onclick="pickAgent('coder');sendPrompt('Show me a Python async pattern')"><div class="e">💻</div><div class="n">Developer</div></button>
+        <button class="quick" onclick="pickAgent('philosopher');sendPrompt('What is consciousness?')"><div class="e">🤔</div><div class="n">Philosopher</div></button>
+        <button class="quick" onclick="pickAgent('activist');sendPrompt('How do we fight climate change?')"><div class="e">✊</div><div class="n">Activist</div></button>
+        <button class="quick" onclick="pickAgent('writer');sendPrompt('Write about Nairobi at dusk')"><div class="e">✍️</div><div class="n">Writer</div></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-strip" id="agent-strip">
+    <button class="chip active" data-agent="generalist" onclick="pickAgent('generalist')">🤖 Generalist</button>
+    <button class="chip" data-agent="scientist" onclick="pickAgent('scientist')">🧬 Scientist</button>
+    <button class="chip" data-agent="coder" onclick="pickAgent('coder')">💻 Developer</button>
+    <button class="chip" data-agent="economist" onclick="pickAgent('economist')">💰 Economist</button>
+    <button class="chip" data-agent="entrepreneur" onclick="pickAgent('entrepreneur')">🚀 Entrepreneur</button>
+    <button class="chip" data-agent="philosopher" onclick="pickAgent('philosopher')">🤔 Philosopher</button>
+    <button class="chip" data-agent="writer" onclick="pickAgent('writer')">✍️ Writer</button>
+    <button class="chip" data-agent="analyst" onclick="pickAgent('analyst')">📊 Analyst</button>
+    <button class="chip" data-agent="legal" onclick="pickAgent('legal')">⚖️ Legal</button>
+    <button class="chip" data-agent="designer" onclick="pickAgent('designer')">🎨 Designer</button>
+    <button class="chip" data-agent="psychologist" onclick="pickAgent('psychologist')">🧠 Psychologist</button>
+    <button class="chip" data-agent="geographer" onclick="pickAgent('geographer')">🌍 Geographer</button>
+    <button class="chip" data-agent="historian" onclick="pickAgent('historian')">📜 Historian</button>
+    <button class="chip" data-agent="tutor" onclick="pickAgent('tutor')">🎓 Tutor</button>
+    <button class="chip" data-agent="medic" onclick="pickAgent('medic')">🩺 Medic</button>
+    <button class="chip" data-agent="engineer" onclick="pickAgent('engineer')">🛠️ Engineer</button>
+    <button class="chip" data-agent="agronomist" onclick="pickAgent('agronomist')">🌾 Agronomist</button>
+    <button class="chip" data-agent="inventor" onclick="pickAgent('inventor')">💡 Inventor</button>
+    <button class="chip" data-agent="civic" onclick="pickAgent('civic')">🏛️ Civic</button>
+    <button class="chip" data-agent="marketer" onclick="pickAgent('marketer')">📣 Marketer</button>
+    <button class="chip" data-agent="media" onclick="pickAgent('media')">🎥 Media</button>
+    <button class="chip" data-agent="activist" onclick="pickAgent('activist')">✊ Activist</button>
+  </div>
+
+  <div class="input-row">
+    <textarea id="prompt" rows="1"
+      placeholder="Ask Imhotep anything…"
+      onkeydown="onKey(event)"
+      oninput="autoGrow(this)"></textarea>
+    <button class="send-btn-v3" id="send-btn" onclick="sendChat()" aria-label="Send">➤</button>
+  </div>
 </div>
-</div>
-</div>
-<div class="chat-input-area">
-<div class="chat-input-field">
-<div class="agent-bar" id="agent-bar">
-<button class="chip active" data-agent="generalist" onclick="pickAgent('generalist')">🤖 Generalist</button>
-<button class="chip" data-agent="scientist" onclick="pickAgent('scientist')">🧬 Scientist</button>
-<button class="chip" data-agent="coder" onclick="pickAgent('coder')">💻 Developer</button>
-<button class="chip" data-agent="economist" onclick="pickAgent('economist')">💰 Economist</button>
-<button class="chip" data-agent="entrepreneur" onclick="pickAgent('entrepreneur')">🚀 Entrepreneur</button>
-<button class="chip" data-agent="philosopher" onclick="pickAgent('philosopher')">🤔 Philosopher</button>
-<button class="chip" data-agent="writer" onclick="pickAgent('writer')">✍️ Writer</button>
-<button class="chip" data-agent="analyst" onclick="pickAgent('analyst')">📊 Analyst</button>
-<button class="chip" data-agent="legal" onclick="pickAgent('legal')">⚖️ Legal</button>
-<button class="chip" data-agent="designer" onclick="pickAgent('designer')">🎨 Designer</button>
-<button class="chip" data-agent="psychologist" onclick="pickAgent('psychologist')">🧠 Psychologist</button>
-<button class="chip" data-agent="geographer" onclick="pickAgent('geographer')">🌍 Geographer</button>
-<button class="chip" data-agent="historian" onclick="pickAgent('historian')">📜 Historian</button>
-<button class="chip" data-agent="tutor" onclick="pickAgent('tutor')">🎓 Tutor</button>
-<button class="chip" data-agent="medic" onclick="pickAgent('medic')">🩺 Medic</button>
-<button class="chip" data-agent="engineer" onclick="pickAgent('engineer')">🛠️ Engineer</button>
-<button class="chip" data-agent="agronomist" onclick="pickAgent('agronomist')">🌾 Agronomist</button>
-<button class="chip" data-agent="inventor" onclick="pickAgent('inventor')">💡 Inventor</button>
-<button class="chip" data-agent="civic" onclick="pickAgent('civic')">🏛️ Civic</button>
-<button class="chip" data-agent="marketer" onclick="pickAgent('marketer')">📣 Marketer</button>
-<button class="chip" data-agent="media" onclick="pickAgent('media')">🎥 Media</button>
-<button class="chip" data-agent="activist" onclick="pickAgent('activist')">✊ Activist</button>
-</div>
-<div class="rate-bar" id="rate-bar" style="display:none;">
-<span id="rate-label">—</span>
-<div class="track"><div class="fill" id="rate-fill"></div></div>
-</div>
-<div class="weather-widget" id="weather-widget" style="display:none;">
-<div class="w-left">
-<span class="w-emoji" id="w-emoji">🌤️</span>
-<div><div class="w-temp" id="w-temp">—°C</div><div class="w-city" id="w-city">—</div></div>
-</div>
-<div style="text-align:right;">
-<div id="w-cond" style="color:var(--text-secondary);">—</div>
-<div style="color:var(--text-muted); font-size:.78rem;" id="w-hum">—</div>
-</div></div>
-<div class="temp-control">
-<label for="temp">Temp</label>
-<input id="temp" type="range" min="0" max="2" step="0.1" value="0.7">
-<span class="temp-val" id="temp-val">0.7</span>
-</div>
-<textarea id="prompt" placeholder="Ask Imhotep anything… (Enter to send, Shift+Enter for new line)" onkeypress="onKey(event)"></textarea>
-</div>
-<button class="send-btn" id="send-btn" onclick="sendChat()">Send</button>
-</div></div>
 
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
 let selectedAgent = "generalist";
-let userLocation = null;
-let sidebarOpen = true;
-const tempEl = document.getElementById("temp");
-const tempVal = document.getElementById("temp-val");
-tempEl.addEventListener("input", e => tempVal.textContent = parseFloat(e.target.value).toFixed(1));
+let userLocation  = null;
+let busy          = false;
 
-function toggleSidebar(){
-sidebarOpen = !sidebarOpen;
-document.getElementById("sidebar").classList.toggle("hidden");
-document.getElementById("chat-container").classList.toggle("with-sidebar");
+function autoGrow(el){
+  el.style.height = "42px";
+  el.style.height = Math.min(el.scrollHeight, 130) + "px";
 }
+
 if (navigator.geolocation){
-navigator.geolocation.getCurrentPosition(
-pos => { userLocation = {lat:pos.coords.latitude,lon:pos.coords.longitude};
-         document.getElementById("weather-widget").style.display = "flex"; },
-() => {}, {timeout:6000});
+  navigator.geolocation.getCurrentPosition(
+    pos => { userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude }; },
+    () => {}, { timeout: 6000 }
+  );
 }
+
 async function checkAuth(){
-const token = localStorage.getItem("imhotep_token");
-const user = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
-document.getElementById("user-display").textContent = token ? (user.name || "User") : "Guest";
-const uid = localStorage.getItem("imhotep_user_id");
-if (uid){
-try{
-const r = await fetch(API + "/user/profile?user_id=" + uid);
-const d = await r.json();
-if (d.ok){
-document.getElementById("credits-num").textContent = d.credits.remaining;
-document.getElementById("credits-sub").textContent = d.credits.used + "/" + d.credits.limit;
+  const token = localStorage.getItem("imhotep_token");
+  const user  = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
+  document.getElementById("user-display").textContent = token ? (user.name || "User") : "Guest";
 }
-}catch(e){}
-loadChatHistory();
-}
-}
-async function loadChatHistory(){
-const uid = localStorage.getItem("imhotep_user_id");
-if (!uid) return;
-try{
-const r = await fetch(API + "/chat/history?user_id=" + uid);
-const d = await r.json();
-const list = document.getElementById("history-list");
-if (d.ok && d.history.length > 0){
-list.innerHTML = "";
-d.history.slice(-20).reverse().forEach(item => {
-const div = document.createElement("div");
-div.className = "history-item";
-div.onclick = () => sendPrompt(item.prompt);
-div.innerHTML = '<div class="agent">' + escapeHtml(item.agent || "generalist") +
-'</div><div class="text">' + escapeHtml(item.prompt).substring(0,60) + '…</div>';
-list.appendChild(div);
-});
-}
-}catch(e){}
-}
+
 function pickAgent(a){
-selectedAgent = a;
-document.querySelectorAll(".agent-bar .chip").forEach(c => {
-c.classList.toggle("active", c.dataset.agent === a);
-});
+  selectedAgent = a;
+  document.querySelectorAll(".agent-strip .chip").forEach(c => {
+    c.classList.toggle("active", c.dataset.agent === a);
+  });
 }
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function addBubble(text, cls){
+  const messages = document.getElementById("messages");
+  const w = document.getElementById("welcome");
+  if (w) w.remove();
+  const d = document.createElement("div");
+  d.className = "bubble " + cls;
+  d.innerHTML = escapeHtml(text)
+    .replace(/\n/g, "<br>")
+    .replace(/\[source:\s*([^\]]+)\]/gi,
+             '<a href="$1" target="_blank" rel="noopener">[source]</a>');
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
+  return d;
+}
+
+function addReasoning(text){
+  const messages = document.getElementById("messages");
+  const d = document.createElement("div");
+  d.className = "reasoning";
+  d.textContent = text;
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
+  return d;
+}
+
+function addThinking(){
+  const messages = document.getElementById("messages");
+  const w = document.getElementById("welcome");
+  if (w) w.remove();
+  const d = document.createElement("div");
+  d.className = "thinking";
+  d.id = "thinking";
+  d.innerHTML =
+    '<span class="earth">🌍</span>' +
+    '<span>reasoning</span>' +
+    '<span class="dots"><i></i><i></i><i></i></span>';
+  messages.appendChild(d);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function removeThinking(){
+  const t = document.getElementById("thinking");
+  if (t) t.remove();
+}
+
 async function sendChat(){
-const v = document.getElementById("prompt").value.trim();
-if (!v) return;
-await sendPrompt(v);
+  const v = document.getElementById("prompt").value.trim();
+  if (!v || busy) return;
+  await sendPrompt(v);
 }
+
 async function sendPrompt(prompt){
-const messages = document.getElementById("messages");
-const welcome = document.getElementById("welcome");
-if (welcome) welcome.remove();
-const u = document.createElement("div");
-u.className = "message user";
-u.textContent = prompt;
-messages.appendChild(u);
-messages.scrollTop = messages.scrollHeight;
-document.getElementById("prompt").value = "";
-const skel = document.createElement("div");
-skel.className = "message imhotep";
-skel.innerHTML = '<span class="typing"><span></span><span></span><span></span></span>';
-messages.appendChild(skel);
-messages.scrollTop = messages.scrollHeight;
-const btn = document.getElementById("send-btn");
-btn.disabled = true;
-btn.textContent = "…";
-try{
-const uid = localStorage.getItem("imhotep_user_id");
-const temperature = parseFloat(tempEl.value);
-const r = await fetch(API + "/chat", {
-method:"POST", headers:{"Content-Type":"application/json"},
-body: JSON.stringify({prompt, agent:selectedAgent, user_id:uid, temperature, location:userLocation})
-});
-if (!r.ok){ const t = await r.text(); throw new Error("HTTP " + r.status + ": " + t.slice(0,200)); }
-const data = await r.json();
-skel.remove();
-if (!data.ok) throw new Error(data.error || "unknown");
-if (data.thoughts && data.thoughts.length > 5){
-const t = document.createElement("div");
-t.className = "thoughts-panel";
-t.textContent = data.thoughts;
-messages.appendChild(t);
+  if (busy) return;
+  busy = true;
+  const btn  = document.getElementById("send-btn");
+  const ta   = document.getElementById("prompt");
+  btn.disabled = true;
+  btn.textContent = "…";
+
+  addBubble(prompt, "user");
+  ta.value = ""; autoGrow(ta);
+  addThinking();
+
+  try {
+    const uid = localStorage.getItem("imhotep_user_id");
+    const r = await fetch(API + "/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        prompt,
+        agent: selectedAgent,
+        user_id: uid,
+        temperature: 0.7,
+        location: userLocation,
+      }),
+    });
+    if (!r.ok){
+      const t = await r.text();
+      throw new Error("HTTP " + r.status + ": " + t.slice(0, 200));
+    }
+    const data = await r.json();
+    removeThinking();
+
+    if (!data.ok) throw new Error(data.error || "unknown");
+
+    if (data.thoughts && data.thoughts.length > 5){
+      addReasoning(data.thoughts);
+    }
+    addBubble(data.reply, "bot");
+
+  } catch (err){
+    removeThinking();
+    addBubble("Error: " + err.message, "bot error");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "➤";
+    busy = false;
+  }
 }
-const a = document.createElement("div");
-a.className = "message imhotep";
-a.innerHTML = escapeHtml(data.reply)
-.replace(/\n/g, "<br>")
-.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank" rel="noopener">[source]</a>');
-messages.appendChild(a);
-if (data.weather){
-const w = data.weather;
-document.getElementById("weather-widget").style.display = "flex";
-document.getElementById("w-temp").textContent = w.temp + "°C";
-document.getElementById("w-cond").textContent = w.condition || "";
-document.getElementById("w-city").textContent = w.city || "Your area";
-document.getElementById("w-hum").textContent = (w.humidity || "—") + "%";
-document.getElementById("w-emoji").textContent = /cloud/i.test(w.condition) ? "☁️" : /rain|drizzle/i.test(w.condition) ? "🌧️" : /clear|sun/i.test(w.condition) ? "☀️" : "🌤️";
+
+function onKey(e){
+  if (e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendChat();
+  }
 }
-if (data.credits){
-document.getElementById("credits-num").textContent = data.credits.remaining;
-document.getElementById("credits-sub").textContent = data.credits.used + "/" + data.credits.limit;
-const pct = data.credits.limit ? Math.min(100, (data.credits.used / data.credits.limit) * 100) : 0;
-document.getElementById("rate-bar").style.display = "flex";
-document.getElementById("rate-fill").style.width = pct + "%";
-document.getElementById("rate-label").textContent = data.credits.remaining + " left · " + data.credits.used + "/" + data.credits.limit;
-if (!data.credits.allowed){
-alert("⚠️ No credits left. Upgrade to continue.");
-setTimeout(() => window.location.href = "pricing.html", 1000);
-}
-}
-loadChatHistory();
-}catch(err){
-skel.remove();
-const e = document.createElement("div");
-e.className = "message imhotep";
-e.style.color = "#ff6b6b";
-e.textContent = "Error: " + err.message;
-messages.appendChild(e);
-}finally{
-btn.disabled = false;
-btn.textContent = "Send";
-messages.scrollTop = messages.scrollHeight;
-}
-}
-function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function onKey(e){ if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendChat(); } }
+
 function logout(){
-["imhotep_token","imhotep_user_id","imhotep_user","imhotep_mode"].forEach(k => localStorage.removeItem(k));
-window.location.href = "auth.html";
+  ["imhotep_token","imhotep_user_id","imhotep_user","imhotep_mode"]
+    .forEach(k => localStorage.removeItem(k));
+  window.location.href = "auth.html";
 }
+
 checkAuth();
 </script>
-</body></html>
+</body>
+</html>
