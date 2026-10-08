@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kenya Live Data — Imhotep</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .dashboard { padding: 2rem; max-width: 1200px; margin: 0 auto; }
-    .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
-    .dash-card { background: var(--bg-glass); border: 1px solid rgba(0,217,255,.15); border-radius: 16px; padding: 1.5rem; backdrop-filter: blur(10px); }
-    .dash-card h3 { color: var(--accent-cyan); margin-bottom: 1rem; font-size: 1.1rem; }
-    .dash-card .big-num { font-size: 2.2rem; font-weight: 800; color: var(--accent-lime); }
-    .dash-card .label { font-size: 0.85rem; color: var(--text-muted); }
-    .fire-item, .news-item { padding: .6rem 0; border-bottom: 1px solid rgba(0,217,255,.08); font-size: 0.85rem; }
-    .fire-item:last-child, .news-item:last-child { border-bottom: none; }
-    .fire-item a, .news-item a { color: var(--accent-cyan); text-decoration: none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenya Live Data — Imhotep</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .dashboard { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+  .dash-card { background: var(--bg-glass); border: 1px solid rgba(0,217,255,.15);
+    border-radius: 16px; padding: 1.5rem; backdrop-filter: blur(10px); }
+  .dash-card h3 { color: var(--accent-cyan); margin-bottom: 1rem; font-size: 1.1rem; }
+  .dash-card .big-num { font-size: 2.2rem; font-weight: 800; color: var(--accent-lime); }
+  .dash-card .label { font-size: 0.85rem; color: var(--text-muted); }
+  .fire-item, .news-item, .drought-item { padding: .6rem 0;
+    border-bottom: 1px solid rgba(0,217,255,.08); font-size: 0.85rem; }
+  .fire-item:last-child, .news-item:last-child, .drought-item:last-child { border-bottom: none; }
+  .fire-item a, .news-item a { color: var(--accent-cyan); text-decoration: none; }
+  .climate-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;
+    padding: .75rem 0; border-bottom: 1px solid rgba(0,217,255,.08); font-size: .88rem; }
+  .climate-row .val { color: var(--accent-cyan); font-weight: 700; }
+  .climate-row .delta { color: var(--accent-magenta); font-weight: 700; }
+  .verdict { padding: .75rem 1rem; margin-top: 1rem; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0,217,255,.08), rgba(255,0,255,.04));
+    border: 1px solid rgba(0,217,255,.22); color: var(--text-secondary); font-size: .85rem; }
+</style>
 </head>
 <body>
 
@@ -35,82 +44,102 @@
 
 <section class="dashboard">
   <h1 class="section-title">🇰🇪 Kenya Live Data</h1>
-  <p class="section-subtitle">Real-time information from NASA, NOAA, NDMA, and other open sources.</p>
+  <p class="section-subtitle">Real-time information from NASA, NOAA, NDMA, and Open-Meteo. No API keys. Always free.</p>
 
   <div class="dash-grid">
-    <!-- Weather Card -->
-    <div class="dash-card">
-      <h3>🌡️ County Temperatures</h3>
-      <div id="weather-grid" class="weather-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1rem;">
-        <div class="temp-item">Loading…</div>
+
+    <!-- Climate Change -->
+    <div class="dash-card" style="grid-column: 1 / -1;">
+      <h3>🌡️ Climate Change — Kenya Projection</h3>
+      <div id="climate-content">
+        <div class="label">Loading climate data…</div>
       </div>
     </div>
 
-    <!-- Active Fires Card -->
+    <!-- Active Fires -->
     <div class="dash-card">
       <h3>🔥 Active Fires (24h)</h3>
-      <div id="fires-list" style="max-height:300px; overflow-y:auto;">
+      <div id="fires-list" style="max-height:320px; overflow-y:auto;">
         <div class="fire-item">Loading…</div>
       </div>
     </div>
 
-    <!-- Drought Card -->
+    <!-- Drought -->
     <div class="dash-card">
       <h3>🌾 Drought Status</h3>
-      <div id="drought-list" style="max-height:300px; overflow-y:auto;">
-        <div class="fire-item">Loading…</div>
+      <div id="drought-list" style="max-height:320px; overflow-y:auto;">
+        <div class="drought-item">Loading…</div>
       </div>
     </div>
 
-    <!-- News Card -->
+    <!-- News -->
     <div class="dash-card">
       <h3>📰 Latest Kenya News</h3>
-      <div id="news-list" style="max-height:300px; overflow-y:auto;">
+      <div id="news-list" style="max-height:320px; overflow-y:auto;">
         <div class="news-item">Loading…</div>
       </div>
     </div>
 
-    <!-- Satellite Card -->
+    <!-- Satellite -->
     <div class="dash-card">
       <h3>🛰️ Satellite View</h3>
       <div style="text-align:center;">
-        <img id="satellite-img" src="" alt="Latest satellite" style="width:100%; border-radius:12px; margin-bottom:1rem; background:rgba(0,0,0,.3); min-height:200px;">
-        <button class="btn-secondary" onclick="loadSatellite()">Refresh</button>
+        <img id="satellite-img" src="" alt="Latest satellite"
+             style="width:100%; border-radius:12px; margin-bottom:1rem;
+                    background:rgba(0,0,0,.3); min-height:200px;">
+        <div id="sat-meta" class="label"></div>
+        <button class="btn-secondary" onclick="loadSatellite()"
+                style="margin-top:.75rem;">🔄 Refresh</button>
       </div>
     </div>
 
-    <!-- Traffic Card -->
+    <!-- Traffic -->
     <div class="dash-card">
       <h3>🚗 Nairobi Traffic</h3>
-      <div id="traffic-list" style="max-height:300px; overflow-y:auto;">
-        <div class="fire-item">Loading…</div>
+      <div id="traffic-list">
+        <div class="fire-item">
+          Live traffic requires an API key.
+          <a href="https://www.waze.com/live-map" target="_blank">View Waze Live Map →</a>
+        </div>
       </div>
     </div>
+
   </div>
 </section>
 
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
 
-async function loadWeather() {
-  const counties = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Nyeri","Machakos","Garissa","Turkana"];
-  const grid = document.getElementById("weather-grid");
-  grid.innerHTML = "";
-  for (const c of counties) {
-    try {
-      const r = await fetch(API + "/weather", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({city: c})
-      });
-      const d = await r.json();
-      if (d.ok) {
-        const div = document.createElement("div");
-        div.className = "temp-item";
-        div.innerHTML = `<div class="label">${c}</div><div class="big-num">${d.temp}°C</div><div class="label">${d.emoji} ${d.condition}</div>`;
-        grid.appendChild(div);
-      }
-    } catch(e) {}
-  }
+async function loadClimate() {
+  const el = document.getElementById("climate-content");
+  try {
+    const r = await fetch(API + "/climate/kenya");
+    const d = await r.json();
+    if (!d.ok) { el.innerHTML = "<div class='label'>❌ " + (d.error || "failed") + "</div>"; return; }
+    const h = d.historical, p = d.projection, c = d.change;
+    el.innerHTML = `
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1rem;">
+        <div><div class="label">Historical (2019-2023)</div>
+             <div class="big-num">${h.avg_tmax_c ?? "—"}°C</div>
+             <div class="label">avg max temp</div></div>
+        <div><div class="label">Projection (2025-2055)</div>
+             <div class="big-num">${p.avg_tmax_c ?? "—"}°C</div>
+             <div class="label">avg max temp</div></div>
+        <div><div class="label">Change</div>
+             <div class="big-num" style="color:${c.warming_c > 0.5 ? '#ff6b6b' : '#00c87a'};">
+                ${c.warming_c > 0 ? '+' : ''}${c.warming_c ?? "—"}°C
+             </div>
+             <div class="label">warming</div></div>
+      </div>
+      <div class="climate-row">
+        <div>Rain (historical)<br><span class="val">${h.avg_daily_rain_mm ?? "—"} mm/day</span></div>
+        <div>Rain (projection)<br><span class="val">${p.avg_daily_rain_mm ?? "—"} mm/day</span></div>
+        <div>Rain change<br><span class="delta">${c.rain_change_mm ?? "—"} mm/day</span></div>
+      </div>
+      <div class="verdict">⚡ ${c.verdict}</div>
+      <div class="label" style="margin-top:.75rem;">Models: ${d.models.join(", ")} · Source: ${d.source}</div>
+    `;
+  } catch (e) { el.innerHTML = "<div class='label'>❌ " + e.message + "</div>"; }
 }
 
 async function loadFires() {
@@ -119,48 +148,42 @@ async function loadFires() {
     const d = await r.json();
     const list = document.getElementById("fires-list");
     if (d.count === 0) { list.innerHTML = "<div class='fire-item'>✅ No active fires in Kenya.</div>"; return; }
-    list.innerHTML = "";
-    d.fires.slice(0, 20).forEach(f => {
-      const div = document.createElement("div");
-      div.className = "fire-item";
-      div.innerHTML = `📍 ${f.lat.toFixed(2)}, ${f.lon.toFixed(2)} · ${f.date} ${f.time || ""}`;
-      list.appendChild(div);
+    let html = `<div class="fire-item"><b>${d.count} fires detected</b></div>`;
+    d.fires.slice(0, 15).forEach(f => {
+      html += `<div class="fire-item">🔥 <b>${f.county || "Unknown"}</b> · ${f.lat.toFixed(2)}, ${f.lon.toFixed(2)} · ${f.date}</div>`;
     });
-  } catch(e) {}
+    list.innerHTML = html;
+  } catch(e) { document.getElementById("fires-list").innerHTML = "<div class='fire-item'>❌ Failed</div>"; }
 }
 
 async function loadDrought() {
-  const counties = ["Turkana","Marsabit","Garissa","Wajir","Nairobi","Kitui","Isiolo"];
+  const counties = ["Turkana","Marsabit","Garissa","Wajir","Isiolo","Samburu","Kitui","Nairobi"];
   const list = document.getElementById("drought-list");
-  list.innerHTML = "";
+  let html = "";
   for (const c of counties) {
     try {
       const r = await fetch(API + "/drought/" + encodeURIComponent(c));
       const d = await r.json();
       if (d.ok) {
-        const div = document.createElement("div");
-        div.className = "fire-item";
         const color = d.phase >= 4 ? "#ff6b6b" : d.phase >= 3 ? "#ffaa00" : "#00c87a";
-        div.innerHTML = `<b>${c}</b>: Phase ${d.phase} (${d.label}) <span style="color:${color};">${"█".repeat(d.phase)}</span>`;
-        list.appendChild(div);
+        html += `<div class="drought-item"><b>${c}</b>: Phase ${d.phase} (${d.label})
+                 <span style="color:${color};">${"█".repeat(d.phase)}</span></div>`;
       }
     } catch(e) {}
   }
+  list.innerHTML = html || "<div class='drought-item'>No data</div>";
 }
 
 async function loadNews() {
   try {
     const r = await fetch(API + "/news/kenya?limit=8");
     const d = await r.json();
-    const list = document.getElementById("news-list");
-    list.innerHTML = "";
+    let html = "";
     d.items.forEach(it => {
-      const div = document.createElement("div");
-      div.className = "news-item";
-      div.innerHTML = `<a href="${it.link}" target="_blank">${it.title}</a>`;
-      list.appendChild(div);
+      html += `<div class="news-item"><a href="${it.link}" target="_blank">${it.title}</a></div>`;
     });
-  } catch(e) {}
+    document.getElementById("news-list").innerHTML = html;
+  } catch(e) { document.getElementById("news-list").innerHTML = "<div class='news-item'>❌ Failed</div>"; }
 }
 
 async function loadSatellite() {
@@ -169,27 +192,17 @@ async function loadSatellite() {
     const d = await r.json();
     if (d.ok && d.image_url) {
       document.getElementById("satellite-img").src = API + "/img/proxy?url=" + encodeURIComponent(d.image_url);
+      document.getElementById("sat-meta").textContent = "Frame: " + (d.date || "") + " · DSCOVR";
     }
   } catch(e) {}
 }
 
-async function loadTraffic() {
-  // Placeholder: traffic APIs often require keys or have restrictions.
-  // We'll show a message and link to the Waze live map.
-  document.getElementById("traffic-list").innerHTML = `
-    <div class="fire-item">
-      Live traffic data is complex to source without a key.
-      <a href="https://www.waze.com/live-map" target="_blank">View Waze Live Map</a> for Nairobi.
-    </div>`;
-}
-
 window.addEventListener("DOMContentLoaded", () => {
-  loadWeather();
+  loadClimate();
   loadFires();
   loadDrought();
   loadNews();
   loadSatellite();
-  loadTraffic();
 });
 </script>
 </body>

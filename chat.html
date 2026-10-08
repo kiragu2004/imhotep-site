@@ -307,7 +307,7 @@ function autoGrow(el) {
 }
 
 // ── Weather bootstrap ──
-async function bootstrapWeather() {
+async function initAutoWeather() {
   if (navigator.geolocation) {
     const got = await new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
@@ -607,8 +607,43 @@ window.addEventListener("DOMContentLoaded", () => {
   const b = document.getElementById("wx-gps-btn");
   if (b) b.addEventListener("click", forceGPS);
   checkAuth();
-  bootstrapWeather();
+  initAutoWeather();
 });
+
+// ═══ AUTO-ROTATING WEATHER — cycles through all 47 counties ═══
+let _wxCounties = [];
+let _wxIndex = 0;
+let _wxTimer = null;
+
+async function initAutoWeather() {
+  try {
+    const r = await fetch(API + "/weather/all-counties");
+    const d = await r.json();
+    if (d.ok && d.counties.length > 0) {
+      _wxCounties = d.counties;
+      _wxIndex = 0;
+      showWxCard();
+      if (_wxTimer) clearInterval(_wxTimer);
+      _wxTimer = setInterval(() => {
+        _wxIndex = (_wxIndex + 1) % _wxCounties.length;
+        showWxCard();
+      }, 5000);
+    }
+  } catch (e) { console.log("auto weather fail:", e); }
+}
+
+function showWxCard() {
+  if (_wxCounties.length === 0) return;
+  const c = _wxCounties[_wxIndex];
+  document.getElementById("weather-pill").style.display = "flex";
+  document.getElementById("wx-emoji").textContent = c.emoji || "🌤️";
+  document.getElementById("wx-temp").textContent  = c.temp + "°C";
+  document.getElementById("wx-feel").textContent  = " · " + (c.feel || "");
+  document.getElementById("wx-city").textContent  = c.county + ", KE · " + c.condition_label;
+}
+
+// Replace the old bootstrapWeather call
+
 </script>
 </body>
 </html>
