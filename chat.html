@@ -162,6 +162,12 @@
            <span class="wx-feel" id="wx-feel"></span></div>
       <div class="wx-city" id="wx-city">—</div>
     </div>
+    <button id="wx-gps-btn" title="Use my exact GPS location"
+            style="background:transparent;border:1px solid rgba(0,217,255,.35);
+                   color:#00d9ff;border-radius:8px;padding:.35rem .65rem;
+                   font-size:.75rem;cursor:pointer;white-space:nowrap;">
+      📍 GPS
+    </button>
   </div>
 
   <div class="weather-pill" id="cfc-pill" style="display:none;">
@@ -469,6 +475,34 @@ function logout() {
 }
 
 checkAuth();
+
+// Force GPS — user clicked the button
+async function forceGPS() {
+  if (!navigator.geolocation) {
+    alert("Your browser does not support location.");
+    return;
+  }
+  document.getElementById("wx-city").textContent = "Locating…";
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const la = pos.coords.latitude, lo = pos.coords.longitude;
+      userLocation = { lat: la, lon: lo };
+      console.log("GPS forced:", userLocation);
+      await loadWeather();
+    },
+    err => {
+      alert("Location denied or unavailable. Using IP location instead.");
+      loadWeather();
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+// Wire the button once DOM is ready
+window.addEventListener("DOMContentLoaded", () => {
+  const b = document.getElementById("wx-gps-btn");
+  if (b) b.addEventListener("click", forceGPS);
+});
+
 </script>
 
 <div id="imhotep-footer" style="
