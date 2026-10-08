@@ -141,6 +141,16 @@
     </div>
   </div>
 
+  <div class="weather-pill" id="cfc-pill" style="display:none;">
+    <span style="font-size:1.35rem;">🧠</span>
+    <div style="flex:1;">
+      <div><span style="color:#00d9ff; font-weight:800;">CFC</span>
+           <span id="cfc-count" style="color:#dde7f0;">—</span>
+           <span style="color:var(--text-muted); font-size:.75rem;">predictors active</span></div>
+      <div class="wx-city" id="cfc-agents">—</div>
+    </div>
+  </div>
+
   <div class="agent-strip" id="agent-strip">
     <button class="chip active" data-agent="generalist" onclick="pickAgent('generalist')">🤖 Generalist</button>
     <button class="chip" data-agent="scientist" onclick="pickAgent('scientist')">🧬 Scientist</button>
@@ -320,7 +330,21 @@ async function sendPrompt(prompt) {
   try {
     let uid = localStorage.getItem("imhotep_user_id");
     if (!uid) {
-      await checkAuth();
+      await 
+async function loadCFC() {
+  try {
+    const r = await fetch(API + "/cfc/active");
+    const d = await r.json();
+    if (d.ok && d.count > 0) {
+      document.getElementById("cfc-pill").style.display = "flex";
+      document.getElementById("cfc-count").textContent = d.count;
+      document.getElementById("cfc-agents").textContent = d.agents.slice(0, 6).join(", ") + (d.agents.length > 6 ? " …" : "");
+    }
+  } catch (e) { console.log("cfc:", e); }
+}
+
+checkAuth();
+loadCFC();
       uid = localStorage.getItem("imhotep_user_id");
     }
 
