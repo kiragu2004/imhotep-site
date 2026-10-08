@@ -523,30 +523,51 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 async function openSatModal() {
-  document.getElementById("sat-modal").style.display = "block";
+  const modal = document.getElementById("sat-modal");
+  const earthImg = document.getElementById("sat-earth");
+  const goesImg  = document.getElementById("sat-goes");
+  const earthMeta = document.getElementById("sat-earth-meta");
+  const goesMeta  = document.getElementById("sat-goes-meta");
+
+  modal.style.display = "block";
   document.body.style.overflow = "hidden";
 
-  // Load NASA Earth
+  // ── NASA EPIC — Earth from DSCOVR ──
+  earthImg.src = "";
+  earthMeta.textContent = "Loading Earth image…";
   try {
     const r = await fetch(API + "/nasa/earth");
     const d = await r.json();
     if (d.ok && d.image_url) {
-      document.getElementById("sat-earth").src = d.image_url;
-      document.getElementById("sat-earth-meta").textContent =
-        "Frame: " + (d.date || "unknown") + " · DSCOVR";
+      // Route through our proxy to bypass NASA's missing CORS headers
+      earthImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.image_url);
+      earthMeta.textContent =
+        "Frame: " + (d.date || "unknown") + " · DSCOVR satellite · NASA EPIC";
+    } else {
+      earthMeta.textContent = "NASA EPIC unavailable — try again shortly";
     }
-  } catch (e) { console.log("earth failed", e); }
+  } catch (e) {
+    earthMeta.textContent = "Could not reach NASA EPIC";
+    console.log("earth failed", e);
+  }
 
-  // Load GOES satellite
+  // ── GOES-16 full disk ──
+  goesImg.src = "";
+  goesMeta.textContent = "Loading satellite view…";
   try {
     const r = await fetch(API + "/nasa/satellite");
     const d = await r.json();
     if (d.ok && d.goes_east_full_disk) {
-      document.getElementById("sat-goes").src = d.goes_east_full_disk;
-      document.getElementById("sat-goes-meta").textContent =
-        "Frame: " + (d.frame_time || "") + " · GOES-16";
+      goesImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.goes_east_full_disk);
+      goesMeta.textContent =
+        "Frame: " + (d.frame_time || "latest") + " · GOES-16 (NOAA) · updates every 10 min";
+    } else {
+      goesMeta.textContent = "GOES image unavailable — try again shortly";
     }
-  } catch (e) { console.log("goes failed", e); }
+  } catch (e) {
+    goesMeta.textContent = "Could not reach NOAA GOES";
+    console.log("goes failed", e);
+  }
 }
 function closeSatModal() {
   document.getElementById("sat-modal").style.display = "none";
