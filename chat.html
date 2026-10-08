@@ -210,6 +210,7 @@
     <button class="chip" data-agent="marketer" onclick="pickAgent('marketer')">📣 Marketer</button>
     <button class="chip" data-agent="media" onclick="pickAgent('media')">🎥 Media</button>
     <button class="chip" data-agent="activist" onclick="pickAgent('activist')">✊ Activist</button>
+    <button class="chip" data-agent="sheng" onclick="pickAgent('sheng')">🇰🇪 Sheng</button>
     <button class="chip" data-agent="tongue-twister" onclick="pickAgent('tongue-twister')">👅 Tongue Twister</button>
   </div>
 
@@ -574,6 +575,73 @@ function closeSatModal() {
   document.body.style.overflow = "";
 }
 
+
+// ═══ Kenya Tools handlers ═══
+function _showToolOut(html_content) {
+  const box = document.getElementById("tool-output");
+  box.innerHTML = html_content;
+  box.style.display = "block";
+}
+
+async function showFires() {
+  _showToolOut("⏳ Fetching active fires from NASA…");
+  try {
+    const r = await fetch(API + "/fires/kenya?days=1");
+    const d = await r.json();
+    if (!d.ok) { _showToolOut("❌ " + (d.error || "failed")); return; }
+    if (d.count === 0) { _showToolOut("✅ <b>No active fires detected in Kenya</b> in the last 24 hours. Source: NASA FIRMS."); return; }
+    let s = `<b>🔥 ${d.count} active fire(s) in Kenya (last 24h)</b><br>`;
+    d.fires.slice(0, 8).forEach(f => {
+      s += `📍 ${f.lat.toFixed(2)}, ${f.lon.toFixed(2)} · ${f.date} ${f.time || ""}<br>`;
+    });
+    s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: NASA FIRMS · MODIS + VIIRS</span>`;
+    _showToolOut(s);
+  } catch (e) { _showToolOut("❌ " + e.message); }
+}
+
+async function showDrought() {
+  const county = prompt("Enter Kenyan county (e.g. Turkana, Garissa, Nairobi):");
+  if (!county) return;
+  _showToolOut("⏳ Checking drought status…");
+  try {
+    const r = await fetch(API + "/drought/" + encodeURIComponent(county));
+    const d = await r.json();
+    if (!d.ok) { _showToolOut("❌ " + (d.error || "Not found")); return; }
+    const color = d.phase >= 4 ? "#ff6b6b" : d.phase >= 3 ? "#ffaa00" : d.phase >= 2 ? "#f0c000" : "#00c87a";
+    _showToolOut(`<b>🌾 ${d.county} — Drought: Phase ${d.phase} (${d.label})</b><br>
+      <span style="color:${color}; font-weight:700;">${"█".repeat(d.phase)}${"░".repeat(5-d.phase)}</span><br>
+      <span style="color:var(--text-muted); font-size:.72rem;">Source: NDMA (approx — verify at ndma.go.ke)</span>`);
+  } catch (e) { _showToolOut("❌ " + e.message); }
+}
+
+async function showNews() {
+  _showToolOut("⏳ Fetching Kenya news…");
+  try {
+    const r = await fetch(API + "/news/kenya?limit=6");
+    const d = await r.json();
+    if (!d.ok) { _showToolOut("❌ " + (d.error || "failed")); return; }
+    let s = `<b>📰 Latest from Standard Media</b><br>`;
+    d.items.forEach(it => {
+      s += `• <a href="${it.link}" target="_blank" style="color:#00d9ff;">${it.title}</a><br>`;
+    });
+    s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: standardmedia.co.ke</span>`;
+    _showToolOut(s);
+  } catch (e) { _showToolOut("❌ " + e.message); }
+}
+
+async function showCounties() {
+  _showToolOut("⏳ Loading counties…");
+  try {
+    const r = await fetch(API + "/kenya/counties");
+    const d = await r.json();
+    if (!d.ok) { _showToolOut("❌ failed"); return; }
+    let s = `<b>🗺️ Kenya — ${d.count} counties</b><br><br>`;
+    s += d.counties.slice(0, 12).map(c => `• ${c.code} ${c.name} (${c.capital})`).join("<br>");
+    s += `<br><br><span style="color:var(--text-muted); font-size:.72rem;">+${d.count - 12} more</span>`;
+    _showToolOut(s);
+  } catch (e) { _showToolOut("❌ " + e.message); }
+}
+
 </script>
 
 <div id="imhotep-footer" style="
@@ -659,6 +727,45 @@ function closeSatModal() {
     </div>
   </div>
 </div>
+
+
+<!-- Kenya Tools -->
+<div id="kenya-tools" style="
+  text-align:center; padding:1.25rem .75rem;
+  border-top:1px solid rgba(0,217,255,.12); margin-top:1rem;">
+  <div style="color:#00d9ff; font-size:.75rem; font-weight:700;
+              letter-spacing:.06em; text-transform:uppercase;
+              margin-bottom:.75rem;">🇰🇪 Kenya Live Data</div>
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem;
+              max-width:640px; margin:0 auto;">
+    <button class="tool-pill" onclick="showFires()">🔥 Active Fires</button>
+    <button class="tool-pill" onclick="showDrought()">🌾 Drought Status</button>
+    <button class="tool-pill" onclick="showNews()">📰 Kenya News</button>
+    <button class="tool-pill" onclick="openSatModal()">🛰️ Satellites</button>
+    <button class="tool-pill" onclick="showCounties()">🗺️ Counties</button>
+  </div>
+  <div id="tool-output" style="
+    max-width:640px; margin:1rem auto 0; display:none;
+    background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
+    border:1px solid rgba(0,217,255,.22); border-radius:12px;
+    padding:1rem; color:var(--text-secondary);
+    font-size:.82rem; line-height:1.6; text-align:left;"></div>
+</div>
+<style>
+  .tool-pill {
+    padding:.4rem .85rem;
+    background:rgba(0,217,255,.05);
+    border:1px solid rgba(0,217,255,.22);
+    color:#00d9ff; border-radius:999px;
+    font-size:.78rem; font-weight:600;
+    cursor:pointer; white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .tool-pill:hover {
+    background:rgba(0,217,255,.15);
+    transform:translateY(-1px);
+  }
+</style>
 
 </body>
 </html>
