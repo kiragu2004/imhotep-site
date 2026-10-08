@@ -485,23 +485,34 @@ checkAuth();
 
 // Force GPS — user clicked the button
 async function forceGPS() {
+  const city = document.getElementById("wx-city");
+  const originalText = city.textContent;
+
   if (!navigator.geolocation) {
-    alert("Your browser does not support location.");
+    city.textContent = "GPS not supported — using IP";
+    setTimeout(() => { city.textContent = originalText; }, 2500);
     return;
   }
-  document.getElementById("wx-city").textContent = "Locating…";
+
+  city.textContent = "📍 Locating…";
+
   navigator.geolocation.getCurrentPosition(
     async pos => {
       const la = pos.coords.latitude, lo = pos.coords.longitude;
       userLocation = { lat: la, lon: lo };
-      console.log("GPS forced:", userLocation);
+      console.log("GPS:", userLocation);
       await loadWeather();
     },
     err => {
-      alert("Location denied or unavailable. Using IP location instead.");
-      loadWeather();
+      // Silent fallback — no alert. Just a brief text hint.
+      console.log("GPS denied:", err.message);
+      city.textContent = "Using IP location";
+      setTimeout(() => {
+        // Reload IP-based weather silently
+        loadWeather();
+      }, 800);
     },
-    { enableHighAccuracy: true, timeout: 10000 }
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
 }
 // Wire the button once DOM is ready
