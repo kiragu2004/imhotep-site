@@ -227,27 +227,53 @@ function autoGrow(el) {
   el.style.height = Math.min(el.scrollHeight, 130) + "px";
 }
 
-// Always try to load weather. Use location if allowed, else default to Nairobi.
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      loadWeather();
-    },
-    () => {
-      // Denied or unavailable → default to Nairobi
-      console.log("location denied, using Nairobi");
-      loadWeather("Nairobi");
-    },
-    { timeout: 6000 });
-} else {
+// ── Weather bootstrap ──
+// 1) Try GPS. 2) Fall back to IP geolocation (works without permission).
+// 3) Last resort: Nairobi.
+async function bootstrapWeather() {
+  // Step 1: GPS
+  if (navigator.geolocation) {
+    const got = await new Promise(resolve => {
+      navigator.geolocation.getCurrentPosition(
+        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => resolve(null),
+        { timeout: 5000, maximumAge: 600000 }
+      );
+    });
+    if (got) {
+      userLocation = got;
+      console.log("weather: using GPS", got);
+      return loadWeather();
+    }
+  }
+
+  // Step 2: IP geolocation (no permission needed)
+  try {
+    const r = await fetch("https://ipwho.is/", { cache: "no-store" });
+    const d = await r.json();
+    if (d && d.success !== false && d.latitude && d.longitude) {
+      userLocation = { lat: d.latitude, lon: d.longitude };
+      console.log("weather: using IP location", userLocation, d.city);
+      return loadWeather();
+    }
+  } catch (e) { console.log("ipwho failed", e); }
+
+  // Step 3: Nairobi
+  console.log("weather: using Nairobi fallback");
   loadWeather("Nairobi");
 }
 
+bootstrapWeather();
+
 async function loadWeather(city) {
-  const body = (userLocation && !city)
-    ? { lat: userLocation.lat, lon: userLocation.lon }
-    : { city: city || "Nairobi" };
+  let body;
+  if (userLocation && !city) {
+    body = { lat: userLocation.lat, lon: userLocation.lon };
+  } else if (city) {
+    body = { city };
+  } else {
+    body = { city: "Nairobi" };
+  }
   try {
     const r = await fetch(API + "/weather", {
       method: "POST", headers: {"Content-Type":"application/json"},
