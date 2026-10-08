@@ -19,9 +19,8 @@
     font-weight:600; border-radius:16px 16px 4px 16px; }
   .bubble.bot { align-self:flex-start;
     background:linear-gradient(135deg,rgba(0,217,255,.05),rgba(144,0,255,.04),rgba(255,0,255,.03));
-    border:1px solid rgba(0,217,255,.22);
-    color:#dde7f0; border-radius:16px 16px 16px 4px;
-    box-shadow:0 4px 20px -8px rgba(0,217,255,.15); }
+    border:1px solid rgba(0,217,255,.22); color:#dde7f0;
+    border-radius:16px 16px 16px 4px; box-shadow:0 4px 20px -8px rgba(0,217,255,.15); }
   .bubble.bot strong { color:#00d9ff; font-weight:700; }
   .bubble.bot em { color:#ff7ad9; font-style:italic; }
   .bubble.bot code { background:rgba(0,217,255,.1); color:#7ee6ff;
@@ -31,8 +30,7 @@
   .thinking { align-self:flex-start; display:flex; align-items:center; gap:.7rem;
     padding:.75rem 1.1rem; background:var(--bg-glass);
     border:1px solid rgba(0,217,255,.22); border-radius:16px 16px 16px 4px;
-    color:var(--text-secondary); font-size:.88rem; max-width:88%;
-    box-shadow:0 0 20px -10px rgba(0,217,255,.4); }
+    color:var(--text-secondary); font-size:.88rem; max-width:88%; }
   .earth { display:inline-block; font-size:1.2rem; animation:spinEarth 2.2s linear infinite; }
   @keyframes spinEarth { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
   .think-text { display:inline-block; min-width:12ch;
@@ -83,20 +81,25 @@
   .weather-pill .wx-temp { color:#00d9ff; font-weight:800; font-size:1.05rem; }
   .weather-pill .wx-feel { color:#ff9dd8; font-weight:600; font-size:.85rem; }
   .weather-pill .wx-city { color:var(--text-muted); font-size:.75rem; }
-  .welcome { text-align:center; padding:1.5rem 1rem; max-width:540px; margin:auto; }
+  .welcome { text-align:center; padding:1.5rem 1rem; max-width:560px; margin:auto; }
   .welcome h2 { font-size:1.7rem;
     background:var(--gradient-neon);
     -webkit-background-clip:text; background-clip:text;
     -webkit-text-fill-color:transparent; margin-bottom:.5rem; }
   .welcome p { color:var(--text-secondary); font-size:.92rem; line-height:1.6; }
   .quick-grid { margin-top:1.25rem;
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:.6rem; }
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:.6rem; }
   .quick { padding:.7rem .5rem; background:var(--bg-glass);
     border:1px solid rgba(0,217,255,.18); border-radius:12px;
     cursor:pointer; transition:all .2s; color:inherit; }
   .quick:hover { border-color:var(--accent-cyan); transform:translateY(-2px); }
   .quick .e { font-size:1.25rem; }
   .quick .n { font-size:.78rem; color:var(--accent-cyan); font-weight:600; margin-top:.2rem; }
+  .tool-pill { padding:.4rem .85rem; background:rgba(0,217,255,.05);
+    border:1px solid rgba(0,217,255,.22); color:#00d9ff;
+    border-radius:999px; font-size:.78rem; font-weight:600;
+    cursor:pointer; white-space:nowrap; }
+  .tool-pill:hover { background:rgba(0,217,255,.15); }
 </style>
 </head>
 <body>
@@ -112,13 +115,7 @@
   <div class="nav-buttons">
     <span class="engine-badge">Imhotep Engine</span>
     <span id="user-display" style="color:var(--text-secondary); font-size:.85rem;">Guest</span>
-        <button onclick="openSatModal()" title="Live from space"
-      style="background:transparent;border:1px solid rgba(0,217,255,.3);
-             color:#00d9ff;border-radius:999px;padding:.45rem .85rem;
-             font-size:.78rem;cursor:pointer;font-weight:600;">
-      🛰️ Live
-    </button>
-
+    <button class="nav-btn" onclick="openSatModal()" style="padding:.5rem 1rem;font-size:.82rem;">🛰️ Live</button>
     <button class="nav-btn" onclick="logout()" style="padding:.5rem 1rem;font-size:.82rem;">Sign Out</button>
   </div>
 </nav>
@@ -127,37 +124,14 @@
   <div class="chat-scroll" id="messages">
     <div class="welcome" id="welcome">
       <h2>Welcome to Imhotep</h2>
-      <p>Pick an agent below, or just type. Every new visitor gets 3 free chats.</p>
+      <p>Chat with 22 agents. Say <strong style="color:#00d9ff;">"Sasa"</strong> or <strong style="color:#00d9ff;">"Niaje"</strong> for Sheng mode. Every new visitor gets 3 free chats.</p>
       <div class="quick-grid">
         <button class="quick" onclick="pickAgent('generalist');sendPrompt('Hello Imhotep!')"><div class="e">🤖</div><div class="n">Generalist</div></button>
+        <button class="quick" onclick="pickAgent('sheng');sendPrompt('Sasa! Niaje?')"><div class="e">🇰🇪</div><div class="n">Sheng</div></button>
         <button class="quick" onclick="pickAgent('scientist');sendPrompt('Explain CRISPR gene editing')"><div class="e">🧬</div><div class="n">Scientist</div></button>
         <button class="quick" onclick="pickAgent('coder');sendPrompt('Show me a Python async pattern')"><div class="e">💻</div><div class="n">Developer</div></button>
-        <button class="quick" onclick="pickAgent('tongue-twister');sendPrompt('Say a tongue twister about Nairobi')"><div class="e">👅</div><div class="n">Tongue Twister</div></button>
         <button class="quick" onclick="pickAgent('activist');sendPrompt('How do we fight climate change?')"><div class="e">✊</div><div class="n">Activist</div></button>
         <button class="quick" onclick="pickAgent('writer');sendPrompt('Write about Nairobi at dusk')"><div class="e">✍️</div><div class="n">Writer</div></button>
-      </div>
-
-
-      <div style="margin-top:2rem; padding:1.25rem; text-align:left;
-                  background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
-                  border:1px solid rgba(0,217,255,.22); border-radius:16px;">
-        <div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem;">
-          <span style="font-size:1.6rem;">🇰🇪</span>
-          <h3 style="font-size:1.1rem; color:#00d9ff; margin:0;">Agent Sam</h3>
-          <span style="font-size:.65rem; padding:.15rem .55rem; border-radius:999px;
-                       background:rgba(0,217,255,.15); color:#00d9ff;
-                       letter-spacing:.08em; font-weight:700;">AUTONOMOUS</span>
-        </div>
-        <p style="color:var(--text-secondary); font-size:.85rem; line-height:1.6; margin:0 0 .6rem 0;">
-          The first Kenyan autonomous model. Runs a full Ubuntu Linux container with
-          85+ tools, CFC auto-train, ODE solvers, τ time-constant adaptation,
-          email and GitHub automation — built and trained by Samuel Kiragu.
-        </p>
-        <p style="color:#ff9dd8; font-size:.78rem; line-height:1.5; margin:0;">
-          ⚡ Agent Sam runs on donated GPU time, so he's <strong>online and offline</strong>
-          while we scale infrastructure. <strong style="color:#00d9ff;">Imhotep stays online 24/7</strong>
-          — the site always has a brain to answer you.
-        </p>
       </div>
     </div>
   </div>
@@ -177,18 +151,9 @@
     </button>
   </div>
 
-  <div class="weather-pill" id="cfc-pill" style="display:none;">
-    <span style="font-size:1.35rem;">🧠</span>
-    <div style="flex:1;">
-      <div><span style="color:#00d9ff; font-weight:800;">CFC</span>
-           <span id="cfc-count" style="color:#dde7f0;">—</span>
-           <span style="color:var(--text-muted); font-size:.75rem;">predictors active</span></div>
-      <div class="wx-city" id="cfc-agents">—</div>
-    </div>
-  </div>
-
   <div class="agent-strip" id="agent-strip">
     <button class="chip active" data-agent="generalist" onclick="pickAgent('generalist')">🤖 Generalist</button>
+    <button class="chip" data-agent="sheng" onclick="pickAgent('sheng')">🇰🇪 Sheng</button>
     <button class="chip" data-agent="scientist" onclick="pickAgent('scientist')">🧬 Scientist</button>
     <button class="chip" data-agent="coder" onclick="pickAgent('coder')">💻 Developer</button>
     <button class="chip" data-agent="economist" onclick="pickAgent('economist')">💰 Economist</button>
@@ -210,14 +175,114 @@
     <button class="chip" data-agent="marketer" onclick="pickAgent('marketer')">📣 Marketer</button>
     <button class="chip" data-agent="media" onclick="pickAgent('media')">🎥 Media</button>
     <button class="chip" data-agent="activist" onclick="pickAgent('activist')">✊ Activist</button>
-    <button class="chip" data-agent="sheng" onclick="pickAgent('sheng')">🇰🇪 Sheng</button>
     <button class="chip" data-agent="tongue-twister" onclick="pickAgent('tongue-twister')">👅 Tongue Twister</button>
   </div>
 
   <div class="input-row">
-    <textarea id="prompt" rows="1" placeholder="Ask Imhotep anything…"
+    <textarea id="prompt" rows="1" placeholder="Ask Imhotep anything… (try 'Sasa' for Sheng)"
       onkeydown="onKey(event)" oninput="autoGrow(this)"></textarea>
     <button class="send-btn-v3" id="send-btn" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<!-- ═══ KENYA TOOLS PANEL ═══ -->
+<div id="kenya-tools" style="
+  max-width:900px; margin:0 auto; padding:1.25rem .75rem 1rem;
+  border-top:1px solid rgba(0,217,255,.12);">
+  <div style="text-align:center; color:#00d9ff; font-size:.75rem;
+              font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+              margin-bottom:.75rem;">🇰🇪 Kenya Live Data</div>
+  <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem;
+              max-width:640px; margin:0 auto;">
+    <button class="tool-pill" onclick="showFires()">🔥 Active Fires</button>
+    <button class="tool-pill" onclick="showDrought()">🌾 Drought</button>
+    <button class="tool-pill" onclick="showNews()">📰 Kenya News</button>
+    <button class="tool-pill" onclick="openSatModal()">🛰️ Satellites</button>
+    <button class="tool-pill" onclick="showCounties()">🗺️ Counties</button>
+  </div>
+  <div id="tool-output" style="
+    max-width:640px; margin:1rem auto 0; display:none;
+    background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
+    border:1px solid rgba(0,217,255,.22); border-radius:12px;
+    padding:1rem; color:var(--text-secondary);
+    font-size:.82rem; line-height:1.6; text-align:left;"></div>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div style="text-align:center; padding:1.5rem 1rem;
+  border-top:1px solid rgba(0,217,255,.12);
+  color:var(--text-muted); font-size:.8rem; line-height:1.7;">
+  <div style="margin-bottom:.5rem;">
+    <span style="color:#00d9ff; font-weight:700;">⚡ IMHOTEP</span>
+    · Built by Samuel Kiragu in Mukuyu, Murang'a, Kenya 🇰🇪
+  </div>
+  <div style="margin-bottom:.5rem;">
+    🐛 Found a bug? Report to
+    <a href="tel:0748203553" style="color:#00d9ff; font-weight:700;">0748 203 553</a>
+  </div>
+  <div style="background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
+    border:1px solid rgba(0,217,255,.22); border-radius:12px;
+    padding:.75rem 1rem; max-width:520px; margin:.75rem auto 0; text-align:left;">
+    <div style="color:#00d9ff; font-weight:700; font-size:.75rem;
+                letter-spacing:.06em; text-transform:uppercase; margin-bottom:.35rem;">
+      ⚙️ Continuous Improvement
+    </div>
+    <div style="color:var(--text-secondary); font-size:.78rem; line-height:1.55;">
+      Agent Sam is the first Kenyan autonomous model — an Ubuntu Linux brain
+      with 85+ tools, CFC auto-train, and ODE solvers. Because GPU compute is
+      scarce, Sam is <strong style="color:#ff9dd8;">online and offline</strong>
+      while we scale. <strong style="color:#00d9ff;">Imhotep stays online 24/7</strong>.
+      Thank you for your patience. 🙏
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SATELLITE MODAL ═══ -->
+<div id="sat-modal" style="
+  display:none; position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,.85); backdrop-filter:blur(8px);
+  padding:1rem; overflow-y:auto;">
+  <div style="max-width:720px; margin:2rem auto;
+    background:var(--bg-secondary);
+    border:1px solid rgba(0,217,255,.25);
+    border-radius:16px; padding:1.25rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <h3 style="font-size:1.15rem; color:#00d9ff; margin:0;">🛰️ Live from Space</h3>
+      <button onclick="closeSatModal()"
+        style="background:transparent;border:1px solid rgba(0,217,255,.3);
+               color:#00d9ff;border-radius:8px;padding:.35rem .7rem;
+               font-size:.8rem;cursor:pointer;">✕ Close</button>
+    </div>
+    <div style="display:grid; gap:1rem;">
+      <div>
+        <div style="color:#ff9dd8; font-size:.75rem; font-weight:700;
+                    letter-spacing:.06em; text-transform:uppercase; margin-bottom:.4rem;">
+          🌍 Full Earth · DSCOVR
+        </div>
+        <img id="sat-earth" src="" alt="Earth"
+             style="width:100%; border-radius:12px;
+                    border:1px solid rgba(0,217,255,.2); display:block; min-height:200px;
+                    background:rgba(0,0,0,.3);">
+        <div id="sat-earth-meta" style="color:var(--text-muted);
+             font-size:.72rem; margin-top:.35rem;">Loading…</div>
+      </div>
+      <div>
+        <div style="color:#ff9dd8; font-size:.75rem; font-weight:700;
+                    letter-spacing:.06em; text-transform:uppercase; margin-bottom:.4rem;">
+          ☁️ Africa · GOES-16
+        </div>
+        <img id="sat-goes" src="" alt="GOES"
+             style="width:100%; border-radius:12px;
+                    border:1px solid rgba(0,217,255,.2); display:block; min-height:200px;
+                    background:rgba(0,0,0,.3);">
+        <div id="sat-goes-meta" style="color:var(--text-muted);
+             font-size:.72rem; margin-top:.35rem;">Loading…</div>
+      </div>
+    </div>
+    <div style="color:var(--text-muted); font-size:.7rem;
+                margin-top:1rem; text-align:center; line-height:1.5;">
+      Sources: NASA EPIC · NOAA GOES-16
+    </div>
   </div>
 </div>
 
@@ -228,12 +293,12 @@ let userLocation  = null;
 let busy = false;
 
 const THINKING_STAGES = [
-  "🌍 Connecting to knowledge base...",
+  "🌍 Connecting...",
   "🔍 Searching sources...",
-  "🧠 Reasoning through your question...",
-  "⚡ Activating engines...",
-  "📝 Composing answer...",
-  "✨ Polishing response...",
+  "🧠 Reasoning...",
+  "⚡ Activating...",
+  "📝 Composing...",
+  "✨ Polishing...",
 ];
 
 function autoGrow(el) {
@@ -242,98 +307,90 @@ function autoGrow(el) {
 }
 
 // ── Weather bootstrap ──
-// 1) Try GPS. 2) Fall back to IP geolocation (works without permission).
-// 3) Last resort: Nairobi.
 async function bootstrapWeather() {
-  // 1) GPS (fast if allowed)
   if (navigator.geolocation) {
     const got = await new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
-        pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
         () => resolve(null),
-        { timeout: 4000, maximumAge: 600000 }
-      );
+        { timeout: 4000, maximumAge: 600000 });
     });
-    if (got) {
-      userLocation = got;
-      console.log("weather: GPS", got);
-      return loadWeather();
-    }
+    if (got) { userLocation = got; return loadWeather(); }
   }
-
-  // 2) IP geolocation via ipapi.co (CORS-enabled, free, reliable)
   const providers = [
-    { url: "https://ipapi.co/json/",       lat: "latitude", lon: "longitude", city: "city" },
-    { url: "https://ipwho.is/",            lat: "latitude", lon: "longitude", city: "city" },
-    { url: "https://ipwhois.app/json/",    lat: "latitude", lon: "longitude", city: "city" }
+    { url: "https://ipapi.co/json/", lat: "latitude", lon: "longitude", city: "city" },
+    { url: "https://ipwho.is/", lat: "latitude", lon: "longitude", city: "city" },
   ];
   for (const p of providers) {
     try {
       const r = await fetch(p.url, { cache: "no-store" });
       if (!r.ok) continue;
       const d = await r.json();
-      const la = parseFloat(d[p.lat]);
-      const lo = parseFloat(d[p.lon]);
+      const la = parseFloat(d[p.lat]), lo = parseFloat(d[p.lon]);
       if (!isNaN(la) && !isNaN(lo) && la !== 0 && lo !== 0) {
         userLocation = { lat: la, lon: lo };
-        console.log("weather: IP via " + p.url, userLocation, d[p.city]);
         return loadWeather();
       }
-    } catch (e) {
-      console.log("weather provider failed:", p.url, e.message);
-    }
+    } catch (e) { console.log("wx provider fail:", p.url); }
   }
-
-  // 3) Absolute last resort
-  console.log("weather: Nairobi fallback");
-  loadWeather("Nairobi");
+  return loadWeather("Nairobi");
 }
-
-bootstrapWeather();
 
 async function loadWeather(city) {
   let body;
-  if (userLocation && !city) {
-    body = { lat: userLocation.lat, lon: userLocation.lon };
-  } else if (city) {
-    body = { city };
-  } else {
-    body = { city: "Nairobi" };
-  }
+  if (userLocation && !city) body = { lat: userLocation.lat, lon: userLocation.lon };
+  else if (city) body = { city };
+  else body = { city: "Nairobi" };
   try {
     const r = await fetch(API + "/weather", {
       method: "POST", headers: {"Content-Type":"application/json"},
       body: JSON.stringify(body)
     });
     const d = await r.json();
-    if (d.ok) {
+    if (d.ok && d.temp !== null && d.temp !== undefined) {
       document.getElementById("weather-pill").style.display = "flex";
-      document.getElementById("wx-emoji").textContent = d.emoji;
+      document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
       document.getElementById("wx-temp").textContent  = d.temp + "°C";
-      document.getElementById("wx-feel").textContent  = " · " + d.feel;
-      document.getElementById("wx-city").textContent  = d.city + (d.country ? ", " + d.country : "") + " · " + d.condition_label;
+      document.getElementById("wx-feel").textContent  = " · " + (d.feel || "");
+      document.getElementById("wx-city").textContent  = (d.city || "—") + (d.country ? ", " + d.country : "");
     }
   } catch (e) { console.log("weather:", e); }
 }
 
-// AUTH — auto-creates a guest session if none exists
+async function forceGPS() {
+  const city = document.getElementById("wx-city");
+  const orig = city.textContent;
+  if (!navigator.geolocation) { city.textContent = "GPS not supported"; return; }
+  city.textContent = "📍 Locating…";
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      await loadWeather();
+    },
+    err => {
+      city.textContent = "Using IP location";
+      setTimeout(() => loadWeather(), 800);
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+}
+
+// ── Auth ──
 async function checkAuth() {
   const token = localStorage.getItem("imhotep_token");
   const user  = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
   const uid   = localStorage.getItem("imhotep_user_id");
-
   if (!uid) {
     try {
       const r = await fetch(API + "/auth/guest");
       const d = await r.json();
       if (d.ok) {
-        localStorage.setItem("imhotep_token",    d.token);
-        localStorage.setItem("imhotep_user_id",  d.user_id);
-        localStorage.setItem("imhotep_user",     JSON.stringify({ name: "Guest" }));
-        localStorage.setItem("imhotep_mode",     "guest");
+        localStorage.setItem("imhotep_token", d.token);
+        localStorage.setItem("imhotep_user_id", d.user_id);
+        localStorage.setItem("imhotep_user", JSON.stringify({ name: "Guest" }));
+        localStorage.setItem("imhotep_mode", "guest");
         document.getElementById("user-display").textContent = "Guest";
       }
-    } catch (e) { console.log("guest auto-create failed:", e); }
+    } catch (e) { console.log("guest fail:", e); }
   } else {
     document.getElementById("user-display").textContent = token ? (user.name || "User") : "Guest";
   }
@@ -348,43 +405,33 @@ function pickAgent(a) {
 function escapeHtml(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
-
 function formatReply(text) {
   let h = escapeHtml(text);
   h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   h = h.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "<em>$1</em>");
   h = h.replace(/`([^`\n]+)`/g, "<code>$1</code>");
   h = h.replace(/\n/g, "<br>");
-  h = h.replace(/\[source:\s*([^\]]+)\]/gi,
-                '<a href="$1" target="_blank" rel="noopener">[source]</a>');
+  h = h.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank" rel="noopener">[source]</a>');
   return h;
 }
-
 function addBubble(text, cls, formatted) {
-  const messages = document.getElementById("messages");
-  const w = document.getElementById("welcome");
-  if (w) w.remove();
+  const m = document.getElementById("messages");
+  const w = document.getElementById("welcome"); if (w) w.remove();
   const d = document.createElement("div");
   d.className = "bubble " + cls;
   d.innerHTML = formatted ? formatReply(text) : escapeHtml(text).replace(/\n/g,"<br>");
-  messages.appendChild(d);
-  messages.scrollTop = messages.scrollHeight;
+  m.appendChild(d); m.scrollTop = m.scrollHeight;
   return d;
 }
-
 function addThinking() {
-  const messages = document.getElementById("messages");
-  const w = document.getElementById("welcome");
-  if (w) w.remove();
+  const m = document.getElementById("messages");
+  const w = document.getElementById("welcome"); if (w) w.remove();
   const d = document.createElement("div");
-  d.className = "thinking";
-  d.id = "thinking";
-  d.innerHTML =
-    '<span class="earth">🌍</span>' +
+  d.className = "thinking"; d.id = "thinking";
+  d.innerHTML = '<span class="earth">🌍</span>' +
     '<span class="think-text" id="think-text">' + THINKING_STAGES[0] + '</span>' +
     '<span class="dots"><i></i><i></i><i></i></span>';
-  messages.appendChild(d);
-  messages.scrollTop = messages.scrollHeight;
+  m.appendChild(d); m.scrollTop = m.scrollHeight;
   let i = 0;
   d._interval = setInterval(() => {
     i = (i + 1) % THINKING_STAGES.length;
@@ -392,7 +439,6 @@ function addThinking() {
     if (el) el.textContent = THINKING_STAGES[i];
   }, 1400);
 }
-
 function removeThinking() {
   const t = document.getElementById("thinking");
   if (t) { clearInterval(t._interval); t.remove(); }
@@ -403,7 +449,6 @@ async function sendChat() {
   if (!v || busy) return;
   await sendPrompt(v);
 }
-
 async function sendPrompt(prompt) {
   if (busy) return;
   busy = true;
@@ -413,57 +458,36 @@ async function sendPrompt(prompt) {
   addBubble(prompt, "user", false);
   ta.value = ""; autoGrow(ta);
   addThinking();
-
   try {
     let uid = localStorage.getItem("imhotep_user_id");
-    if (!uid) {
-      await 
-async function loadCFC() {
-  try {
-    const r = await fetch(API + "/cfc/active");
-    const d = await r.json();
-    if (d.ok && d.count > 0) {
-      document.getElementById("cfc-pill").style.display = "flex";
-      document.getElementById("cfc-count").textContent = d.count;
-      document.getElementById("cfc-agents").textContent = d.agents.slice(0, 6).join(", ") + (d.agents.length > 6 ? " …" : "");
-    }
-  } catch (e) { console.log("cfc:", e); }
-}
-
-checkAuth();
-loadCFC();
-      uid = localStorage.getItem("imhotep_user_id");
-    }
-
+    if (!uid) { await checkAuth(); uid = localStorage.getItem("imhotep_user_id"); }
     const r = await fetch(API + "/chat", {
       method: "POST", headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ prompt, agent: selectedAgent, user_id: uid,
                              temperature: 0.7, location: userLocation })
     });
-
     if (r.status === 402) {
       const err = await r.json();
       removeThinking();
       const info = err.detail || {};
-      const msg  = info.error || "No credits left";
-      const url  = info.upgrade_url || "pricing.html";
-      if (msg.toLowerCase().includes("sign in")) {
-        window.location.href = "auth.html";
-      } else if (confirm(msg + "\n\nUpgrade for more chats?")) {
-        window.location.href = url;
-      }
+      alert(info.error || "No credits left");
+      window.location.href = info.upgrade_url || "pricing.html";
       busy = false; btn.disabled = false; btn.textContent = "➤";
       return;
     }
-
-    if (!r.ok) {
-      const t = await r.text();
-      throw new Error("HTTP " + r.status + ": " + t.slice(0,200));
-    }
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
     removeThinking();
     if (!data.ok) throw new Error(data.error || "unknown");
     addBubble(data.reply, "bot", true);
+    // update weather pill if backend returned weather
+    if (data.weather) {
+      document.getElementById("weather-pill").style.display = "flex";
+      document.getElementById("wx-emoji").textContent = data.weather.emoji || "🌤️";
+      document.getElementById("wx-temp").textContent = data.weather.temp + "°C";
+      document.getElementById("wx-feel").textContent = " · " + (data.weather.feel || "");
+      document.getElementById("wx-city").textContent = data.weather.city || "—";
+    }
   } catch (err) {
     removeThinking();
     addBubble("Error: " + err.message, "bot error", false);
@@ -475,145 +499,84 @@ loadCFC();
 function onKey(e) {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); }
 }
-
 function logout() {
   ["imhotep_token","imhotep_user_id","imhotep_user","imhotep_mode"]
     .forEach(k => localStorage.removeItem(k));
   window.location.href = "auth.html";
 }
 
-checkAuth();
-
-// Force GPS — user clicked the button
-async function forceGPS() {
-  const city = document.getElementById("wx-city");
-  const originalText = city.textContent;
-
-  if (!navigator.geolocation) {
-    city.textContent = "GPS not supported — using IP";
-    setTimeout(() => { city.textContent = originalText; }, 2500);
-    return;
-  }
-
-  city.textContent = "📍 Locating…";
-
-  navigator.geolocation.getCurrentPosition(
-    async pos => {
-      const la = pos.coords.latitude, lo = pos.coords.longitude;
-      userLocation = { lat: la, lon: lo };
-      console.log("GPS:", userLocation);
-      await loadWeather();
-    },
-    err => {
-      // Silent fallback — no alert. Just a brief text hint.
-      console.log("GPS denied:", err.message);
-      city.textContent = "Using IP location";
-      setTimeout(() => {
-        // Reload IP-based weather silently
-        loadWeather();
-      }, 800);
-    },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-  );
-}
-// Wire the button once DOM is ready
-window.addEventListener("DOMContentLoaded", () => {
-  const b = document.getElementById("wx-gps-btn");
-  if (b) b.addEventListener("click", forceGPS);
-});
-
-
+// ── Satellite modal ──
 async function openSatModal() {
   const modal = document.getElementById("sat-modal");
   const earthImg = document.getElementById("sat-earth");
   const goesImg  = document.getElementById("sat-goes");
-  const earthMeta = document.getElementById("sat-earth-meta");
-  const goesMeta  = document.getElementById("sat-goes-meta");
-
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
 
-  // ── NASA EPIC — Earth from DSCOVR ──
-  earthImg.src = "";
-  earthMeta.textContent = "Loading Earth image…";
+  earthImg.src = ""; document.getElementById("sat-earth-meta").textContent = "Loading…";
+  goesImg.src = ""; document.getElementById("sat-goes-meta").textContent = "Loading…";
+
   try {
     const r = await fetch(API + "/nasa/earth");
     const d = await r.json();
     if (d.ok && d.image_url) {
-      // Route through our proxy to bypass NASA's missing CORS headers
       earthImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.image_url);
-      earthMeta.textContent =
-        "Frame: " + (d.date || "unknown") + " · DSCOVR satellite · NASA EPIC";
+      document.getElementById("sat-earth-meta").textContent = "Frame: " + (d.date || "") + " · DSCOVR";
     } else {
-      earthMeta.textContent = "NASA EPIC unavailable — try again shortly";
+      document.getElementById("sat-earth-meta").textContent = "NASA EPIC unavailable";
     }
-  } catch (e) {
-    earthMeta.textContent = "Could not reach NASA EPIC";
-    console.log("earth failed", e);
-  }
+  } catch (e) { document.getElementById("sat-earth-meta").textContent = "Could not reach NASA"; }
 
-  // ── GOES-16 full disk ──
-  goesImg.src = "";
-  goesMeta.textContent = "Loading satellite view…";
   try {
     const r = await fetch(API + "/nasa/satellite");
     const d = await r.json();
     if (d.ok && d.goes_east_full_disk) {
       goesImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.goes_east_full_disk);
-      goesMeta.textContent =
-        "Frame: " + (d.frame_time || "latest") + " · GOES-16 (NOAA) · updates every 10 min";
+      document.getElementById("sat-goes-meta").textContent = "Frame: " + (d.frame_time || "") + " · GOES-16 (NOAA)";
     } else {
-      goesMeta.textContent = "GOES image unavailable — try again shortly";
+      document.getElementById("sat-goes-meta").textContent = "GOES unavailable";
     }
-  } catch (e) {
-    goesMeta.textContent = "Could not reach NOAA GOES";
-    console.log("goes failed", e);
-  }
+  } catch (e) { document.getElementById("sat-goes-meta").textContent = "Could not reach NOAA"; }
 }
 function closeSatModal() {
   document.getElementById("sat-modal").style.display = "none";
   document.body.style.overflow = "";
 }
 
-
-// ═══ Kenya Tools handlers ═══
-function _showToolOut(html_content) {
+// ── Kenya tools ──
+function _showToolOut(html) {
   const box = document.getElementById("tool-output");
-  box.innerHTML = html_content;
-  box.style.display = "block";
+  box.innerHTML = html; box.style.display = "block";
 }
-
 async function showFires() {
-  _showToolOut("⏳ Fetching active fires from NASA…");
+  _showToolOut("⏳ Fetching fires from NASA…");
   try {
     const r = await fetch(API + "/fires/kenya?days=1");
     const d = await r.json();
     if (!d.ok) { _showToolOut("❌ " + (d.error || "failed")); return; }
-    if (d.count === 0) { _showToolOut("✅ <b>No active fires detected in Kenya</b> in the last 24 hours. Source: NASA FIRMS."); return; }
-    let s = `<b>🔥 ${d.count} active fire(s) in Kenya (last 24h)</b><br>`;
+    if (d.count === 0) { _showToolOut("✅ <b>No active fires in Kenya</b> in last 24h. Source: NASA FIRMS."); return; }
+    let s = `<b>🔥 ${d.count} active fire(s) in Kenya (24h)</b><br>`;
     d.fires.slice(0, 8).forEach(f => {
       s += `📍 ${f.lat.toFixed(2)}, ${f.lon.toFixed(2)} · ${f.date} ${f.time || ""}<br>`;
     });
-    s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: NASA FIRMS · MODIS + VIIRS</span>`;
+    s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: NASA FIRMS (MODIS + VIIRS)</span>`;
     _showToolOut(s);
   } catch (e) { _showToolOut("❌ " + e.message); }
 }
-
 async function showDrought() {
-  const county = prompt("Enter Kenyan county (e.g. Turkana, Garissa, Nairobi):");
-  if (!county) return;
-  _showToolOut("⏳ Checking drought status…");
+  const c = prompt("Enter Kenyan county (Turkana, Garissa, Nairobi…):");
+  if (!c) return;
+  _showToolOut("⏳ Checking…");
   try {
-    const r = await fetch(API + "/drought/" + encodeURIComponent(county));
+    const r = await fetch(API + "/drought/" + encodeURIComponent(c));
     const d = await r.json();
-    if (!d.ok) { _showToolOut("❌ " + (d.error || "Not found")); return; }
+    if (!d.ok) { _showToolOut("❌ " + d.error); return; }
     const color = d.phase >= 4 ? "#ff6b6b" : d.phase >= 3 ? "#ffaa00" : d.phase >= 2 ? "#f0c000" : "#00c87a";
-    _showToolOut(`<b>🌾 ${d.county} — Drought: Phase ${d.phase} (${d.label})</b><br>
+    _showToolOut(`<b>🌾 ${d.county} — Phase ${d.phase} (${d.label})</b><br>
       <span style="color:${color}; font-weight:700;">${"█".repeat(d.phase)}${"░".repeat(5-d.phase)}</span><br>
-      <span style="color:var(--text-muted); font-size:.72rem;">Source: NDMA (approx — verify at ndma.go.ke)</span>`);
+      <span style="color:var(--text-muted); font-size:.72rem;">Source: NDMA (approx)</span>`);
   } catch (e) { _showToolOut("❌ " + e.message); }
 }
-
 async function showNews() {
   _showToolOut("⏳ Fetching Kenya news…");
   try {
@@ -621,151 +584,31 @@ async function showNews() {
     const d = await r.json();
     if (!d.ok) { _showToolOut("❌ " + (d.error || "failed")); return; }
     let s = `<b>📰 Latest from Standard Media</b><br>`;
-    d.items.forEach(it => {
-      s += `• <a href="${it.link}" target="_blank" style="color:#00d9ff;">${it.title}</a><br>`;
-    });
+    d.items.forEach(it => { s += `• <a href="${it.link}" target="_blank" style="color:#00d9ff;">${it.title}</a><br>`; });
     s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: standardmedia.co.ke</span>`;
     _showToolOut(s);
   } catch (e) { _showToolOut("❌ " + e.message); }
 }
-
 async function showCounties() {
   _showToolOut("⏳ Loading counties…");
   try {
     const r = await fetch(API + "/kenya/counties");
     const d = await r.json();
     if (!d.ok) { _showToolOut("❌ failed"); return; }
-    let s = `<b>🗺️ Kenya — ${d.count} counties</b><br><br>`;
-    s += d.counties.slice(0, 12).map(c => `• ${c.code} ${c.name} (${c.capital})`).join("<br>");
-    s += `<br><br><span style="color:var(--text-muted); font-size:.72rem;">+${d.count - 12} more</span>`;
+    let s = `<b>🗺️ Kenya — ${d.count} counties</b><br>`;
+    s += d.counties.slice(0, 15).map(c => `• ${c.code} ${c.name} (${c.capital})`).join("<br>");
+    s += `<br><br><span style="color:var(--text-muted); font-size:.72rem;">+${d.count - 15} more</span>`;
     _showToolOut(s);
   } catch (e) { _showToolOut("❌ " + e.message); }
 }
 
+// ── Init ──
+window.addEventListener("DOMContentLoaded", () => {
+  const b = document.getElementById("wx-gps-btn");
+  if (b) b.addEventListener("click", forceGPS);
+  checkAuth();
+  bootstrapWeather();
+});
 </script>
-
-<div id="imhotep-footer" style="
-  text-align:center; padding:1.5rem 1rem 1rem;
-  border-top:1px solid rgba(0,217,255,.12);
-  margin-top:2rem; color:var(--text-muted); font-size:.8rem; line-height:1.7;">
-  <div style="margin-bottom:.5rem;">
-    <span style="color:#00d9ff; font-weight:700;">⚡ IMHOTEP</span>
-    · Built by Samuel Kiragu in Mukuyu, Murang'a, Kenya 🇰🇪
-  </div>
-  <div style="margin-bottom:.5rem;">
-    🐛 Found a bug? Report to
-    <a href="tel:0748203553" style="color:#00d9ff; font-weight:700;">0748 203 553</a>
-  </div>
-  <div style="
-    background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
-    border:1px solid rgba(0,217,255,.22); border-radius:12px;
-    padding:.75rem 1rem; max-width:520px; margin:.75rem auto 0; text-align:left;">
-    <div style="color:#00d9ff; font-weight:700; font-size:.75rem;
-                letter-spacing:.06em; text-transform:uppercase; margin-bottom:.35rem;">
-      ⚙️ Continuous Improvement
-    </div>
-    <div style="color:var(--text-secondary); font-size:.78rem; line-height:1.55;">
-      Agent Sam is the first Kenyan autonomous model — an Ubuntu Linux brain
-      with 85+ tools, CFC auto-train, and ODE solvers. Because GPU compute is
-      scarce and costly, Sam is <strong style="color:#ff9dd8;">online and offline</strong>
-      while we scale. <strong style="color:#00d9ff;">Imhotep stays online 24/7</strong>
-      so you always get an answer. Thank you for your patience. 🙏
-    </div>
-  </div>
-</div>
-
-
-<!-- Satellite viewer modal -->
-<div id="sat-modal" style="
-  display:none; position:fixed; inset:0; z-index:9999;
-  background:rgba(0,0,0,.85); backdrop-filter:blur(8px);
-  padding:1rem; overflow-y:auto;">
-  <div style="
-    max-width:720px; margin:2rem auto;
-    background:var(--bg-secondary);
-    border:1px solid rgba(0,217,255,.25);
-    border-radius:16px; padding:1.25rem;">
-    <div style="display:flex; justify-content:space-between; align-items:center;
-                margin-bottom:1rem;">
-      <h3 style="font-size:1.15rem; color:#00d9ff; margin:0;">
-        🛰️ Live from Space
-      </h3>
-      <button onclick="closeSatModal()"
-        style="background:transparent;border:1px solid rgba(0,217,255,.3);
-               color:#00d9ff;border-radius:8px;padding:.35rem .7rem;
-               font-size:.8rem;cursor:pointer;">✕ Close</button>
-    </div>
-
-    <div style="display:grid; gap:1rem;">
-      <div>
-        <div style="color:#ff9dd8; font-size:.75rem; font-weight:700;
-                    letter-spacing:.06em; text-transform:uppercase;
-                    margin-bottom:.4rem;">🌍 Full Earth · DSCOVR satellite</div>
-        <img id="sat-earth" src="" alt="Earth from space"
-             style="width:100%; border-radius:12px;
-                    border:1px solid rgba(0,217,255,.2); display:block;">
-        <div id="sat-earth-meta" style="color:var(--text-muted);
-             font-size:.72rem; margin-top:.35rem;"></div>
-      </div>
-
-      <div>
-        <div style="color:#ff9dd8; font-size:.75rem; font-weight:700;
-                    letter-spacing:.06em; text-transform:uppercase;
-                    margin-bottom:.4rem;">☁️ Africa view · GOES-16 (every 10 min)</div>
-        <img id="sat-goes" src="" alt="GOES-16 full disk"
-             style="width:100%; border-radius:12px;
-                    border:1px solid rgba(0,217,255,.2); display:block;">
-        <div id="sat-goes-meta" style="color:var(--text-muted);
-             font-size:.72rem; margin-top:.35rem;"></div>
-      </div>
-    </div>
-
-    <div style="color:var(--text-muted); font-size:.7rem;
-                margin-top:1rem; text-align:center; line-height:1.5;">
-      Sources: NASA EPIC · NOAA GOES-16 · NASA GIBS<br>
-      Images update every 10 min – 24 h depending on the satellite
-    </div>
-  </div>
-</div>
-
-
-<!-- Kenya Tools -->
-<div id="kenya-tools" style="
-  text-align:center; padding:1.25rem .75rem;
-  border-top:1px solid rgba(0,217,255,.12); margin-top:1rem;">
-  <div style="color:#00d9ff; font-size:.75rem; font-weight:700;
-              letter-spacing:.06em; text-transform:uppercase;
-              margin-bottom:.75rem;">🇰🇪 Kenya Live Data</div>
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem;
-              max-width:640px; margin:0 auto;">
-    <button class="tool-pill" onclick="showFires()">🔥 Active Fires</button>
-    <button class="tool-pill" onclick="showDrought()">🌾 Drought Status</button>
-    <button class="tool-pill" onclick="showNews()">📰 Kenya News</button>
-    <button class="tool-pill" onclick="openSatModal()">🛰️ Satellites</button>
-    <button class="tool-pill" onclick="showCounties()">🗺️ Counties</button>
-  </div>
-  <div id="tool-output" style="
-    max-width:640px; margin:1rem auto 0; display:none;
-    background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
-    border:1px solid rgba(0,217,255,.22); border-radius:12px;
-    padding:1rem; color:var(--text-secondary);
-    font-size:.82rem; line-height:1.6; text-align:left;"></div>
-</div>
-<style>
-  .tool-pill {
-    padding:.4rem .85rem;
-    background:rgba(0,217,255,.05);
-    border:1px solid rgba(0,217,255,.22);
-    color:#00d9ff; border-radius:999px;
-    font-size:.78rem; font-weight:600;
-    cursor:pointer; white-space:nowrap;
-    transition:all .15s ease;
-  }
-  .tool-pill:hover {
-    background:rgba(0,217,255,.15);
-    transform:translateY(-1px);
-  }
-</style>
-
 </body>
 </html>
