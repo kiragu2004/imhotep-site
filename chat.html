@@ -532,7 +532,7 @@ async function openSatModal() {
     const d = await r.json();
     if (d.ok && d.goes_east_full_disk) {
       goesImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.goes_east_full_disk);
-      document.getElementById("sat-goes-meta").textContent = "Frame: " + (d.frame_time || "") + " · GOES-16 (NOAA)";
+      document.getElementById("sat-goes-meta").innerHTML = "Live GOES-16 view: <a href='https://www.star.nesdis.noaa.gov/GOES/GOES16_FullDisk_Band.php?band=GEOCOLOR&length=24' target='_blank' style='color:#00d9ff;'>Click here for live imagery</a>";
     } else {
       document.getElementById("sat-goes-meta").textContent = "GOES unavailable";
     }
