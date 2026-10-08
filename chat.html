@@ -231,35 +231,43 @@ function autoGrow(el) {
 // 1) Try GPS. 2) Fall back to IP geolocation (works without permission).
 // 3) Last resort: Nairobi.
 async function bootstrapWeather() {
-  // Step 1: GPS
+  // 1) Try GPS (fast if allowed)
   if (navigator.geolocation) {
     const got = await new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
         pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
         () => resolve(null),
-        { timeout: 5000, maximumAge: 600000 }
+        { timeout: 4000, maximumAge: 600000 }
       );
     });
     if (got) {
       userLocation = got;
-      console.log("weather: using GPS", got);
+      console.log("weather: GPS", got);
       return loadWeather();
     }
   }
 
-  // Step 2: IP geolocation (no permission needed)
-  try {
-    const r = await fetch("https://ipwho.is/", { cache: "no-store" });
-    const d = await r.json();
-    if (d && d.success !== false && d.latitude && d.longitude) {
-      userLocation = { lat: d.latitude, lon: d.longitude };
-      console.log("weather: using IP location", userLocation, d.city);
-      return loadWeather();
-    }
-  } catch (e) { console.log("ipwho failed", e); }
+  // 2) IP-based fallback — try multiple CORS-friendly providers in order
+  const providers = [
+    { url: "https://ipinfo.app/json",   lat: "latitude",  lon: "longitude", city: "city" },
+    { url: "https://ipwhois.app/json/", lat: "latitude",  lon: "longitude", city: "city" },
+    { url: "https://freegeoip.app/json/", lat: "latitude", lon: "longitude", city: "city" },
+  ];
+  for (const p of providers) {
+    try {
+      const r = await fetch(p.url, { cache: "no-store" });
+      const d = await r.json();
+      const la = d[p.lat], lo = d[p.lon];
+      if (la && lo && !isNaN(la) && !isNaN(lo)) {
+        userLocation = { lat: parseFloat(la), lon: parseFloat(lo) };
+        console.log("weather: IP via", p.url, userLocation, d[p.city]);
+        return loadWeather();
+      }
+    } catch (e) { console.log("weather provider failed:", p.url, e.message); }
+  }
 
-  // Step 3: Nairobi
-  console.log("weather: using Nairobi fallback");
+  // 3) Last resort
+  console.log("weather: Nairobi fallback");
   loadWeather("Nairobi");
 }
 
@@ -458,5 +466,36 @@ function logout() {
 
 checkAuth();
 </script>
+
+<div id="imhotep-footer" style="
+  text-align:center; padding:1.5rem 1rem 1rem;
+  border-top:1px solid rgba(0,217,255,.12);
+  margin-top:2rem; color:var(--text-muted); font-size:.8rem; line-height:1.7;">
+  <div style="margin-bottom:.5rem;">
+    <span style="color:#00d9ff; font-weight:700;">⚡ IMHOTEP</span>
+    · Built by Samuel Kiragu in Mukuyu, Murang'a, Kenya 🇰🇪
+  </div>
+  <div style="margin-bottom:.5rem;">
+    🐛 Found a bug? Report to
+    <a href="tel:0748203553" style="color:#00d9ff; font-weight:700;">0748 203 553</a>
+  </div>
+  <div style="
+    background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
+    border:1px solid rgba(0,217,255,.22); border-radius:12px;
+    padding:.75rem 1rem; max-width:520px; margin:.75rem auto 0; text-align:left;">
+    <div style="color:#00d9ff; font-weight:700; font-size:.75rem;
+                letter-spacing:.06em; text-transform:uppercase; margin-bottom:.35rem;">
+      ⚙️ Continuous Improvement
+    </div>
+    <div style="color:var(--text-secondary); font-size:.78rem; line-height:1.55;">
+      Agent Sam is the first Kenyan autonomous model — an Ubuntu Linux brain
+      with 85+ tools, CFC auto-train, and ODE solvers. Because GPU compute is
+      scarce and costly, Sam is <strong style="color:#ff9dd8;">online and offline</strong>
+      while we scale. <strong style="color:#00d9ff;">Imhotep stays online 24/7</strong>
+      so you always get an answer. Thank you for your patience. 🙏
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
