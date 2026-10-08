@@ -231,7 +231,7 @@ function autoGrow(el) {
 // 1) Try GPS. 2) Fall back to IP geolocation (works without permission).
 // 3) Last resort: Nairobi.
 async function bootstrapWeather() {
-  // 1) Try GPS (fast if allowed)
+  // 1) GPS (fast if allowed)
   if (navigator.geolocation) {
     const got = await new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
@@ -247,26 +247,30 @@ async function bootstrapWeather() {
     }
   }
 
-  // 2) IP-based fallback — try multiple CORS-friendly providers in order
+  // 2) IP geolocation via ipapi.co (CORS-enabled, free, reliable)
   const providers = [
-    { url: "https://ipinfo.app/json",   lat: "latitude",  lon: "longitude", city: "city" },
-    { url: "https://ipwhois.app/json/", lat: "latitude",  lon: "longitude", city: "city" },
-    { url: "https://freegeoip.app/json/", lat: "latitude", lon: "longitude", city: "city" },
+    { url: "https://ipapi.co/json/",       lat: "latitude", lon: "longitude", city: "city" },
+    { url: "https://ipwho.is/",            lat: "latitude", lon: "longitude", city: "city" },
+    { url: "https://ipwhois.app/json/",    lat: "latitude", lon: "longitude", city: "city" }
   ];
   for (const p of providers) {
     try {
       const r = await fetch(p.url, { cache: "no-store" });
+      if (!r.ok) continue;
       const d = await r.json();
-      const la = d[p.lat], lo = d[p.lon];
-      if (la && lo && !isNaN(la) && !isNaN(lo)) {
-        userLocation = { lat: parseFloat(la), lon: parseFloat(lo) };
-        console.log("weather: IP via", p.url, userLocation, d[p.city]);
+      const la = parseFloat(d[p.lat]);
+      const lo = parseFloat(d[p.lon]);
+      if (!isNaN(la) && !isNaN(lo) && la !== 0 && lo !== 0) {
+        userLocation = { lat: la, lon: lo };
+        console.log("weather: IP via " + p.url, userLocation, d[p.city]);
         return loadWeather();
       }
-    } catch (e) { console.log("weather provider failed:", p.url, e.message); }
+    } catch (e) {
+      console.log("weather provider failed:", p.url, e.message);
+    }
   }
 
-  // 3) Last resort
+  // 3) Absolute last resort
   console.log("weather: Nairobi fallback");
   loadWeather("Nairobi");
 }
