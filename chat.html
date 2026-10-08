@@ -129,6 +129,29 @@
         <button class="quick" onclick="pickAgent('activist');sendPrompt('How do we fight climate change?')"><div class="e">✊</div><div class="n">Activist</div></button>
         <button class="quick" onclick="pickAgent('writer');sendPrompt('Write about Nairobi at dusk')"><div class="e">✍️</div><div class="n">Writer</div></button>
       </div>
+
+
+      <div style="margin-top:2rem; padding:1.25rem; text-align:left;
+                  background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
+                  border:1px solid rgba(0,217,255,.22); border-radius:16px;">
+        <div style="display:flex; align-items:center; gap:.6rem; margin-bottom:.6rem;">
+          <span style="font-size:1.6rem;">🇰🇪</span>
+          <h3 style="font-size:1.1rem; color:#00d9ff; margin:0;">Agent Sam</h3>
+          <span style="font-size:.65rem; padding:.15rem .55rem; border-radius:999px;
+                       background:rgba(0,217,255,.15); color:#00d9ff;
+                       letter-spacing:.08em; font-weight:700;">AUTONOMOUS</span>
+        </div>
+        <p style="color:var(--text-secondary); font-size:.85rem; line-height:1.6; margin:0 0 .6rem 0;">
+          The first Kenyan autonomous model. Runs a full Ubuntu Linux container with
+          85+ tools, CFC auto-train, ODE solvers, τ time-constant adaptation,
+          email and GitHub automation — built and trained by Samuel Kiragu.
+        </p>
+        <p style="color:#ff9dd8; font-size:.78rem; line-height:1.5; margin:0;">
+          ⚡ Agent Sam runs on donated GPU time, so he's <strong>online and offline</strong>
+          while we scale infrastructure. <strong style="color:#00d9ff;">Imhotep stays online 24/7</strong>
+          — the site always has a brain to answer you.
+        </p>
+      </div>
     </div>
   </div>
 
@@ -204,19 +227,31 @@ function autoGrow(el) {
   el.style.height = Math.min(el.scrollHeight, 130) + "px";
 }
 
+// Always try to load weather. Use location if allowed, else default to Nairobi.
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(
-    pos => { userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-             loadWeather(); },
-    () => {}, { timeout: 6000 });
+    pos => {
+      userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      loadWeather();
+    },
+    () => {
+      // Denied or unavailable → default to Nairobi
+      console.log("location denied, using Nairobi");
+      loadWeather("Nairobi");
+    },
+    { timeout: 6000 });
+} else {
+  loadWeather("Nairobi");
 }
 
-async function loadWeather() {
-  if (!userLocation) return;
+async function loadWeather(city) {
+  const body = (userLocation && !city)
+    ? { lat: userLocation.lat, lon: userLocation.lon }
+    : { city: city || "Nairobi" };
   try {
     const r = await fetch(API + "/weather", {
       method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ lat: userLocation.lat, lon: userLocation.lon })
+      body: JSON.stringify(body)
     });
     const d = await r.json();
     if (d.ok) {
