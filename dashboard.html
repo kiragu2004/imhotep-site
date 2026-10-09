@@ -68,10 +68,29 @@
     background:rgba(0,217,255,.05); border:1px solid rgba(0,217,255,.15);
     border-radius:10px; font-size:.85rem; line-height:1.6;
     color:var(--text-secondary); }
-  .input-pair { display:flex; gap:.5rem; margin-top:.5rem; }
-  .input-pair input { flex:1; padding:.55rem; background:rgba(255,255,255,.05);
+  .input-pair { display:flex; gap:.5rem; margin-top:.5rem; flex-wrap:wrap; }
+  .input-pair input { flex:1; min-width:100px; padding:.55rem;
+    background:rgba(255,255,255,.05);
     border:1px solid rgba(0,217,255,.2); color:#fff; border-radius:8px;
     font-family:inherit; }
+  /* HEATMAP GRID */
+  .heatmap { display:grid; grid-template-columns:repeat(6,1fr);
+    gap:3px; padding:.5rem; background:rgba(0,0,0,.2);
+    border-radius:12px; margin-top:.5rem; }
+  .heatmap .cell { aspect-ratio:1; border-radius:4px; position:relative;
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; font-size:.55rem; color:#000;
+    font-weight:800; cursor:pointer; }
+  .heatmap .cell:hover { outline:2px solid #fff; z-index:2; }
+  .legend { display:flex; gap:.5rem; margin-top:.75rem;
+    font-size:.7rem; color:var(--text-muted); flex-wrap:wrap; }
+  .legend span { display:inline-flex; align-items:center; gap:.3rem; }
+  .legend .swatch { width:12px; height:12px; border-radius:3px; }
+  .disaster-row { padding:.6rem .8rem; margin:.4rem 0;
+    border-left:3px solid #ffaa00; background:rgba(255,170,0,.05);
+    border-radius:8px; font-size:.82rem; }
+  .disaster-row.red { border-left-color:#ff2b2b; background:rgba(255,43,43,.08); }
+  .disaster-row.orange { border-left-color:#ff8800; }
 </style>
 </head>
 <body>
@@ -92,13 +111,25 @@
 
 <section class="dash">
   <h1 class="section-title">🇰🇪 Kenya Live Data</h1>
-  <p class="section-subtitle">Real-time from NASA, NOAA, NDMA and Open-Meteo. No keys. Always free.</p>
+  <p class="section-subtitle">NASA, NOAA, NDMA, GDACS, Open-Meteo. All free, no keys.</p>
 
   <div class="grid">
 
     <div class="card" style="grid-column:1/-1;">
       <h3>🌡️ Climate Change — Kenya Projection</h3>
       <div id="climate"><div class="empty">Loading…</div></div>
+    </div>
+
+    <!-- RAIN HEATMAP -->
+    <div class="card" style="grid-column:1/-1;">
+      <h3>🌧️ 3-Day Rain Forecast Heatmap</h3>
+      <div id="heatmap"><div class="empty">Loading heatmap…</div></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#00d9ff"></span>No rain</span>
+        <span><span class="swatch" style="background:#00c87a"></span>Light (&lt;5mm)</span>
+        <span><span class="swatch" style="background:#ffaa00"></span>Moderate (5-20mm)</span>
+        <span><span class="swatch" style="background:#ff6b6b"></span>Heavy (&gt;20mm)</span>
+      </div>
     </div>
 
     <div class="card">
@@ -120,6 +151,26 @@
     </div>
 
     <div class="card">
+      <h3>⚠️ Disaster Alerts (GDACS)</h3>
+      <div id="disasters" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <h3>⚡ Thunderstorm & Lightning</h3>
+      <div id="lightning" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <h3>🌊 Flood Watch (River Discharge)</h3>
+      <div id="flood" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
+      <h3>🌧️ Rainfall (NASA POWER · 30d)</h3>
+      <div id="rain30" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+    </div>
+
+    <div class="card">
       <h3>📰 Kenya News</h3>
       <div id="news" style="max-height:400px; overflow-y:auto;"><div class="empty">Loading…</div></div>
     </div>
@@ -129,11 +180,11 @@
       <img id="sat-img" src="" alt="Satellite">
       <div style="margin-top:1rem;">
         <div style="color:var(--text-secondary); font-size:.85rem;">
-          Analyze a location:
+          Analyze any location:
         </div>
         <div class="input-pair">
-          <input id="lat" type="number" step="0.01" placeholder="Latitude (-1.29)">
-          <input id="lon" type="number" step="0.01" placeholder="Longitude (36.82)">
+          <input id="lat" type="number" step="0.01" placeholder="Lat (-1.29)">
+          <input id="lon" type="number" step="0.01" placeholder="Lon (36.82)">
           <button class="nav-btn primary" onclick="analyzeSat()">Analyze</button>
         </div>
         <div id="analysis"></div>
@@ -164,6 +215,7 @@
 const API = "https://imhotep-agentic-ai.onrender.com";
 let allFires = [];
 
+// ── CLIMATE ──
 async function loadClimate() {
   try {
     const d = await (await fetch(API + "/climate/kenya")).json();
@@ -176,23 +228,42 @@ async function loadClimate() {
         <div><div class="n" style="color:${color}">${c.warming_c>0?"+":""}${c.warming_c ?? "—"}°C</div><div class="l">Warming</div></div>
       </div>
       <div class="verdict">⚡ ${c.verdict}</div>`;
-  } catch (e) {
-    document.getElementById("climate").innerHTML = '<div class="empty">❌ ' + e.message + '</div>';
-  }
+  } catch (e) { document.getElementById("climate").innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
 }
 
+// ── RAIN HEATMAP ──
+async function loadHeatmap() {
+  const el = document.getElementById("heatmap");
+  try {
+    const d = await (await fetch(API + "/heatmap/rain")).json();
+    if (!d.ok || !d.cells) { el.innerHTML = '<div class="empty">No heatmap data</div>'; return; }
+    const N = d.grid_size;
+    let html = '<div class="heatmap">';
+    // Grid sorted by lat descending, lon ascending
+    const sorted = d.cells.slice().sort((a,b) => b.lat - a.lat || a.lon - b.lon);
+    sorted.forEach(c => {
+      const r = c.rain_mm;
+      const bg = r < 1 ? "#00d9ff" : r < 5 ? "#00c87a" : r < 20 ? "#ffaa00" : "#ff6b6b";
+      html += `<div class="cell" style="background:${bg}" title="${c.county || ''} (${c.lat}, ${c.lon}) — ${r}mm">${r}</div>`;
+    });
+    html += '</div>';
+    html += `<div style="color:var(--text-muted); font-size:.72rem; margin-top:.5rem; text-align:center;">Values = total rain (mm) next 3 days · Hover for county</div>`;
+    el.innerHTML = html;
+  } catch (e) { el.innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
+}
+
+// ── WEATHER ──
 async function loadWx() {
   try {
     const d = await (await fetch(API + "/weather/all-counties")).json();
-    if (!d.count) { document.getElementById("wx").innerHTML = '<div class="empty">No data</div>'; return; }
+    if (!d.count) { document.getElementById("wx").innerHTML = '<div class="empty">No data — try again in a moment</div>'; return; }
     document.getElementById("wx").innerHTML = d.counties.map(c =>
       `<div class="wx-row"><span class="c">${c.emoji} ${c.county}</span><span class="t">${c.temp}°C</span></div>`
     ).join("");
-  } catch (e) {
-    document.getElementById("wx").innerHTML = '<div class="empty">❌ ' + e.message + '</div>';
-  }
+  } catch (e) { document.getElementById("wx").innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
 }
 
+// ── FIRES ──
 async function loadFires() {
   try {
     const d = await (await fetch(API + "/fires/kenya")).json();
@@ -209,9 +280,7 @@ async function loadFires() {
       </div>`;
     });
     document.getElementById("fires").innerHTML = h;
-  } catch (e) {
-    document.getElementById("fires").innerHTML = '<div class="empty">❌ ' + e.message + '</div>';
-  }
+  } catch (e) { document.getElementById("fires").innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
 }
 
 function showFire(i) {
@@ -228,6 +297,7 @@ function showFire(i) {
 }
 function closeModal() { document.getElementById("modal").classList.remove("open"); }
 
+// ── DROUGHT + NDVI ──
 async function loadDrought() {
   const counties = ["Turkana","Marsabit","Mandera","Wajir","Garissa","Isiolo","Samburu","Kitui"];
   let h = "";
@@ -243,24 +313,91 @@ async function loadDrought() {
     } catch (e) {}
   }
   h += `<div class="row" style="color:var(--text-muted); font-size:.72rem; padding-top:.75rem; margin-top:.75rem; border-top:1px solid rgba(0,217,255,.15);">
-    <b style="color:var(--accent-cyan);">📚 NDVI / VCI explained</b><br>
+    <b style="color:var(--accent-cyan);">📚 What is NDVI / VCI?</b><br>
     NDVI measures how green vegetation is from satellite. VCI compares today's
     greenness against historical min/max for the same area. Below 35 triggers
     Kenya's drought early warning.</div>`;
   document.getElementById("drought").innerHTML = h || '<div class="empty">No data</div>';
 }
 
+// ── DISASTERS (GDACS) ──
+async function loadDisasters() {
+  try {
+    const d = await (await fetch(API + "/disasters")).json();
+    if (!d.ok || !d.count) {
+      document.getElementById("disasters").innerHTML = '<div class="empty">✅ No active GDACS alerts for Kenya</div>';
+      return;
+    }
+    document.getElementById("disasters").innerHTML = d.events.map(e => {
+      const cls = e.alert_level === "Red" ? "red" : e.alert_level === "Orange" ? "orange" : "";
+      return `<div class="disaster-row ${cls}">
+        <b>${e.type || "Event"}</b> — ${e.alert_level || "Green"} alert
+        <div style="color:var(--text-muted); font-size:.72rem;">${e.title || ""} · ${e.date || ""}</div>
+      </div>`;
+    }).join("");
+  } catch (e) { document.getElementById("disasters").innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
+}
+
+// ── LIGHTNING ──
+async function loadLightning() {
+  try {
+    const d = await (await fetch(API + "/lightning")).json();
+    if (!d.count) {
+      document.getElementById("lightning").innerHTML = '<div class="empty">☀️ No active thunderstorms in Kenya right now</div>';
+      return;
+    }
+    document.getElementById("lightning").innerHTML = d.storms.map(s =>
+      `<div class="row">⛈️ <b>${s.county}</b> · ${s.severity} · ${s.temp}°C</div>`
+    ).join("");
+  } catch (e) { document.getElementById("lightning").innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
+}
+
+// ── FLOOD ──
+async function loadFlood() {
+  const counties = ["Nairobi","Kisumu","Garissa","Tana River","Kilifi","Turkana"];
+  let h = "";
+  for (const c of counties) {
+    try {
+      const d = await (await fetch(API + "/flood/" + encodeURIComponent(c))).json();
+      if (d.ok) {
+        h += `<div class="row"><b>${c}</b>
+              <span style="color:${d.color}; font-weight:700;"> ${d.level}</span>
+              <div style="color:var(--text-muted); font-size:.72rem; margin-top:.2rem;">
+                Current: ${d.current_discharge} m³/s · Peak 7d: ${d.peak_next_7d} m³/s</div></div>`;
+      }
+    } catch (e) {}
+  }
+  document.getElementById("flood").innerHTML = h || '<div class="empty">No data</div>';
+}
+
+// ── NASA POWER rainfall 30d ──
+async function loadRain30() {
+  const counties = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Garissa"];
+  let h = "";
+  for (const c of counties) {
+    try {
+      const d = await (await fetch(API + "/nasa/power/" + encodeURIComponent(c))).json();
+      if (d.ok) {
+        h += `<div class="row"><b>${c}</b> · ${d.rain_30d_mm} mm
+              <div style="color:var(--text-muted); font-size:.72rem;">
+                avg temp ${d.avg_temp_c}°C · ${d.days} days data</div></div>`;
+      }
+    } catch (e) {}
+  }
+  document.getElementById("rain30").innerHTML = h || '<div class="empty">No data</div>';
+}
+
+// ── NEWS ──
 async function loadNews() {
   try {
     const d = await (await fetch(API + "/news/kenya?limit=8")).json();
     document.getElementById("news").innerHTML = d.items.map(it =>
       `<div class="row"><a href="${it.link}" target="_blank">${it.title}</a></div>`
     ).join("");
-  } catch (e) {
-    document.getElementById("news").innerHTML = '<div class="empty">❌ ' + e.message + '</div>';
-  }
+  } catch (e) { document.getElementById("news").innerHTML = '<div class="empty">❌ ' + e.message + '</div>'; }
 }
 
+// ── SATELLITE ──
 async function loadSat() {
   try {
     const d = await (await fetch(API + "/nasa/earth")).json();
@@ -274,7 +411,9 @@ async function analyzeSat() {
   const lat = parseFloat(document.getElementById("lat").value);
   const lon = parseFloat(document.getElementById("lon").value);
   const out = document.getElementById("analysis");
-  if (isNaN(lat) || isNaN(lon)) { out.style.display = "block"; out.textContent = "Enter coordinates."; return; }
+  if (isNaN(lat) || isNaN(lon)) {
+    out.style.display = "block"; out.textContent = "Enter coordinates."; return;
+  }
   out.style.display = "block";
   out.textContent = "🔍 Analyzing " + lat + ", " + lon + "…";
   try {
@@ -291,11 +430,17 @@ async function analyzeSat() {
   } catch (e) { out.textContent = "Error: " + e.message; }
 }
 
+// ── INIT ──
 window.addEventListener("DOMContentLoaded", () => {
   loadClimate();
+  loadHeatmap();
   loadWx();
   loadFires();
   loadDrought();
+  loadDisasters();
+  loadLightning();
+  loadFlood();
+  loadRain30();
   loadNews();
   loadSat();
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
