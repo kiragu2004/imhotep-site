@@ -10,10 +10,18 @@
 <li><a href="debate.html">Debate</a></li>
 <li><a href="pricing.html" class="active">Pricing</a></li>
     <li><a href="dashboard.html">Kenya Data</a></li>
-</ul><div class="nav-buttons">
-<button class="nav-btn" onclick="window.location.href='auth.html'">Sign In</button>
-<button class="nav-btn primary" onclick="window.location.href='chat.html'">Start Free</button>
-</div></nav>
+</ul>  <div class="nav-buttons">
+    <span class="engine-badge">Imhotep Engine</span>
+    <span id="user-display" style="color:var(--text-secondary);font-size:.85rem;display:none;"></span>
+    <a id="btn-signin" href="auth.html" class="nav-btn"
+       style="padding:.5rem 1rem;font-size:.82rem;text-decoration:none;">Sign In</a>
+    <a id="btn-google" href="auth.html#google" class="nav-btn"
+       style="padding:.5rem 1rem;font-size:.82rem;text-decoration:none;
+              background:linear-gradient(135deg,#4285f4,#ea4335);color:#fff;
+              border:none;">🔵 Google</a>
+    <button id="btn-signout" class="nav-btn" onclick="logout()"
+            style="padding:.5rem 1rem;font-size:.82rem;display:none;">Sign Out</button>
+  </div></nav>
 <section class="hero" style="min-height:auto; padding:5rem 2rem 1rem;">
 <div class="hero-content">
 <h1>Simple pricing</h1>
@@ -91,5 +99,33 @@ try{const r=await fetch(API+"/checkout",{method:"POST",headers:{"Content-Type":"
 const data=await r.json();
 if(data.payment_url)window.location.href=data.payment_url;
 else alert("Payment link unavailable. Try again later.");}catch(e){alert("Error: "+e.message);}}
+
+// ── Auth state: show Sign In/Google when logged out, Sign Out when logged in ──
+function refreshAuthUI() {
+  const token = localStorage.getItem("imhotep_token");
+  const user  = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
+  const display = document.getElementById("user-display");
+  const signin  = document.getElementById("btn-signin");
+  const google  = document.getElementById("btn-google");
+  const signout = document.getElementById("btn-signout");
+  if (!display) return;
+
+  if (token && user && user.name) {
+    display.textContent = "👤 " + user.name;
+    display.style.display = "inline";
+    if (signin)  signin.style.display  = "none";
+    if (google)  google.style.display  = "none";
+    if (signout) signout.style.display = "inline-block";
+  } else {
+    display.style.display = "none";
+    if (signin)  signin.style.display  = "inline-block";
+    if (google)  google.style.display  = "inline-block";
+    if (signout) signout.style.display = "none";
+  }
+}
+window.addEventListener("DOMContentLoaded", refreshAuthUI);
+window.addEventListener("storage", refreshAuthUI);
+setInterval(refreshAuthUI, 2000);   // catch login from another tab
+
 </script>
 </body></html>
