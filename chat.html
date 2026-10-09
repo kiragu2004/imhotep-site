@@ -114,13 +114,19 @@
     </div>
   </div>
 
-  <div class="weather-pill" id="weather-pill" style="display:none;">
-    <span class="wx-emoji" id="wx-emoji">🌤️</span>
-    <div style="flex:1;">
-      <div><span class="wx-temp" id="wx-temp">—°C</span>
-           <span class="wx-feel" id="wx-feel"></span></div>
-      <div class="wx-city" id="wx-city">Loading…</div>
-    </div>
+  <!-- WEATHER PILL PATCH — replaces the existing #weather-pill block -->
+<div class="weather-pill" id="weather-pill" style="display:none;">
+  <span class="wx-emoji" id="wx-emoji">🌤️</span>
+  <div style="flex:1;">
+    <div><span class="wx-temp" id="wx-temp">—°C</span>
+         <span class="wx-feel" id="wx-feel"></span></div>
+    <div class="wx-city" id="wx-city">Loading…</div>
+  </div>
+  <button id="wx-gps-btn" style="background:transparent;
+          border:1px solid rgba(0,217,255,.35); color:#00d9ff;
+          border-radius:8px; padding:.35rem .65rem; font-size:.75rem;
+          cursor:pointer;">📍 GPS</button>
+</div>
     <button id="wx-gps-btn" style="background:transparent;
             border:1px solid rgba(0,217,255,.35); color:#00d9ff;
             border-radius:8px; padding:.35rem .65rem; font-size:.75rem;

@@ -146,31 +146,17 @@
     </div>
 
     <!-- COUNTY WEATHER — SEARCH + BIG DISPLAY -->
-    <div class="card" id="county-weather" style="grid-column:1/-1;">
-      <h3>🌤️ Choose Your County</h3>
-      <select id="county-select" class="county-select" onchange="pickCounty(this.value)">
-        <option value="">— Auto-rotating through all counties —</option>
-      </select>
-      <div id="weather-display" style="margin-top:1rem;">
-        <div class="empty">Loading…</div>
-      </div>
-      <div id="forecast-display" style="margin-top:1rem;"></div>
-    </div>
-
-    <!-- FIRES -->
-    <div class="card">
-      <h3>🔥 Active Fires (24h)</h3>
-      <div id="fires" style="max-height:400px; overflow-y:auto;"><div class="empty">Loading…</div></div>
-      <div style="color:var(--text-muted); font-size:.72rem; margin-top:.75rem;">
-        👆 Tap a fire for details
-      </div>
-    </div>
-
-    <!-- DROUGHT -->
-    <div class="card">
-      <h3>🌾 Drought & NDVI <span class="tag">VCI</span></h3>
-      <div id="drought" style="max-height:400px; overflow-y:auto;"><div class="empty">Loading…</div></div>
-    </div>
+    <!-- COUNTY WEATHER PATCH — replaces the #county-weather card -->
+<div class="card" id="county-weather" style="grid-column:1/-1;">
+  <h3>🌤️ Choose Your County</h3>
+  <select id="county-select" class="county-select" onchange="pickCounty(this.value)">
+    <option value="">— Auto-rotating through all counties —</option>
+  </select>
+  <div id="weather-display" style="margin-top:1rem;">
+    <div class="empty">Loading…</div>
+  </div>
+  <div id="forecast-display" style="margin-top:1rem;"></div>
+</div>
 
     <!-- DISASTERS -->
     <div class="card">
