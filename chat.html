@@ -6,80 +6,38 @@
 <title>Chat — Imhotep</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  .chat-shell { display:flex; flex-direction:column; max-width:900px; margin:0 auto;
-    height:calc(100dvh - 74px); background:var(--bg-primary); }
-  .chat-scroll { flex:1; overflow-y:auto; padding:1rem 1rem .5rem;
-    display:flex; flex-direction:column; gap:.9rem; }
-  .bubble { max-width:88%; padding:.85rem 1.05rem; border-radius:16px;
-    line-height:1.6; font-size:.95rem; word-wrap:break-word; white-space:pre-wrap; }
-  .bubble.user { align-self:flex-end; background:var(--gradient-neon);
-    color:var(--bg-primary); font-weight:600; border-radius:16px 16px 4px 16px; }
-  .bubble.bot { align-self:flex-start;
-    background:linear-gradient(135deg,rgba(0,217,255,.05),rgba(144,0,255,.04));
-    border:1px solid rgba(0,217,255,.22); color:#dde7f0;
-    border-radius:16px 16px 16px 4px; }
-  .bubble.bot a { color:#00d9ff; text-decoration:underline; }
-  .bubble.error { border-color:#ff6b6b; color:#ff9c9c; }
-  .thinking { align-self:flex-start; display:flex; align-items:center; gap:.7rem;
-    padding:.75rem 1.1rem; background:var(--bg-glass);
-    border:1px solid rgba(0,217,255,.22); border-radius:16px 16px 16px 4px;
-    color:var(--text-secondary); font-size:.88rem; }
-  .earth { display:inline-block; font-size:1.2rem;
-    animation:spinEarth 2.2s linear infinite; }
-  @keyframes spinEarth { to { transform:rotate(360deg); } }
-  .think-text { display:inline-block;
-    background:linear-gradient(90deg,#00d9ff,#ff7ad9,#00d9ff);
-    background-size:200% 100%;
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    animation:shine 3s linear infinite; font-weight:600; }
-  @keyframes shine { to { background-position:-200% 0; } }
-  .agent-strip { display:flex; gap:.4rem; overflow-x:auto; padding:.5rem .75rem;
-    scrollbar-width:none; background:var(--bg-secondary);
-    border-top:1px solid rgba(0,217,255,.08);
-    border-bottom:1px solid rgba(0,217,255,.08); }
-  .agent-strip::-webkit-scrollbar { display:none; }
-  .agent-strip .chip { flex:0 0 auto; padding:.32rem .7rem; font-size:.75rem;
-    border-radius:999px; border:1px solid rgba(0,217,255,.22);
-    background:rgba(0,217,255,.05); color:var(--text-secondary);
-    white-space:nowrap; cursor:pointer; }
-  .agent-strip .chip.active { background:var(--gradient-neon);
-    color:var(--bg-primary); border-color:transparent; font-weight:700; }
-  .input-row { display:flex; gap:.5rem;
-    padding:.65rem .75rem calc(.65rem + env(safe-area-inset-bottom));
-    background:var(--bg-secondary); border-top:1px solid rgba(0,217,255,.12);
-    align-items:flex-end; }
-  .input-row textarea { flex:1; padding:.7rem .9rem;
-    background:var(--bg-tertiary); border:1px solid rgba(0,217,255,.18);
-    color:var(--text-primary); border-radius:22px; resize:none;
-    font-family:inherit; font-size:.95rem; min-height:42px; max-height:130px;
-    outline:none; }
-  .send-btn-v3 { width:42px; height:42px; border-radius:50%;
-    background:var(--gradient-neon); color:var(--bg-primary);
-    display:flex; align-items:center; justify-content:center;
-    font-size:1.1rem; font-weight:800; }
-  .weather-pill { display:flex; align-items:center; gap:.6rem;
-    padding:.5rem .9rem; margin:.5rem .75rem;
-    background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(255,0,255,.04));
-    border:1px solid rgba(0,217,255,.18); border-radius:12px;
-    font-size:.85rem; color:var(--text-secondary); }
-  .weather-pill .wx-emoji { font-size:1.35rem; }
-  .weather-pill .wx-temp { color:#00d9ff; font-weight:800; font-size:1.05rem; }
-  .weather-pill .wx-feel { color:#ff9dd8; font-weight:600; font-size:.85rem; }
-  .weather-pill .wx-city { color:var(--text-muted); font-size:.75rem; }
-  .welcome { text-align:center; padding:1.5rem 1rem; max-width:560px; margin:auto; }
-  .welcome h2 { font-size:1.7rem;
-    background:var(--gradient-neon);
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    margin-bottom:.5rem; }
-  .welcome p { color:var(--text-secondary); font-size:.92rem; }
-  .quick-grid { margin-top:1.25rem; display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:.6rem; }
-  .quick { padding:.7rem .5rem; background:var(--bg-glass);
-    border:1px solid rgba(0,217,255,.18); border-radius:12px; cursor:pointer;
-    color:inherit; }
-  .quick .e { font-size:1.25rem; }
-  .quick .n { font-size:.78rem; color:var(--accent-cyan); font-weight:600;
-    margin-top:.2rem; }
+  .chat-shell{display:flex;flex-direction:column;max-width:900px;margin:0 auto;height:calc(100dvh - 74px);background:var(--bg-primary);}
+  .chat-scroll{flex:1;overflow-y:auto;padding:1rem 1rem .5rem;display:flex;flex-direction:column;gap:.9rem;}
+  .bubble{max-width:88%;padding:.85rem 1.05rem;border-radius:16px;line-height:1.6;font-size:.95rem;word-wrap:break-word;white-space:pre-wrap;}
+  .bubble.user{align-self:flex-end;background:var(--gradient-neon);color:var(--bg-primary);font-weight:600;border-radius:16px 16px 4px 16px;}
+  .bubble.bot{align-self:flex-start;background:linear-gradient(135deg,rgba(0,217,255,.05),rgba(144,0,255,.04));border:1px solid rgba(0,217,255,.22);color:#dde7f0;border-radius:16px 16px 16px 4px;}
+  .bubble.bot a{color:#00d9ff;text-decoration:underline;}
+  .bubble.error{border-color:#ff6b6b;color:#ff9c9c;}
+  .thinking{align-self:flex-start;display:flex;align-items:center;gap:.7rem;padding:.75rem 1.1rem;background:var(--bg-glass);border:1px solid rgba(0,217,255,.22);border-radius:16px 16px 16px 4px;color:var(--text-secondary);font-size:.88rem;}
+  .earth{display:inline-block;font-size:1.2rem;animation:spinEarth 2.2s linear infinite;}
+  @keyframes spinEarth{to{transform:rotate(360deg);}}
+  .think-text{display:inline-block;background:linear-gradient(90deg,#00d9ff,#ff7ad9,#00d9ff);background-size:200% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shine 3s linear infinite;font-weight:600;}
+  @keyframes shine{to{background-position:-200% 0;}}
+  .agent-strip{display:flex;gap:.4rem;overflow-x:auto;padding:.5rem .75rem;scrollbar-width:none;background:var(--bg-secondary);border-top:1px solid rgba(0,217,255,.08);border-bottom:1px solid rgba(0,217,255,.08);}
+  .agent-strip::-webkit-scrollbar{display:none;}
+  .agent-strip .chip{flex:0 0 auto;padding:.32rem .7rem;font-size:.75rem;border-radius:999px;border:1px solid rgba(0,217,255,.22);background:rgba(0,217,255,.05);color:var(--text-secondary);white-space:nowrap;cursor:pointer;}
+  .agent-strip .chip.active{background:var(--gradient-neon);color:var(--bg-primary);border-color:transparent;font-weight:700;}
+  .input-row{display:flex;gap:.5rem;padding:.65rem .75rem calc(.65rem + env(safe-area-inset-bottom));background:var(--bg-secondary);border-top:1px solid rgba(0,217,255,.12);align-items:flex-end;}
+  .input-row textarea{flex:1;padding:.7rem .9rem;background:var(--bg-tertiary);border:1px solid rgba(0,217,255,.18);color:var(--text-primary);border-radius:22px;resize:none;font-family:inherit;font-size:.95rem;min-height:42px;max-height:130px;outline:none;}
+  .send-btn-v3{width:42px;height:42px;border-radius:50%;background:var(--gradient-neon);color:var(--bg-primary);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:800;}
+  .weather-pill{display:flex;align-items:center;gap:.6rem;padding:.5rem .9rem;margin:.5rem .75rem;background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(255,0,255,.04));border:1px solid rgba(0,217,255,.18);border-radius:12px;font-size:.85rem;color:var(--text-secondary);}
+  .weather-pill .wx-emoji{font-size:1.35rem;}
+  .weather-pill .wx-temp{color:#00d9ff;font-weight:800;font-size:1.05rem;}
+  .weather-pill .wx-feel{color:#ff9dd8;font-weight:600;font-size:.85rem;}
+  .weather-pill .wx-city{color:var(--text-muted);font-size:.75rem;}
+  .weather-pill .wx-gps{background:transparent;border:1px solid rgba(0,217,255,.35);color:#00d9ff;border-radius:8px;padding:.35rem .65rem;font-size:.75rem;cursor:pointer;}
+  .welcome{text-align:center;padding:1.5rem 1rem;max-width:560px;margin:auto;}
+  .welcome h2{font-size:1.7rem;background:var(--gradient-neon);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;}
+  .welcome p{color:var(--text-secondary);font-size:.92rem;}
+  .quick-grid{margin-top:1.25rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.6rem;}
+  .quick{padding:.7rem .5rem;background:var(--bg-glass);border:1px solid rgba(0,217,255,.18);border-radius:12px;cursor:pointer;color:inherit;}
+  .quick .e{font-size:1.25rem;}
+  .quick .n{font-size:.78rem;color:var(--accent-cyan);font-weight:600;margin-top:.2rem;}
 </style>
 </head>
 <body>
@@ -95,7 +53,7 @@
   </ul>
   <div class="nav-buttons">
     <span class="engine-badge">Imhotep Engine</span>
-    <span id="user-display" style="color:var(--text-secondary); font-size:.85rem;">Guest</span>
+    <span id="user-display" style="color:var(--text-secondary);font-size:.85rem;">Guest</span>
     <button class="nav-btn" onclick="logout()" style="padding:.5rem 1rem;font-size:.82rem;">Sign Out</button>
   </div>
 </nav>
@@ -114,23 +72,14 @@
     </div>
   </div>
 
-  <!-- WEATHER PILL PATCH — replaces the existing #weather-pill block -->
-<div class="weather-pill" id="weather-pill" style="display:none;">
-  <span class="wx-emoji" id="wx-emoji">🌤️</span>
-  <div style="flex:1;">
-    <div><span class="wx-temp" id="wx-temp">—°C</span>
-         <span class="wx-feel" id="wx-feel"></span></div>
-    <div class="wx-city" id="wx-city">Loading…</div>
-  </div>
-  <button id="wx-gps-btn" style="background:transparent;
-          border:1px solid rgba(0,217,255,.35); color:#00d9ff;
-          border-radius:8px; padding:.35rem .65rem; font-size:.75rem;
-          cursor:pointer;">📍 GPS</button>
-</div>
-    <button id="wx-gps-btn" style="background:transparent;
-            border:1px solid rgba(0,217,255,.35); color:#00d9ff;
-            border-radius:8px; padding:.35rem .65rem; font-size:.75rem;
-            cursor:pointer;">📍 GPS</button>
+  <div class="weather-pill" id="weather-pill">
+    <span class="wx-emoji" id="wx-emoji">🌤️</span>
+    <div style="flex:1;">
+      <div><span class="wx-temp" id="wx-temp">—°C</span>
+           <span class="wx-feel" id="wx-feel"></span></div>
+      <div class="wx-city" id="wx-city">Loading…</div>
+    </div>
+    <button class="wx-gps" onclick="forceGPS()">📍 GPS</button>
   </div>
 
   <div class="agent-strip" id="agent-strip">
@@ -141,12 +90,10 @@
     <button class="chip" data-agent="economist" onclick="pickAgent('economist')">💰 Economist</button>
     <button class="chip" data-agent="writer" onclick="pickAgent('writer')">✍️ Writer</button>
     <button class="chip" data-agent="analyst" onclick="pickAgent('analyst')">📊 Analyst</button>
-    <button class="chip" data-agent="philosopher" onclick="pickAgent('philosopher')">🤔 Philosopher</button>
   </div>
 
   <div class="input-row">
-    <textarea id="prompt" rows="1" placeholder="Ask Imhotep… (try 'Sasa')"
-      onkeydown="onKey(event)"></textarea>
+    <textarea id="prompt" rows="1" placeholder="Ask Imhotep… (try 'Sasa')" onkeydown="onKey(event)"></textarea>
     <button class="send-btn-v3" id="send-btn" onclick="sendChat()">➤</button>
   </div>
 </div>
@@ -156,20 +103,18 @@ const API = "https://imhotep-agentic-ai.onrender.com";
 let selectedAgent = "generalist";
 let busy = false;
 
-// Rotation through popular counties — one request at a time
-const ROTATE_COUNTIES = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Nyeri",
-                         "Machakos","Garissa","Turkana","Kakamega","Meru","Kisii"];
-let wxIdx = 0;
-let wxTimer = null;
-let wxPaused = false;
+// ═══ WEATHER — one county at a time, 4s apart ═══
+const ROTATE = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Nyeri",
+                "Machakos","Garissa","Turkana","Kakamega","Meru","Kisii"];
+let wxIdx = 0, wxTimer = null, wxPaused = false;
 
-async function fetchOneCounty(name) {
+async function fetchCounty(name) {
   try {
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 8000);
+    const t = setTimeout(() => ctl.abort(), 8000);
     const r = await fetch(API + "/weather/county/" + encodeURIComponent(name),
                           { signal: ctl.signal });
-    clearTimeout(timer);
+    clearTimeout(t);
     if (!r.ok) return null;
     return await r.json();
   } catch (e) { return null; }
@@ -177,58 +122,56 @@ async function fetchOneCounty(name) {
 
 async function rotateWeather() {
   if (wxPaused) return;
-  const pill = document.getElementById("weather-pill");
-  pill.style.display = "flex";
-  const name = ROTATE_COUNTIES[wxIdx % ROTATE_COUNTIES.length];
+  const name = ROTATE[wxIdx % ROTATE.length];
   wxIdx++;
-  const d = await fetchOneCounty(name);
+  const d = await fetchCounty(name);
   if (d && d.ok) {
     document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
-    document.getElementById("wx-temp").textContent = d.temp + "°C";
-    document.getElementById("wx-feel").textContent = " · " + (d.feel || "");
-    document.getElementById("wx-city").textContent = d.county + " County";
+    document.getElementById("wx-temp").textContent  = d.temp + "°C";
+    document.getElementById("wx-feel").textContent  = " · " + (d.feel || "");
+    document.getElementById("wx-city").textContent  = d.county + " County";
+    if (wxTimer) clearTimeout(wxTimer);
+    wxTimer = setTimeout(rotateWeather, 4000);
   } else {
-    // Skip this county — try next immediately
     if (wxTimer) clearTimeout(wxTimer);
     wxTimer = setTimeout(rotateWeather, 500);
-    return;
   }
-  if (wxTimer) clearTimeout(wxTimer);
-  wxTimer = setTimeout(rotateWeather, 4000);
 }
 
-async function forceGPS() {
+function forceGPS() {
   wxPaused = true;
   if (wxTimer) clearTimeout(wxTimer);
   document.getElementById("wx-city").textContent = "📍 Locating…";
+  const bail = setTimeout(() => { wxPaused = false; rotateWeather(); }, 12000);
   navigator.geolocation.getCurrentPosition(
     async pos => {
+      clearTimeout(bail);
       try {
         const r = await fetch(API + "/weather", {
-          method: "POST", headers: {"Content-Type":"application/json"},
+          method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude })
         });
         const d = await r.json();
         if (d.ok) {
           document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
-          document.getElementById("wx-temp").textContent = d.temp + "°C";
-          document.getElementById("wx-feel").textContent = " · " + (d.feel || "");
-          document.getElementById("wx-city").textContent = "Your location · " + (d.condition || "");
+          document.getElementById("wx-temp").textContent  = d.temp + "°C";
+          document.getElementById("wx-feel").textContent  = " · " + (d.feel || "");
+          document.getElementById("wx-city").textContent  = "📍 " + (d.county || "You");
         }
       } catch (e) {}
-      setTimeout(() => { wxPaused = false; rotateWeather(); }, 20000);
+      setTimeout(() => { wxPaused = false; rotateWeather(); }, 15000);
     },
-    () => { wxPaused = false; rotateWeather(); },
+    () => { clearTimeout(bail); wxPaused = false; rotateWeather(); },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
+// ═══ AUTH ═══
 async function checkAuth() {
   let uid = localStorage.getItem("imhotep_user_id");
   if (!uid) {
     try {
-      const r = await fetch(API + "/auth/guest");
-      const d = await r.json();
+      const d = await (await fetch(API + "/auth/guest")).json();
       if (d.ok) {
         localStorage.setItem("imhotep_token", d.token);
         localStorage.setItem("imhotep_user_id", d.user_id);
@@ -236,34 +179,34 @@ async function checkAuth() {
       }
     } catch (e) {}
   }
-  const token = localStorage.getItem("imhotep_token");
-  const user = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
-  document.getElementById("user-display").textContent = token ? (user.name || "Guest") : "Guest";
+  const t = localStorage.getItem("imhotep_token");
+  const u = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
+  document.getElementById("user-display").textContent = t ? (u.name || "Guest") : "Guest";
 }
 
+// ═══ CHAT ═══
 function pickAgent(a) {
   selectedAgent = a;
   document.querySelectorAll(".agent-strip .chip").forEach(c =>
     c.classList.toggle("active", c.dataset.agent === a));
 }
-
 function escapeHtml(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
-function formatReply(text) {
-  let h = escapeHtml(text);
+function formatReply(t) {
+  let h = escapeHtml(t);
   h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   h = h.replace(/`([^`\n]+)`/g, "<code>$1</code>");
   h = h.replace(/\n/g, "<br>");
   h = h.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank">[source]</a>');
   return h;
 }
-function addBubble(text, cls, formatted) {
+function addBubble(text, cls, html) {
   const m = document.getElementById("messages");
   const w = document.getElementById("welcome"); if (w) w.remove();
   const d = document.createElement("div");
   d.className = "bubble " + cls;
-  d.innerHTML = formatted ? formatReply(text) : escapeHtml(text).replace(/\n/g,"<br>");
+  d.innerHTML = html ? formatReply(text) : escapeHtml(text).replace(/\n/g,"<br>");
   m.appendChild(d); m.scrollTop = m.scrollHeight;
 }
 function addThinking() {
@@ -274,10 +217,8 @@ function addThinking() {
   d.innerHTML = '<span class="earth">🌍</span><span class="think-text">Reasoning…</span>';
   m.appendChild(d); m.scrollTop = m.scrollHeight;
 }
-function removeThinking() {
-  const t = document.getElementById("thinking");
-  if (t) t.remove();
-}
+function removeThinking() { const t = document.getElementById("thinking"); if (t) t.remove(); }
+
 async function sendChat() {
   const v = document.getElementById("prompt").value.trim();
   if (!v || busy) return;
@@ -287,7 +228,7 @@ async function sendPrompt(prompt) {
   if (busy) return;
   busy = true;
   const btn = document.getElementById("send-btn");
-  const ta = document.getElementById("prompt");
+  const ta  = document.getElementById("prompt");
   btn.disabled = true; btn.textContent = "…";
   addBubble(prompt, "user", false);
   ta.value = "";
@@ -296,7 +237,7 @@ async function sendPrompt(prompt) {
     let uid = localStorage.getItem("imhotep_user_id");
     if (!uid) { await checkAuth(); uid = localStorage.getItem("imhotep_user_id"); }
     const r = await fetch(API + "/chat", {
-      method: "POST", headers: {"Content-Type":"application/json"},
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt, agent: selectedAgent, user_id: uid, temperature: 0.7 })
     });
     if (r.status === 402) {
@@ -319,17 +260,14 @@ async function sendPrompt(prompt) {
     btn.disabled = false; btn.textContent = "➤"; busy = false;
   }
 }
-function onKey(e) {
-  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); }
-}
+function onKey(e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); } }
 function logout() {
   ["imhotep_token","imhotep_user_id","imhotep_user"].forEach(k => localStorage.removeItem(k));
   window.location.href = "auth.html";
 }
 
+// ═══ BOOT ═══
 window.addEventListener("DOMContentLoaded", () => {
-  const b = document.getElementById("wx-gps-btn");
-  if (b) b.addEventListener("click", forceGPS);
   checkAuth();
   rotateWeather();
 });

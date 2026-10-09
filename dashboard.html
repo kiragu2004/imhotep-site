@@ -6,101 +6,60 @@
 <title>Kaa Rada, Jua Hali — Kenya Live</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  .dash { max-width:1200px; margin:0 auto; padding:1.5rem 1rem 3rem; }
-  .tb { text-align:center; margin-bottom:1.25rem; }
-  .tb .sh { font-size:clamp(1.8rem,6vw,2.8rem); font-weight:900;
-    background:linear-gradient(135deg,#00d9ff 0%,#9000ff 50%,#ff00ff 100%);
-    -webkit-background-clip:text; background-clip:text;
-    -webkit-text-fill-color:transparent; }
-  .tb .sub { color:var(--text-secondary); font-size:.9rem; margin-top:.35rem; }
-  .tb .hash { color:#ff9dd8; font-size:.75rem; font-weight:700;
-    letter-spacing:.08em; margin-top:.5rem; text-transform:uppercase; }
-  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-    gap:1.25rem; margin-top:1rem; }
-  .card { background:var(--bg-glass); border:1px solid rgba(0,217,255,.15);
-    border-radius:16px; padding:1.25rem; }
-  .card h3 { color:var(--accent-cyan); margin-bottom:.85rem; font-size:1rem;
-    display:flex; align-items:center; gap:.5rem; }
-  .card h3 .tag { font-size:.6rem; padding:.15rem .5rem; border-radius:999px;
-    background:rgba(0,217,255,.12); color:#00d9ff; font-weight:800;
-    letter-spacing:.06em; }
-  .empty { color:var(--text-muted); font-size:.85rem; padding:.75rem 0; }
-  .county-select { width:100%; padding:.75rem; font-size:.95rem;
-    background:rgba(255,255,255,.05); color:#fff;
-    border:1px solid rgba(0,217,255,.2); border-radius:10px; }
-  .weather-big { text-align:center; padding:1rem 0; }
-  .weather-big .we { font-size:3.5rem; line-height:1; }
-  .weather-big .wt { font-size:2.5rem; font-weight:900; color:#00d9ff;
-    margin-top:.25rem; }
-  .weather-big .wc { color:var(--text-secondary); font-size:.9rem;
-    margin-top:.25rem; }
-  .weather-big .wl { color:var(--text-muted); font-size:.75rem; }
-  .fc { display:grid; grid-template-columns:repeat(7,1fr); gap:.35rem;
-    margin-top:1rem; }
-  .fc-day { background:rgba(255,255,255,.03); border-radius:8px;
-    padding:.5rem .25rem; text-align:center; font-size:.7rem; }
-  .fc-day .d { color:var(--text-muted); }
-  .fc-day .e { font-size:1.1rem; margin:.2rem 0; }
-  .fc-day .t { color:#00d9ff; font-weight:700; }
-  .fc-day .r { color:#00c87a; font-size:.65rem; }
-  .fire-row { padding:.7rem .9rem; margin:.35rem 0;
-    background:rgba(255,107,107,.05); border-left:3px solid #ff6b6b;
-    border-radius:8px; cursor:pointer; font-size:.85rem;
-    color:var(--text-secondary); }
-  .fire-row:hover { background:rgba(255,107,107,.12); }
-  .fire-row .county { color:#ff9c9c; font-weight:700; }
-  .fire-row .coords { color:var(--text-muted); font-size:.72rem; margin-top:.2rem; }
-  .row { padding:.55rem 0; border-bottom:1px solid rgba(0,217,255,.08);
-    font-size:.85rem; color:var(--text-secondary); }
-  .row:last-child { border-bottom:none; }
-  .row b { color:var(--accent-cyan); }
-  .row a { color:var(--accent-cyan); text-decoration:none; }
-  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:.75rem;
-    margin-bottom:1rem; text-align:center; }
-  .stats .n { font-size:1.6rem; font-weight:800; color:var(--accent-cyan); }
-  .stats .l { font-size:.7rem; color:var(--text-muted);
-    text-transform:uppercase; letter-spacing:.05em; }
-  .verdict { padding:.7rem .9rem; margin-top:.85rem; border-radius:10px;
-    background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(255,0,255,.04));
-    border:1px solid rgba(0,217,255,.22); color:var(--text-secondary);
-    font-size:.82rem; }
-  #sat-img { width:100%; border-radius:12px; min-height:180px;
-    background:rgba(0,0,0,.3); display:block; }
-  .youth-card { grid-column:1/-1;
-    background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(144,0,255,.06),rgba(255,0,255,.05));
-    border:1.5px solid rgba(0,217,255,.35); }
-  .youth-actions { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:.65rem; margin-top:1rem; }
-  .youth-actions a { padding:.85rem; border-radius:12px; text-align:center;
-    background:rgba(0,217,255,.08); border:1px solid rgba(0,217,255,.25);
-    color:var(--text-primary); font-size:.82rem; font-weight:600;
-    text-decoration:none; }
-  .youth-actions a:hover { background:rgba(0,217,255,.18);
-    transform:translateY(-2px); }
-  .youth-actions a .big { font-size:1.4rem; display:block; margin-bottom:.35rem; }
-  .modal { display:none; position:fixed; inset:0; z-index:9999;
-    background:rgba(0,0,0,.85); backdrop-filter:blur(8px); padding:1rem;
-    overflow-y:auto; }
-  .modal.open { display:block; }
-  .modal-box { max-width:560px; margin:2rem auto;
-    background:linear-gradient(180deg,#1a1416,#0f0b0c);
-    border:1px solid rgba(255,107,107,.4); border-radius:20px;
-    padding:1.5rem; position:relative; }
-  .modal-box h2 { color:#ff9c9c; margin-bottom:.3rem; }
-  .modal-box .sub { color:var(--text-muted); font-size:.72rem;
-    text-transform:uppercase; letter-spacing:.08em; margin-bottom:1.25rem; }
-  .detail { display:flex; justify-content:space-between; padding:.75rem 0;
-    border-bottom:1px solid rgba(255,107,107,.1); font-size:.9rem; }
-  .detail:last-of-type { border-bottom:none; }
-  .detail .k { color:var(--text-muted); }
-  .detail .v { color:#ff9c9c; font-weight:700; }
-  .acts { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-top:1.25rem; }
-  .acts a { padding:.8rem; border-radius:10px; text-align:center;
-    font-size:.82rem; font-weight:700; text-decoration:none; }
-  .acts .p { background:linear-gradient(135deg,#ff6b6b,#ff9c9c); color:#1a0505; }
-  .acts .s { background:transparent; color:#ff9c9c; border:1.5px solid #ff9c9c; }
-  .close { position:absolute; top:1rem; right:1rem; background:transparent;
-    border:none; color:#ff9c9c; font-size:1.5rem; cursor:pointer; }
+  .dash{max-width:1200px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+  .tb{text-align:center;margin-bottom:1.25rem;}
+  .tb .sh{font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;background:linear-gradient(135deg,#00d9ff 0%,#9000ff 50%,#ff00ff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .tb .sub{color:var(--text-secondary);font-size:.9rem;margin-top:.35rem;}
+  .tb .hash{color:#ff9dd8;font-size:.75rem;font-weight:700;letter-spacing:.08em;margin-top:.5rem;text-transform:uppercase;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.25rem;margin-top:1rem;}
+  .card{background:var(--bg-glass);border:1px solid rgba(0,217,255,.15);border-radius:16px;padding:1.25rem;}
+  .card h3{color:var(--accent-cyan);margin-bottom:.85rem;font-size:1rem;display:flex;align-items:center;gap:.5rem;}
+  .card h3 .tag{font-size:.6rem;padding:.15rem .5rem;border-radius:999px;background:rgba(0,217,255,.12);color:#00d9ff;font-weight:800;letter-spacing:.06em;}
+  .empty{color:var(--text-muted);font-size:.85rem;padding:.75rem 0;}
+  .county-select{width:100%;padding:.75rem;font-size:.95rem;background:rgba(255,255,255,.05);color:#fff;border:1px solid rgba(0,217,255,.2);border-radius:10px;}
+  .weather-big{text-align:center;padding:1rem 0;}
+  .weather-big .we{font-size:3.5rem;line-height:1;}
+  .weather-big .wt{font-size:2.5rem;font-weight:900;color:#00d9ff;margin-top:.25rem;}
+  .weather-big .wc{color:var(--text-secondary);font-size:.9rem;margin-top:.25rem;}
+  .weather-big .wl{color:var(--text-muted);font-size:.75rem;}
+  .fc{display:grid;grid-template-columns:repeat(7,1fr);gap:.35rem;margin-top:1rem;}
+  .fc-day{background:rgba(255,255,255,.03);border-radius:8px;padding:.5rem .25rem;text-align:center;font-size:.7rem;}
+  .fc-day .d{color:var(--text-muted);}
+  .fc-day .e{font-size:1.1rem;margin:.2rem 0;}
+  .fc-day .t{color:#00d9ff;font-weight:700;}
+  .fc-day .r{color:#00c87a;font-size:.65rem;}
+  .fire-row{padding:.7rem .9rem;margin:.35rem 0;background:rgba(255,107,107,.05);border-left:3px solid #ff6b6b;border-radius:8px;cursor:pointer;font-size:.85rem;color:var(--text-secondary);}
+  .fire-row:hover{background:rgba(255,107,107,.12);}
+  .fire-row .county{color:#ff9c9c;font-weight:700;}
+  .fire-row .coords{color:var(--text-muted);font-size:.72rem;margin-top:.2rem;}
+  .row{padding:.55rem 0;border-bottom:1px solid rgba(0,217,255,.08);font-size:.85rem;color:var(--text-secondary);}
+  .row:last-child{border-bottom:none;}
+  .row b{color:var(--accent-cyan);}
+  .row a{color:var(--accent-cyan);text-decoration:none;}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem;text-align:center;}
+  .stats .n{font-size:1.6rem;font-weight:800;color:var(--accent-cyan);}
+  .stats .l{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;}
+  .verdict{padding:.7rem .9rem;margin-top:.85rem;border-radius:10px;background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(255,0,255,.04));border:1px solid rgba(0,217,255,.22);color:var(--text-secondary);font-size:.82rem;}
+  #sat-img{width:100%;border-radius:12px;min-height:180px;background:rgba(0,0,0,.3);display:block;}
+  .youth-card{grid-column:1/-1;background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(144,0,255,.06),rgba(255,0,255,.05));border:1.5px solid rgba(0,217,255,.35);}
+  .youth-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.65rem;margin-top:1rem;}
+  .youth-actions a{padding:.85rem;border-radius:12px;text-align:center;background:rgba(0,217,255,.08);border:1px solid rgba(0,217,255,.25);color:var(--text-primary);font-size:.82rem;font-weight:600;text-decoration:none;}
+  .youth-actions a:hover{background:rgba(0,217,255,.18);transform:translateY(-2px);}
+  .youth-actions a .big{font-size:1.4rem;display:block;margin-bottom:.35rem;}
+  .modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);padding:1rem;overflow-y:auto;}
+  .modal.open{display:block;}
+  .modal-box{max-width:560px;margin:2rem auto;background:linear-gradient(180deg,#1a1416,#0f0b0c);border:1px solid rgba(255,107,107,.4);border-radius:20px;padding:1.5rem;position:relative;}
+  .modal-box h2{color:#ff9c9c;margin-bottom:.3rem;}
+  .modal-box .sub{color:var(--text-muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1.25rem;}
+  .detail{display:flex;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid rgba(255,107,107,.1);font-size:.9rem;}
+  .detail:last-of-type{border-bottom:none;}
+  .detail .k{color:var(--text-muted);}
+  .detail .v{color:#ff9c9c;font-weight:700;}
+  .acts{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1.25rem;}
+  .acts a{padding:.8rem;border-radius:10px;text-align:center;font-size:.82rem;font-weight:700;text-decoration:none;}
+  .acts .p{background:linear-gradient(135deg,#ff6b6b,#ff9c9c);color:#1a0505;}
+  .acts .s{background:transparent;color:#ff9c9c;border:1.5px solid #ff9c9c;}
+  .close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:#ff9c9c;font-size:1.5rem;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -124,10 +83,9 @@
 
   <div class="grid">
 
-    <!-- YOUTH -->
     <div class="card youth-card">
       <h3>🌍 #YouthAndClimateChange <span class="tag">TAKE ACTION</span></h3>
-      <p style="color:var(--text-secondary); font-size:.9rem; line-height:1.7;">
+      <p style="color:var(--text-secondary);font-size:.9rem;line-height:1.7;">
         Young Kenyans are on the front line of climate change — and its most
         powerful solvers. See live data, then join the movement.
       </p>
@@ -139,52 +97,53 @@
       </div>
     </div>
 
-    <!-- CLIMATE -->
     <div class="card" style="grid-column:1/-1;">
       <h3>🌡️ Climate Change — Kenya <span class="tag">1985→2050</span></h3>
       <div id="climate"><div class="empty">Loading…</div></div>
     </div>
 
-    <!-- COUNTY WEATHER — SEARCH + BIG DISPLAY -->
-    <!-- COUNTY WEATHER PATCH — replaces the #county-weather card -->
-<div class="card" id="county-weather" style="grid-column:1/-1;">
-  <h3>🌤️ Choose Your County</h3>
-  <select id="county-select" class="county-select" onchange="pickCounty(this.value)">
-    <option value="">— Auto-rotating through all counties —</option>
-  </select>
-  <div id="weather-display" style="margin-top:1rem;">
-    <div class="empty">Loading…</div>
-  </div>
-  <div id="forecast-display" style="margin-top:1rem;"></div>
-</div>
+    <div class="card" id="county-weather" style="grid-column:1/-1;">
+      <h3>🌤️ Choose Your County</h3>
+      <select id="county-select" class="county-select" onchange="pickCounty(this.value)">
+        <option value="">— Auto-rotating through all counties —</option>
+      </select>
+      <div id="weather-display" style="margin-top:1rem;"><div class="empty">Loading…</div></div>
+      <div id="forecast-display" style="margin-top:1rem;"></div>
+    </div>
 
-    <!-- DISASTERS -->
+    <div class="card">
+      <h3>🔥 Active Fires (24h) <span class="tag">NASA FIRMS</span></h3>
+      <div id="fires" style="max-height:400px;overflow-y:auto;"><div class="empty">Loading…</div></div>
+      <div style="color:var(--text-muted);font-size:.72rem;margin-top:.75rem;">👆 Tap a fire for details</div>
+    </div>
+
+    <div class="card">
+      <h3>🌾 Drought & NDVI <span class="tag">VCI</span></h3>
+      <div id="drought" style="max-height:400px;overflow-y:auto;"><div class="empty">Loading…</div></div>
+    </div>
+
     <div class="card">
       <h3>⚠️ Disaster Alerts — GDACS</h3>
-      <div id="disasters" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+      <div id="disasters" style="max-height:300px;overflow-y:auto;"><div class="empty">Loading…</div></div>
     </div>
 
-    <!-- FLOOD -->
     <div class="card">
       <h3>🌊 Flood Watch</h3>
-      <div id="flood" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+      <div id="flood" style="max-height:300px;overflow-y:auto;"><div class="empty">Loading…</div></div>
     </div>
 
-    <!-- NASA POWER -->
     <div class="card">
-      <h3>🌧️ Rainfall — Last 30 Days</h3>
-      <div id="rain30" style="max-height:300px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+      <h3>🌧️ Rainfall — Last 30 Days <span class="tag">NASA POWER</span></h3>
+      <div id="rain30" style="max-height:300px;overflow-y:auto;"><div class="empty">Loading…</div></div>
     </div>
 
-    <!-- NEWS -->
     <div class="card">
       <h3>📰 Kenya News</h3>
-      <div id="news" style="max-height:400px; overflow-y:auto;"><div class="empty">Loading…</div></div>
+      <div id="news" style="max-height:400px;overflow-y:auto;"><div class="empty">Loading…</div></div>
     </div>
 
-    <!-- SATELLITE -->
     <div class="card" style="grid-column:1/-1;">
-      <h3>🛰️ Satellite View</h3>
+      <h3>🛰️ Satellite View <span class="tag">NASA EPIC</span></h3>
       <img id="sat-img" src="" alt="Satellite">
     </div>
 
@@ -209,17 +168,12 @@
 
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
-let allFires = [];
-let allCounties = [];
-let rotIdx = 0;
-let rotTimer = null;
-let userPicked = false;
+let allFires = [], allCounties = [], rotIdx = 0, rotTimer = null, userPicked = false;
 
-// ── POPULATE COUNTY SELECT ──
+// ── COUNTY LIST + ROTATION ──
 async function loadCountyList() {
   try {
-    const r = await fetch(API + "/counties");
-    const d = await r.json();
+    const d = await (await fetch(API + "/counties")).json();
     if (d.ok && d.counties) {
       allCounties = d.counties.sort();
       const sel = document.getElementById("county-select");
@@ -230,27 +184,24 @@ async function loadCountyList() {
       });
       startRotation();
     }
-  } catch (e) { console.log("counties fail:", e); }
+  } catch (e) { console.log("counties:", e); }
 }
 
-// ── ROTATION ──
 function startRotation() {
   if (rotTimer) clearInterval(rotTimer);
   rotTimer = setInterval(() => {
-    if (userPicked) return;
-    if (allCounties.length === 0) return;
+    if (userPicked || allCounties.length === 0) return;
     const c = allCounties[rotIdx % allCounties.length];
     rotIdx++;
-    loadCountyWeather(c, true);
+    loadCountyWeather(c);
   }, 5000);
-  // Fetch first immediately
   if (allCounties.length > 0) {
-    loadCountyWeather(allCounties[0], true);
+    loadCountyWeather(allCounties[0]);
     rotIdx = 1;
   }
 }
 
-async function loadCountyWeather(name, isRotation) {
+async function loadCountyWeather(name) {
   try {
     const r = await fetch(API + "/weather/county/" + encodeURIComponent(name));
     if (!r.ok) return;
@@ -278,21 +229,19 @@ async function loadForecast(name) {
   const el = document.getElementById("forecast-display");
   el.innerHTML = '<div class="empty">Loading forecast…</div>';
   try {
-    const r = await fetch(API + "/weather/forecast/" + encodeURIComponent(name));
-    const d = await r.json();
+    const d = await (await fetch(API + "/weather/forecast/" + encodeURIComponent(name))).json();
     if (!d.ok) { el.innerHTML = ""; return; }
-    let html = '<div style="color:var(--accent-cyan); font-size:.85rem; margin-bottom:.5rem;">7-Day Forecast</div>';
-    html += '<div class="fc">';
+    let h = '<div style="color:var(--accent-cyan);font-size:.85rem;margin-bottom:.5rem;">7-Day Forecast</div><div class="fc">';
     d.days.forEach(day => {
-      html += `<div class="fc-day">
+      h += `<div class="fc-day">
         <div class="d">${day.date.slice(5)}</div>
         <div class="e">${day.emoji}</div>
         <div class="t">${day.tmax}° / ${day.tmin}°</div>
         ${day.rain_mm > 0 ? `<div class="r">${day.rain_mm}mm</div>` : ""}
       </div>`;
     });
-    html += '</div>';
-    el.innerHTML = html;
+    h += '</div>';
+    el.innerHTML = h;
   } catch (e) { el.innerHTML = ""; }
 }
 
@@ -312,7 +261,7 @@ async function loadClimate() {
   } catch (e) { document.getElementById("climate").innerHTML = '<div class="empty">❌</div>'; }
 }
 
-// ── FIRES ──
+// ── NASA FIRES ──
 async function loadFires() {
   try {
     const d = await (await fetch(API + "/fires/kenya")).json();
@@ -321,7 +270,7 @@ async function loadFires() {
       document.getElementById("fires").innerHTML = '<div class="empty">✅ No fires in Kenya today</div>';
       return;
     }
-    let h = `<div style="color:var(--text-muted); font-size:.82rem; margin-bottom:.5rem;"><b style="color:#ff9c9c;">${d.count} fires</b></div>`;
+    let h = `<div style="color:var(--text-muted);font-size:.82rem;margin-bottom:.5rem;"><b style="color:#ff9c9c;">${d.count} fires</b></div>`;
     allFires.slice(0, 40).forEach((f, i) => {
       h += `<div class="fire-row" onclick="showFire(${i})">
         🔥 <span class="county">${f.county || "Unknown"}</span>
@@ -333,8 +282,7 @@ async function loadFires() {
 }
 
 function showFire(i) {
-  const f = allFires[i];
-  if (!f) return;
+  const f = allFires[i]; if (!f) return;
   document.getElementById("m-county").textContent = (f.county || "Unknown") + " County";
   document.getElementById("m-coords").textContent = f.lat.toFixed(4) + ", " + f.lon.toFixed(4);
   document.getElementById("m-date").textContent = (f.date || "—") + " " + (f.time || "");
@@ -345,7 +293,7 @@ function showFire(i) {
 }
 function closeModal() { document.getElementById("modal").classList.remove("open"); }
 
-// ── DROUGHT ──
+// ── DROUGHT / NDVI ──
 async function loadDrought() {
   const cs = ["Turkana","Marsabit","Mandera","Wajir","Garissa","Isiolo","Samburu","Kitui"];
   let h = "";
@@ -353,17 +301,15 @@ async function loadDrought() {
     try {
       const d = await (await fetch(API + "/ndvi/" + encodeURIComponent(c))).json();
       if (d.ok) {
-        const color = d.vci >= 50 ? "#00c87a" : d.vci >= 35 ? "#00d9ff"
-                    : d.vci >= 21 ? "#ffaa00" : "#ff6b6b";
+        const color = d.vci >= 50 ? "#00c87a" : d.vci >= 35 ? "#00d9ff" : d.vci >= 21 ? "#ffaa00" : "#ff6b6b";
         h += `<div class="row"><b>${c}</b> · VCI <span style="color:${color};font-weight:700;">${d.vci}</span>
-              <div style="color:var(--text-muted); font-size:.72rem; margin-top:.2rem;">${d.status}</div></div>`;
+              <div style="color:var(--text-muted);font-size:.72rem;margin-top:.2rem;">${d.status}</div></div>`;
       }
     } catch (e) {}
   }
-  h += `<div class="row" style="color:var(--text-muted); font-size:.72rem; padding-top:.75rem; margin-top:.75rem; border-top:1px solid rgba(0,217,255,.15);">
+  h += `<div class="row" style="color:var(--text-muted);font-size:.72rem;padding-top:.75rem;margin-top:.75rem;border-top:1px solid rgba(0,217,255,.15);">
     <b style="color:var(--accent-cyan);">📚 NDVI / VCI</b><br>
-    NDVI = vegetation greenness from satellite. VCI = today vs historical.
-    Below 35 triggers Kenya's drought early warning.</div>`;
+    NDVI = vegetation greenness from satellite. VCI = today vs historical. Below 35 triggers Kenya's drought early warning.</div>`;
   document.getElementById("drought").innerHTML = h || '<div class="empty">No data</div>';
 }
 
@@ -376,7 +322,7 @@ async function loadDisasters() {
       return;
     }
     document.getElementById("disasters").innerHTML = d.events.map(e =>
-      `<div class="row"><b>${e.type}</b> — ${e.alert_level}<div style="color:var(--text-muted); font-size:.72rem;">${e.title || ""}</div></div>`
+      `<div class="row"><b>${e.type}</b> — ${e.alert_level}<div style="color:var(--text-muted);font-size:.72rem;">${e.title || ""}</div></div>`
     ).join("");
   } catch (e) { document.getElementById("disasters").innerHTML = '<div class="empty">❌</div>'; }
 }
@@ -390,7 +336,7 @@ async function loadFlood() {
       const d = await (await fetch(API + "/flood/" + encodeURIComponent(c))).json();
       if (d.ok) {
         h += `<div class="row"><b>${c}</b><span style="color:${d.color};font-weight:700;"> ${d.level}</span>
-              <div style="color:var(--text-muted); font-size:.72rem;">Peak 7d: ${d.peak_next_7d} m³/s</div></div>`;
+              <div style="color:var(--text-muted);font-size:.72rem;">Peak 7d: ${d.peak_next_7d} m³/s</div></div>`;
       }
     } catch (e) {}
   }
@@ -406,7 +352,7 @@ async function loadRain30() {
       const d = await (await fetch(API + "/nasa/power/" + encodeURIComponent(c))).json();
       if (d.ok) {
         h += `<div class="row"><b>${c}</b> · ${d.rain_30d_mm} mm
-              <div style="color:var(--text-muted); font-size:.72rem;">avg ${d.avg_temp_c}°C</div></div>`;
+              <div style="color:var(--text-muted);font-size:.72rem;">avg ${d.avg_temp_c}°C</div></div>`;
       }
     } catch (e) {}
   }
