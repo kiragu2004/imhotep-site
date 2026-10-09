@@ -289,92 +289,91 @@
 <script>
 const API = "https://imhotep-agentic-ai.onrender.com";
 let selectedAgent = "generalist";
-let userLocation  = null;
 let busy = false;
 
 const THINKING_STAGES = [
-  "🌍 Connecting...",
-  "🔍 Searching sources...",
-  "🧠 Reasoning...",
-  "⚡ Activating...",
-  "📝 Composing...",
-  "✨ Polishing...",
+  "🌍 Connecting...", "🔍 Searching sources...", "🧠 Reasoning...",
+  "⚡ Activating...", "📝 Composing...", "✨ Polishing...",
 ];
 
-function autoGrow(el) {
-  el.style.height = "42px";
-  el.style.height = Math.min(el.scrollHeight, 130) + "px";
-}
+// ═══════════════════════════════════════════════════════════════
+// ROTATING WEATHER — cycles through 47 Kenyan counties every 5s
+// ═══════════════════════════════════════════════════════════════
+let _wxCounties = [];
+let _wxIndex = 0;
+let _wxTimer = null;
 
-// ── Weather bootstrap ──
-async function initAutoWeather() {
-  if (navigator.geolocation) {
-    const got = await new Promise(resolve => {
-      navigator.geolocation.getCurrentPosition(
-        p => resolve({ lat: p.coords.latitude, lon: p.coords.longitude }),
-        () => resolve(null),
-        { timeout: 4000, maximumAge: 600000 });
-    });
-    if (got) { userLocation = got; return loadWeather(); }
-  }
-  const providers = [
-    { url: "https://ipapi.co/json/", lat: "latitude", lon: "longitude", city: "city" },
-    { url: "https://ipwho.is/", lat: "latitude", lon: "longitude", city: "city" },
-  ];
-  for (const p of providers) {
-    try {
-      const r = await fetch(p.url, { cache: "no-store" });
-      if (!r.ok) continue;
-      const d = await r.json();
-      const la = parseFloat(d[p.lat]), lo = parseFloat(d[p.lon]);
-      if (!isNaN(la) && !isNaN(lo) && la !== 0 && lo !== 0) {
-        userLocation = { lat: la, lon: lo };
-        return loadWeather();
-      }
-    } catch (e) { console.log("wx provider fail:", p.url); }
-  }
-  return loadWeather("Nairobi");
-}
+async function startRotatingWeather() {
+  const pill = document.getElementById("weather-pill");
+  if (!pill) return;
+  pill.style.display = "flex";
+  document.getElementById("wx-emoji").textContent = "🌍";
+  document.getElementById("wx-temp").textContent = "…";
+  document.getElementById("wx-city").textContent = "Loading Kenya weather";
 
-async function loadWeather(city) {
-  let body;
-  if (userLocation && !city) body = { lat: userLocation.lat, lon: userLocation.lon };
-  else if (city) body = { city };
-  else body = { city: "Nairobi" };
   try {
-    const r = await fetch(API + "/weather", {
-      method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify(body)
-    });
+    const r = await fetch(API + "/weather/all-counties", { cache: "no-store" });
     const d = await r.json();
-    if (d.ok && d.temp !== null && d.temp !== undefined) {
-      document.getElementById("weather-pill").style.display = "flex";
-      document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
-      document.getElementById("wx-temp").textContent  = d.temp + "°C";
-      document.getElementById("wx-feel").textContent  = " · " + (d.feel || "");
-      document.getElementById("wx-city").textContent  = (d.city || "—") + (d.country ? ", " + d.country : "");
+    console.log("weather API returned", d.count, "counties");
+    if (!d.ok || !d.counties || d.counties.length === 0) {
+      document.getElementById("wx-city").textContent = "Weather unavailable";
+      return;
     }
-  } catch (e) { console.log("weather:", e); }
+    _wxCounties = d.counties.slice().sort(() => Math.random() - 0.5);
+    _wxIndex = 0;
+    showWxCard();
+    if (_wxTimer) clearInterval(_wxTimer);
+    _wxTimer = setInterval(() => {
+      _wxIndex = (_wxIndex + 1) % _wxCounties.length;
+      showWxCard();
+    }, 5000);
+  } catch (e) {
+    console.log("rotate weather fail:", e);
+    document.getElementById("wx-city").textContent = "Weather unavailable";
+  }
 }
 
-async function forceGPS() {
+function showWxCard() {
+  if (!_wxCounties.length) return;
+  const c = _wxCounties[_wxIndex];
+  document.getElementById("wx-emoji").textContent = c.emoji || "🌤️";
+  document.getElementById("wx-temp").textContent  = c.temp + "°C";
+  document.getElementById("wx-feel").textContent  = " · " + (c.feel || "");
+  document.getElementById("wx-city").textContent  = c.county + " County · " + c.condition_label;
+}
+
+function forceGPS() {
   const city = document.getElementById("wx-city");
-  const orig = city.textContent;
   if (!navigator.geolocation) { city.textContent = "GPS not supported"; return; }
   city.textContent = "📍 Locating…";
   navigator.geolocation.getCurrentPosition(
     async pos => {
-      userLocation = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-      await loadWeather();
+      const lat = pos.coords.latitude, lon = pos.coords.longitude;
+      try {
+        const r = await fetch(API + "/weather", {
+          method: "POST", headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({lat, lon})
+        });
+        const d = await r.json();
+        if (d.ok) {
+          if (_wxTimer) clearInterval(_wxTimer);
+          _wxTimer = null;
+          document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
+          document.getElementById("wx-temp").textContent  = d.temp + "°C";
+          document.getElementById("wx-feel").textContent  = " · " + (d.feel || "");
+          document.getElementById("wx-city").textContent  = "Your location · " + d.condition_label;
+          setTimeout(startRotatingWeather, 20000); // resume rotation after 20s
+        }
+      } catch (e) { city.textContent = "Using IP location"; startRotatingWeather(); }
     },
-    err => {
-      city.textContent = "Using IP location";
-      setTimeout(() => loadWeather(), 800);
-    },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+    err => { city.textContent = "Using IP location"; startRotatingWeather(); },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
 }
 
-// ── Auth ──
+// ═══════════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════════
 async function checkAuth() {
   const token = localStorage.getItem("imhotep_token");
   const user  = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
@@ -390,7 +389,7 @@ async function checkAuth() {
         localStorage.setItem("imhotep_mode", "guest");
         document.getElementById("user-display").textContent = "Guest";
       }
-    } catch (e) { console.log("guest fail:", e); }
+    } catch (e) {}
   } else {
     document.getElementById("user-display").textContent = token ? (user.name || "User") : "Guest";
   }
@@ -400,6 +399,11 @@ function pickAgent(a) {
   selectedAgent = a;
   document.querySelectorAll(".agent-strip .chip").forEach(c =>
     c.classList.toggle("active", c.dataset.agent === a));
+}
+
+function autoGrow(el) {
+  el.style.height = "42px";
+  el.style.height = Math.min(el.scrollHeight, 130) + "px";
 }
 
 function escapeHtml(s) {
@@ -463,8 +467,7 @@ async function sendPrompt(prompt) {
     if (!uid) { await checkAuth(); uid = localStorage.getItem("imhotep_user_id"); }
     const r = await fetch(API + "/chat", {
       method: "POST", headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({ prompt, agent: selectedAgent, user_id: uid,
-                             temperature: 0.7, location: userLocation })
+      body: JSON.stringify({ prompt, agent: selectedAgent, user_id: uid, temperature: 0.7 })
     });
     if (r.status === 402) {
       const err = await r.json();
@@ -480,14 +483,6 @@ async function sendPrompt(prompt) {
     removeThinking();
     if (!data.ok) throw new Error(data.error || "unknown");
     addBubble(data.reply, "bot", true);
-    // update weather pill if backend returned weather
-    if (data.weather) {
-      document.getElementById("weather-pill").style.display = "flex";
-      document.getElementById("wx-emoji").textContent = data.weather.emoji || "🌤️";
-      document.getElementById("wx-temp").textContent = data.weather.temp + "°C";
-      document.getElementById("wx-feel").textContent = " · " + (data.weather.feel || "");
-      document.getElementById("wx-city").textContent = data.weather.city || "—";
-    }
   } catch (err) {
     removeThinking();
     addBubble("Error: " + err.message, "bot error", false);
@@ -505,145 +500,34 @@ function logout() {
   window.location.href = "auth.html";
 }
 
-// ── Satellite modal ──
+// ── SATELLITE MODAL ──
 async function openSatModal() {
   const modal = document.getElementById("sat-modal");
-  const earthImg = document.getElementById("sat-earth");
-  const goesImg  = document.getElementById("sat-goes");
   modal.style.display = "block";
   document.body.style.overflow = "hidden";
-
-  earthImg.src = ""; document.getElementById("sat-earth-meta").textContent = "Loading…";
-  goesImg.src = ""; document.getElementById("sat-goes-meta").textContent = "Loading…";
-
   try {
     const r = await fetch(API + "/nasa/earth");
     const d = await r.json();
     if (d.ok && d.image_url) {
-      earthImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.image_url);
+      document.getElementById("sat-earth").src = API + "/img/proxy?url=" + encodeURIComponent(d.image_url);
       document.getElementById("sat-earth-meta").textContent = "Frame: " + (d.date || "") + " · DSCOVR";
-    } else {
-      document.getElementById("sat-earth-meta").textContent = "NASA EPIC unavailable";
     }
-  } catch (e) { document.getElementById("sat-earth-meta").textContent = "Could not reach NASA"; }
-
-  try {
-    const r = await fetch(API + "/nasa/satellite");
-    const d = await r.json();
-    if (d.ok && d.goes_east_full_disk) {
-      goesImg.src = API + "/img/proxy?url=" + encodeURIComponent(d.goes_east_full_disk);
-      document.getElementById("sat-goes-meta").innerHTML = "Live GOES-16 view: <a href='https://www.star.nesdis.noaa.gov/GOES/GOES16_FullDisk_Band.php?band=GEOCOLOR&length=24' target='_blank' style='color:#00d9ff;'>Click here for live imagery</a>";
-    } else {
-      document.getElementById("sat-goes-meta").textContent = "GOES unavailable";
-    }
-  } catch (e) { document.getElementById("sat-goes-meta").textContent = "Could not reach NOAA"; }
+  } catch (e) {}
 }
 function closeSatModal() {
   document.getElementById("sat-modal").style.display = "none";
   document.body.style.overflow = "";
 }
 
-// ── Kenya tools ──
-function _showToolOut(html) {
-  const box = document.getElementById("tool-output");
-  box.innerHTML = html; box.style.display = "block";
-}
-async function showFires() {
-  _showToolOut("⏳ Fetching fires from NASA…");
-  try {
-    const r = await fetch(API + "/fires/kenya?days=1");
-    const d = await r.json();
-    if (!d.ok) { _showToolOut("❌ " + (d.error || "failed")); return; }
-    if (d.count === 0) { _showToolOut("✅ <b>No active fires in Kenya</b> in last 24h. Source: NASA FIRMS."); return; }
-    let s = `<b>🔥 ${d.count} active fire(s) in Kenya (24h)</b><br>`;
-    d.fires.slice(0, 8).forEach(f => {
-      s += `📍 ${f.lat.toFixed(2)}, ${f.lon.toFixed(2)} · ${f.date} ${f.time || ""}<br>`;
-    });
-    s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: NASA FIRMS (MODIS + VIIRS)</span>`;
-    _showToolOut(s);
-  } catch (e) { _showToolOut("❌ " + e.message); }
-}
-async function showDrought() {
-  const c = prompt("Enter Kenyan county (Turkana, Garissa, Nairobi…):");
-  if (!c) return;
-  _showToolOut("⏳ Checking…");
-  try {
-    const r = await fetch(API + "/drought/" + encodeURIComponent(c));
-    const d = await r.json();
-    if (!d.ok) { _showToolOut("❌ " + d.error); return; }
-    const color = d.phase >= 4 ? "#ff6b6b" : d.phase >= 3 ? "#ffaa00" : d.phase >= 2 ? "#f0c000" : "#00c87a";
-    _showToolOut(`<b>🌾 ${d.county} — Phase ${d.phase} (${d.label})</b><br>
-      <span style="color:${color}; font-weight:700;">${"█".repeat(d.phase)}${"░".repeat(5-d.phase)}</span><br>
-      <span style="color:var(--text-muted); font-size:.72rem;">Source: NDMA (approx)</span>`);
-  } catch (e) { _showToolOut("❌ " + e.message); }
-}
-async function showNews() {
-  _showToolOut("⏳ Fetching Kenya news…");
-  try {
-    const r = await fetch(API + "/news/kenya?limit=6");
-    const d = await r.json();
-    if (!d.ok) { _showToolOut("❌ " + (d.error || "failed")); return; }
-    let s = `<b>📰 Latest from Standard Media</b><br>`;
-    d.items.forEach(it => { s += `• <a href="${it.link}" target="_blank" style="color:#00d9ff;">${it.title}</a><br>`; });
-    s += `<br><span style="color:var(--text-muted); font-size:.72rem;">Source: standardmedia.co.ke</span>`;
-    _showToolOut(s);
-  } catch (e) { _showToolOut("❌ " + e.message); }
-}
-async function showCounties() {
-  _showToolOut("⏳ Loading counties…");
-  try {
-    const r = await fetch(API + "/kenya/counties");
-    const d = await r.json();
-    if (!d.ok) { _showToolOut("❌ failed"); return; }
-    let s = `<b>🗺️ Kenya — ${d.count} counties</b><br>`;
-    s += d.counties.slice(0, 15).map(c => `• ${c.code} ${c.name} (${c.capital})`).join("<br>");
-    s += `<br><br><span style="color:var(--text-muted); font-size:.72rem;">+${d.count - 15} more</span>`;
-    _showToolOut(s);
-  } catch (e) { _showToolOut("❌ " + e.message); }
-}
-
-// ── Init ──
+// ── INIT ──
 window.addEventListener("DOMContentLoaded", () => {
   const b = document.getElementById("wx-gps-btn");
   if (b) b.addEventListener("click", forceGPS);
   checkAuth();
-  initAutoWeather();
+  startRotatingWeather();
+  // Refresh rotation every 10 min
+  setInterval(startRotatingWeather, 600000);
 });
-
-// ═══ AUTO-ROTATING WEATHER — cycles through all 47 counties ═══
-let _wxCounties = [];
-let _wxIndex = 0;
-let _wxTimer = null;
-
-async function initAutoWeather() {
-  try {
-    const r = await fetch(API + "/weather/all-counties");
-    const d = await r.json();
-    if (d.ok && d.counties.length > 0) {
-      _wxCounties = d.counties;
-      _wxIndex = 0;
-      showWxCard();
-      if (_wxTimer) clearInterval(_wxTimer);
-      _wxTimer = setInterval(() => {
-        _wxIndex = (_wxIndex + 1) % _wxCounties.length;
-        showWxCard();
-      }, 5000);
-    }
-  } catch (e) { console.log("auto weather fail:", e); }
-}
-
-function showWxCard() {
-  if (_wxCounties.length === 0) return;
-  const c = _wxCounties[_wxIndex];
-  document.getElementById("weather-pill").style.display = "flex";
-  document.getElementById("wx-emoji").textContent = c.emoji || "🌤️";
-  document.getElementById("wx-temp").textContent  = c.temp + "°C";
-  document.getElementById("wx-feel").textContent  = " · " + (c.feel || "");
-  document.getElementById("wx-city").textContent  = c.county + ", KE · " + c.condition_label;
-}
-
-// Replace the old bootstrapWeather call
-
 </script>
 </body>
 </html>
