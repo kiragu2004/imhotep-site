@@ -279,32 +279,48 @@ window.addEventListener("DOMContentLoaded", () => {
   rotateWeather();
 });
 
-// ── Auth state: show Sign In/Google when logged out, Sign Out when logged in ──
+
+// ── Auth UI: guests are shown Sign In/Google; only real users see Sign Out ──
 function refreshAuthUI() {
-  const token = localStorage.getItem("imhotep_token");
+  const token = localStorage.getItem("imhotep_token") || "";
+  const uid   = localStorage.getItem("imhotep_user_id") || "";
   const user  = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
+
+  const isGuest    = !token || uid.startsWith("guest_") ||
+                     (user && (user.name || "").toLowerCase() === "guest");
+  const isRealUser = !isGuest && !!token;
+
   const display = document.getElementById("user-display");
   const signin  = document.getElementById("btn-signin");
   const google  = document.getElementById("btn-google");
   const signout = document.getElementById("btn-signout");
   if (!display) return;
 
-  if (token && user && user.name) {
-    display.textContent = "👤 " + user.name;
-    display.style.display = "inline";
-    if (signin)  signin.style.display  = "none";
-    if (google)  google.style.display  = "none";
-    if (signout) signout.style.display = "inline-block";
+  const show = (el, on) => {
+    if (!el) return;
+    const v = on ? "inline-block" : "none";
+    if (el.style.display !== v) el.style.display = v;
+  };
+
+  if (isRealUser) {
+    display.textContent = "👤 " + (user.name || "You");
+    show(display, true);
+    show(signin,  false);
+    show(google,  false);
+    show(signout, true);
   } else {
-    display.style.display = "none";
-    if (signin)  signin.style.display  = "inline-block";
-    if (google)  google.style.display  = "inline-block";
-    if (signout) signout.style.display = "none";
+    show(display, false);
+    show(signin,  true);
+    show(google,  true);
+    show(signout, false);
   }
 }
 window.addEventListener("DOMContentLoaded", refreshAuthUI);
 window.addEventListener("storage", refreshAuthUI);
-setInterval(refreshAuthUI, 2000);   // catch login from another tab
+window.addEventListener("focus", refreshAuthUI);
+// slower interval = less flicker; also updates when we change login state
+setInterval(refreshAuthUI, 3000);
+// catch login from another tab
 
 </script>
 </body>
