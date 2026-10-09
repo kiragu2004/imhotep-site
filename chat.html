@@ -309,28 +309,70 @@ async function startRotatingWeather() {
   pill.style.display = "flex";
   document.getElementById("wx-emoji").textContent = "🌍";
   document.getElementById("wx-temp").textContent = "…";
-  document.getElementById("wx-city").textContent = "Loading Kenya weather";
+  document.getElementById("wx-city").textContent = "Loading Kenya weather…";
 
+  // Try /weather/all-counties with 15s timeout
+  let counties = null;
   try {
-    const r = await fetch(API + "/weather/all-counties", { cache: "no-store" });
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 15000);
+    const r = await fetch(API + "/weather/all-counties", { signal: ctl.signal });
+    clearTimeout(timer);
     const d = await r.json();
-    console.log("weather API returned", d.count, "counties");
-    if (!d.ok || !d.counties || d.counties.length === 0) {
-      document.getElementById("wx-city").textContent = "Weather unavailable";
-      return;
+    console.log("all-counties:", r.status, d.count);
+    if (d.ok && d.counties && d.counties.length > 0) {
+      counties = d.counties;
     }
-    _wxCounties = d.counties.slice().sort(() => Math.random() - 0.5);
-    _wxIndex = 0;
-    showWxCard();
-    if (_wxTimer) clearInterval(_wxTimer);
-    _wxTimer = setInterval(() => {
-      _wxIndex = (_wxIndex + 1) % _wxCounties.length;
-      showWxCard();
-    }, 5000);
   } catch (e) {
-    console.log("rotate weather fail:", e);
-    document.getElementById("wx-city").textContent = "Weather unavailable";
+    console.log("all-counties failed:", e.message);
   }
+
+  // Fallback: fetch a small set of popular counties one by one
+  if (!counties || counties.length === 0) {
+    console.log("Using fallback county list");
+    document.getElementById("wx-city").textContent = "Loading popular counties…";
+    const fallback = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret",
+                      "Nyeri","Machakos","Garissa","Turkana","Kakamega",
+                      "Meru","Kisii"];
+    counties = [];
+    await Promise.all(fallback.map(async (name) => {
+      try {
+        const r = await fetch(API + "/weather", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ city: name })
+        });
+        const d = await r.json();
+        if (d.ok) {
+          counties.push({
+            county: name,
+            temp: d.temp,
+            emoji: d.emoji || "🌤️",
+            condition_label: d.condition || "—",
+            feel: d.feel || ""
+          });
+        }
+      } catch (e) {}
+    }));
+  }
+
+  if (!counties || counties.length === 0) {
+    document.getElementById("wx-emoji").textContent = "⚠️";
+    document.getElementById("wx-temp").textContent = "Offline";
+    document.getElementById("wx-city").textContent =
+      "Weather data unavailable. Try again in a moment.";
+    return;
+  }
+
+  _wxCounties = counties.sort(() => Math.random() - 0.5);
+  _wxIndex = 0;
+  showWxCard();
+  if (_wxTimer) clearInterval(_wxTimer);
+  _wxTimer = setInterval(() => {
+    _wxIndex = (_wxIndex + 1) % _wxCounties.length;
+    showWxCard();
+  }, 5000);
+  console.log("rotating through", _wxCounties.length, "counties");
 }
 
 function showWxCard() {
