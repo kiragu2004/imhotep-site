@@ -79,40 +79,60 @@
   <span class="badge">SEEKING COLLABORATORS</span>
  </div>
 
- <h3 style="font-size:1.5rem;margin:.2rem 0 .6rem">Imhotep V2 — Autonomous Village OS</h3>
- <p class="muted" style="font-size:.95rem">Version 1 proved that a small, focused AI can understand Kenya. Version 2 expands that into a <strong style="color:#fff">team of autonomous agents</strong> that monitor Kenyan climate, agriculture, and infrastructure — and act on it without waiting for human input.</p>
+ <h3 style="font-size:1.5rem;margin:.2rem 0 .6rem">Imhotep V2 — Autonomous Agent Civilization</h3>
+ <p class="muted" style="font-size:.95rem">Version 1 proved a focused Kenyan AI can understand Kenya. Version 2 turns that into a <strong style="color:#fff">self-organizing team of autonomous agents</strong> that run on real Ubuntu Linux, make decisions independently, and act on Kenyan problems without waiting for human input.</p>
 
  <div class="grid" style="margin-top:1.2rem">
   <div>
-   <h4 style="color:#00d9ff;margin:0 0 .6rem">What Version 2 Will Do</h4>
+   <h4 style="color:#00d9ff;margin:0 0 .6rem">The Agent Team</h4>
    <ul style="color:#c8d6e0;font-size:.93rem;line-height:1.9;padding-left:1.2rem;margin:0">
-    <li><strong>Self-training climate models</strong> — learns from new Turkana fires, Marsabit drought, and Murang'a rainfall without manual retraining</li>
-    <li><strong>Multi-agent decision swarm</strong> — separate agents for data gathering, translation, farmer advisory, and fact-checking that debate before recommending</li>
-    <li><strong>Automated data pipelines</strong> — pulls from NASA FIRMS, Kenya Meteorological Department, soil maps, and market prices to generate daily reports</li>
-    <li><strong>GitHub auto-workflows</strong> — agents commit code, open pull requests, and run tests autonomously</li>
-    <li><strong>Email agent</strong> — reads and replies in Sheng, Kiswahili, or English; sends "Mvua inakuja kesho" alerts to farmers</li>
-    <li><strong>Offline deployment</strong> — runs on cheap refurbished laptops in Mukuyu cyber cafés, schools, and libraries</li>
-    <li><strong>SMS and WhatsApp delivery</strong> — climate alerts for farmers without smartphones</li>
-    <li><strong>Voice interface</strong> — Kikuyu, Sheng, and Kiswahili voice input and output</li>
+    <li><strong>Agent Sam — the orchestrator.</strong> Creates, deploys, and manages every other agent. The "king" of the swarm: decides which agent runs, when, and with what budget.</li>
+    <li><strong>Agent Nox — the evolving agent.</strong> Rewrites its own code, tests itself, and mutates over time. Learns new Kenyan datasets without human retraining.</li>
+    <li><strong>ClimateAgent</strong> — pulls NASA FIRMS, Kenya Met, and soil data; predicts drought and fire risk per county.</li>
+    <li><strong>FarmerAdvisor</strong> — speaks Sheng, Kiswahili, Kikuyu, English. Sends planting and rainfall alerts to farmers via SMS or WhatsApp.</li>
+    <li><strong>CodeAgent</strong> — writes, tests, and commits code to GitHub autonomously. Opens pull requests for human review.</li>
+   </ul>
+
+   <h4 style="color:#00d9ff;margin:1.2rem 0 .6rem">What the Swarm Will Do</h4>
+   <ul style="color:#c8d6e0;font-size:.93rem;line-height:1.9;padding-left:1.2rem;margin:0">
+    <li><strong>Control real computers</strong> — full Ubuntu Linux running inside a udocker container, so agents can install packages, run scripts, browse, and manage files like a human operator</li>
+    <li><strong>Autonomous pricing</strong> — agents set their own service prices based on demand, cost, and competitor data</li>
+    <li><strong>File KRA tax returns</strong> — prepare, validate, and submit Kenya Revenue Authority filings with human sign-off</li>
+    <li><strong>Drug, molecule & atom docking</strong> — run molecular simulations and search for drug candidates against tropical diseases</li>
+    <li><strong>Continuous auto-training (CfC)</strong> — closed-form continuous-time neural networks that retrain themselves on fresh Kenyan data in real time</li>
+    <li><strong>Self-evolution</strong> — Nox proposes code changes; Sam approves; the swarm grows without manual intervention</li>
+    <li><strong>Ubuntu in udocker</strong> — the entire agent stack runs offline on cheap refurbished laptops in Mukuyu cyber cafés and schools</li>
    </ul>
   </div>
   <div style="background:#081423;border:1px dashed #234561;border-radius:14px;padding:1rem">
-   <div style="display:flex;justify-content:space-between"><span class="muted" style="font-size:.8rem">imhotep_v2.py</span><span style="color:#ffcc00;font-size:.8rem">research</span></div>
-   <code style="display:block;margin-top:.8rem;color:#8ecfff;font-size:.83rem;line-height:1.9">
-    from imhotep import ClimateAgent<br>
-    from imhotep import FarmerAdvisor<br>
+   <div style="display:flex;justify-content:space-between"><span class="muted" style="font-size:.8rem">imhotep_v2.py</span><span style="color:#ffcc00;font-size:.8rem">research preview</span></div>
+   <code style="display:block;margin-top:.8rem;color:#8ecfff;font-size:.82rem;line-height:1.85">
+    from imhotep import Sam, Nox<br>
+    from imhotep import ClimateAgent, FarmerAdvisor<br>
+    from imhotep import CodeAgent, ChemAgent<br>
     <br>
-    climate = ClimateAgent(<br>
-    &nbsp;&nbsp;data=["nasa_firms","ke_met"]<br>
-    )<br>
+    <span style="color:#7ee787"># The king orchestrates the swarm</span><br>
+    sam = Sam(role="orchestrator")<br>
+    nox = Nox(evolve=True)  <span style="color:#7ee787"># mutates itself</span><br>
+    <br>
+    climate = ClimateAgent(data=["nasa_firms", "ke_met"])<br>
     advisor = FarmerAdvisor(lang="sheng")<br>
+    coder   = CodeAgent(repo="kiragu2004/imhotep-site")<br>
+    chem    = ChemAgent(dock="molecules")<br>
     <br>
-    <span style="color:#ffcc00">&gt; Status: research preview<br>&gt; Awaiting: GPU infrastructure<br>&gt; Goal: run 24/7 on Kenyan data</span><br>
+    swarm = sam.spawn([nox, climate, advisor, coder, chem])<br>
+    sam.run_on_ubuntu(container="udocker")<br>
     <br>
-    agents = [climate, advisor]<br>
-    agents.run(task="alert_murang_a")
+    <span style="color:#ffcc00">&gt; Status: research preview<br>&gt; Awaiting: GPU infrastructure<br>&gt; Goal: run 24/7 on Kenyan data<br>&gt; Mission: alert_murang_a + file_kra + dock_malaria</span><br>
+    <br>
+    swarm.run(task="protect_kenya")
    </code>
-   <div style="margin-top:1rem;background:#0e2a1f;border-radius:8px;padding:.6rem .8rem;font-size:.8rem;color:#6fdc9a">✓ V1 live: chat, weather, climate<br>✓ Data pipelines: connected<br>⏳ V2 agents: in development</div>
+   <div style="margin-top:1rem;background:#0e2a1f;border-radius:8px;padding:.6rem .8rem;font-size:.78rem;color:#6fdc9a;line-height:1.7">
+    ✓ V1 live: chat, weather, climate<br>
+    ✓ Data pipelines: connected<br>
+    ✓ Ubuntu + udocker: container ready<br>
+    ⏳ Sam, Nox, CodeAgent, ChemAgent: in development
+   </div>
   </div>
  </div>
 
@@ -120,7 +140,7 @@
   <a class="btn" href="chat.html">Try V1 Live (Free) →</a>
   <a class="btn btn2" href="mailto:kiragukamau2004@gmail.com?subject=Imhotep V2 — I want to help">Collaborate on V2</a>
  </div>
- <p class="muted" style="font-size:.82rem;margin-top:.8rem">Open source. Every commit is public on GitHub. Goal: bring Kenyan-built AI to every village.</p>
+ <p class="muted" style="font-size:.82rem;margin-top:.8rem">Fully open source. Every commit is public on GitHub. Goal: bring Kenyan-built autonomous AI to every village.</p>
 </section>
 
 <footer>© 2026 Imhotep — Mukuyu, Murang'a, Kenya — kiragu2004.github.io/imhotep-site — Built on Ubuntu Linux</footer>
