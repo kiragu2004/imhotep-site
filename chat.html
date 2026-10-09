@@ -24,7 +24,8 @@
     padding:.75rem 1.1rem; background:var(--bg-glass);
     border:1px solid rgba(0,217,255,.22); border-radius:16px 16px 16px 4px;
     color:var(--text-secondary); font-size:.88rem; }
-  .earth { display:inline-block; font-size:1.2rem; animation:spinEarth 2.2s linear infinite; }
+  .earth { display:inline-block; font-size:1.2rem;
+    animation:spinEarth 2.2s linear infinite; }
   @keyframes spinEarth { to { transform:rotate(360deg); } }
   .think-text { display:inline-block;
     background:linear-gradient(90deg,#00d9ff,#ff7ad9,#00d9ff);
@@ -90,7 +91,7 @@
     <li><a href="capabilities.html">Capabilities</a></li>
     <li><a href="debate.html">Debate</a></li>
     <li><a href="pricing.html">Pricing</a></li>
-    <li><a href="dashboard.html">Kenya Data</a></li>
+    <li><a href="dashboard.html">Kaa Rada</a></li>
   </ul>
   <div class="nav-buttons">
     <span class="engine-badge">Imhotep Engine</span>
@@ -103,7 +104,7 @@
   <div class="chat-scroll" id="messages">
     <div class="welcome" id="welcome">
       <h2>Welcome to Imhotep</h2>
-      <p>Chat with 22 agents. Say "Sasa" or "Niaje" for Sheng mode. 3 free chats for every visitor.</p>
+      <p>Chat with 22 agents. Say "Sasa" or "Niaje" for Sheng mode. 3 free chats.</p>
       <div class="quick-grid">
         <button class="quick" onclick="pickAgent('generalist');sendPrompt('Hello Imhotep!')"><div class="e">🤖</div><div class="n">Generalist</div></button>
         <button class="quick" onclick="pickAgent('sheng');sendPrompt('Sasa! Niaje?')"><div class="e">🇰🇪</div><div class="n">Sheng</div></button>
@@ -149,76 +150,50 @@ const API = "https://imhotep-agentic-ai.onrender.com";
 let selectedAgent = "generalist";
 let busy = false;
 
-// ── ROTATING WEATHER ──
-let _wxCounties = [];
-let _wxIndex = 0;
-let _wxTimer = null;
+// Rotation through popular counties — one request at a time
+const ROTATE_COUNTIES = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Nyeri",
+                         "Machakos","Garissa","Turkana","Kakamega","Meru","Kisii"];
+let wxIdx = 0;
+let wxTimer = null;
+let wxPaused = false;
 
-async function startRotatingWeather() {
-  const pill = document.getElementById("weather-pill");
-  pill.style.display = "flex";
-  document.getElementById("wx-emoji").textContent = "🌍";
-  document.getElementById("wx-temp").textContent = "…";
-  document.getElementById("wx-city").textContent = "Loading Kenya weather";
-
-  let counties = [];
+async function fetchOneCounty(name) {
   try {
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 20000);
-    const r = await fetch(API + "/weather/all-counties", { signal: ctl.signal });
+    const timer = setTimeout(() => ctl.abort(), 8000);
+    const r = await fetch(API + "/weather/county/" + encodeURIComponent(name),
+                          { signal: ctl.signal });
     clearTimeout(timer);
-    const d = await r.json();
-    if (d.ok && d.counties && d.counties.length > 0) counties = d.counties;
-  } catch (e) { console.log("all-counties failed:", e); }
-
-  if (counties.length === 0) {
-    // Fallback: 12 popular counties
-    const names = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Nyeri",
-                   "Machakos","Garissa","Turkana","Kakamega","Meru","Kisii"];
-    document.getElementById("wx-city").textContent = "Loading popular counties…";
-    for (const name of names) {
-      try {
-        const r = await fetch(API + "/weather", {
-          method: "POST", headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({ city: name })
-        });
-        const d = await r.json();
-        if (d.ok) counties.push({
-          county: name, temp: d.temp, emoji: d.emoji || "🌤️",
-          condition_label: d.condition || "—", feel: d.feel || ""
-        });
-      } catch (e) {}
-    }
-  }
-
-  if (counties.length === 0) {
-    document.getElementById("wx-emoji").textContent = "⚠️";
-    document.getElementById("wx-temp").textContent = "Offline";
-    document.getElementById("wx-city").textContent = "Weather unavailable";
-    return;
-  }
-
-  _wxCounties = counties;
-  _wxIndex = 0;
-  showWxCard();
-  if (_wxTimer) clearInterval(_wxTimer);
-  _wxTimer = setInterval(() => {
-    _wxIndex = (_wxIndex + 1) % _wxCounties.length;
-    showWxCard();
-  }, 5000);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch (e) { return null; }
 }
 
-function showWxCard() {
-  if (!_wxCounties.length) return;
-  const c = _wxCounties[_wxIndex];
-  document.getElementById("wx-emoji").textContent = c.emoji || "🌤️";
-  document.getElementById("wx-temp").textContent = c.temp + "°C";
-  document.getElementById("wx-feel").textContent = " · " + (c.feel || "");
-  document.getElementById("wx-city").textContent = c.county + " · " + (c.condition_label || "");
+async function rotateWeather() {
+  if (wxPaused) return;
+  const pill = document.getElementById("weather-pill");
+  pill.style.display = "flex";
+  const name = ROTATE_COUNTIES[wxIdx % ROTATE_COUNTIES.length];
+  wxIdx++;
+  const d = await fetchOneCounty(name);
+  if (d && d.ok) {
+    document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
+    document.getElementById("wx-temp").textContent = d.temp + "°C";
+    document.getElementById("wx-feel").textContent = " · " + (d.feel || "");
+    document.getElementById("wx-city").textContent = d.county + " County";
+  } else {
+    // Skip this county — try next immediately
+    if (wxTimer) clearTimeout(wxTimer);
+    wxTimer = setTimeout(rotateWeather, 500);
+    return;
+  }
+  if (wxTimer) clearTimeout(wxTimer);
+  wxTimer = setTimeout(rotateWeather, 4000);
 }
 
 async function forceGPS() {
-  if (!navigator.geolocation) return;
+  wxPaused = true;
+  if (wxTimer) clearTimeout(wxTimer);
   document.getElementById("wx-city").textContent = "📍 Locating…";
   navigator.geolocation.getCurrentPosition(
     async pos => {
@@ -229,21 +204,19 @@ async function forceGPS() {
         });
         const d = await r.json();
         if (d.ok) {
-          if (_wxTimer) clearInterval(_wxTimer);
           document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
           document.getElementById("wx-temp").textContent = d.temp + "°C";
           document.getElementById("wx-feel").textContent = " · " + (d.feel || "");
           document.getElementById("wx-city").textContent = "Your location · " + (d.condition || "");
-          setTimeout(startRotatingWeather, 20000);
         }
-      } catch (e) { startRotatingWeather(); }
+      } catch (e) {}
+      setTimeout(() => { wxPaused = false; rotateWeather(); }, 20000);
     },
-    () => startRotatingWeather(),
+    () => { wxPaused = false; rotateWeather(); },
     { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
-// ── AUTH ──
 async function checkAuth() {
   let uid = localStorage.getItem("imhotep_user_id");
   if (!uid) {
@@ -279,7 +252,6 @@ function formatReply(text) {
   h = h.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank">[source]</a>');
   return h;
 }
-
 function addBubble(text, cls, formatted) {
   const m = document.getElementById("messages");
   const w = document.getElementById("welcome"); if (w) w.remove();
@@ -287,29 +259,24 @@ function addBubble(text, cls, formatted) {
   d.className = "bubble " + cls;
   d.innerHTML = formatted ? formatReply(text) : escapeHtml(text).replace(/\n/g,"<br>");
   m.appendChild(d); m.scrollTop = m.scrollHeight;
-  return d;
 }
-
 function addThinking() {
   const m = document.getElementById("messages");
   const w = document.getElementById("welcome"); if (w) w.remove();
   const d = document.createElement("div");
   d.className = "thinking"; d.id = "thinking";
-  d.innerHTML = '<span class="earth">🌍</span>' +
-    '<span class="think-text">Reasoning…</span>';
+  d.innerHTML = '<span class="earth">🌍</span><span class="think-text">Reasoning…</span>';
   m.appendChild(d); m.scrollTop = m.scrollHeight;
 }
 function removeThinking() {
   const t = document.getElementById("thinking");
   if (t) t.remove();
 }
-
 async function sendChat() {
   const v = document.getElementById("prompt").value.trim();
   if (!v || busy) return;
   await sendPrompt(v);
 }
-
 async function sendPrompt(prompt) {
   if (busy) return;
   busy = true;
@@ -346,7 +313,6 @@ async function sendPrompt(prompt) {
     btn.disabled = false; btn.textContent = "➤"; busy = false;
   }
 }
-
 function onKey(e) {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); }
 }
@@ -359,7 +325,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const b = document.getElementById("wx-gps-btn");
   if (b) b.addEventListener("click", forceGPS);
   checkAuth();
-  startRotatingWeather();
+  rotateWeather();
 });
 </script>
 </body>
