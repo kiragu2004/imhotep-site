@@ -7,48 +7,35 @@
 <link rel="stylesheet" href="style.css">
 <style>
   .chat-shell { display:flex; flex-direction:column; max-width:900px; margin:0 auto;
-    height:calc(100vh - 74px); height:calc(100dvh - 74px); background:var(--bg-primary); }
+    height:calc(100dvh - 74px); background:var(--bg-primary); }
   .chat-scroll { flex:1; overflow-y:auto; padding:1rem 1rem .5rem;
-    display:flex; flex-direction:column; gap:.9rem; scroll-behavior:smooth; }
-  .chat-scroll::-webkit-scrollbar { width:6px; }
-  .chat-scroll::-webkit-scrollbar-thumb { background:rgba(0,217,255,.25); border-radius:3px; }
+    display:flex; flex-direction:column; gap:.9rem; }
   .bubble { max-width:88%; padding:.85rem 1.05rem; border-radius:16px;
-    line-height:1.6; font-size:.95rem; word-wrap:break-word;
-    animation:fadeIn .25s ease-out; white-space:pre-wrap; }
-  .bubble.user { align-self:flex-end; background:var(--gradient-neon); color:var(--bg-primary);
-    font-weight:600; border-radius:16px 16px 4px 16px; }
+    line-height:1.6; font-size:.95rem; word-wrap:break-word; white-space:pre-wrap; }
+  .bubble.user { align-self:flex-end; background:var(--gradient-neon);
+    color:var(--bg-primary); font-weight:600; border-radius:16px 16px 4px 16px; }
   .bubble.bot { align-self:flex-start;
-    background:linear-gradient(135deg,rgba(0,217,255,.05),rgba(144,0,255,.04),rgba(255,0,255,.03));
+    background:linear-gradient(135deg,rgba(0,217,255,.05),rgba(144,0,255,.04));
     border:1px solid rgba(0,217,255,.22); color:#dde7f0;
-    border-radius:16px 16px 16px 4px; box-shadow:0 4px 20px -8px rgba(0,217,255,.15); }
-  .bubble.bot strong { color:#00d9ff; font-weight:700; }
-  .bubble.bot em { color:#ff7ad9; font-style:italic; }
-  .bubble.bot code { background:rgba(0,217,255,.1); color:#7ee6ff;
-    padding:.1em .35em; border-radius:4px; font-family:ui-monospace,monospace; font-size:.88em; }
+    border-radius:16px 16px 16px 4px; }
   .bubble.bot a { color:#00d9ff; text-decoration:underline; }
   .bubble.error { border-color:#ff6b6b; color:#ff9c9c; }
   .thinking { align-self:flex-start; display:flex; align-items:center; gap:.7rem;
     padding:.75rem 1.1rem; background:var(--bg-glass);
     border:1px solid rgba(0,217,255,.22); border-radius:16px 16px 16px 4px;
-    color:var(--text-secondary); font-size:.88rem; max-width:88%; }
+    color:var(--text-secondary); font-size:.88rem; }
   .earth { display:inline-block; font-size:1.2rem; animation:spinEarth 2.2s linear infinite; }
-  @keyframes spinEarth { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-  .think-text { display:inline-block; min-width:12ch;
+  @keyframes spinEarth { to { transform:rotate(360deg); } }
+  .think-text { display:inline-block;
     background:linear-gradient(90deg,#00d9ff,#ff7ad9,#00d9ff);
     background-size:200% 100%;
-    -webkit-background-clip:text; background-clip:text;
-    -webkit-text-fill-color:transparent;
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
     animation:shine 3s linear infinite; font-weight:600; }
   @keyframes shine { to { background-position:-200% 0; } }
-  .dots { display:inline-flex; gap:2px; }
-  .dots i { width:5px; height:5px; border-radius:50%; background:#00d9ff;
-    animation:blinkDot 1.2s infinite; }
-  .dots i:nth-child(2) { animation-delay:.2s; }
-  .dots i:nth-child(3) { animation-delay:.4s; }
-  @keyframes blinkDot { 0%,80%,100% { opacity:.2; } 40% { opacity:1; } }
   .agent-strip { display:flex; gap:.4rem; overflow-x:auto; padding:.5rem .75rem;
     scrollbar-width:none; background:var(--bg-secondary);
-    border-top:1px solid rgba(0,217,255,.08); border-bottom:1px solid rgba(0,217,255,.08); }
+    border-top:1px solid rgba(0,217,255,.08);
+    border-bottom:1px solid rgba(0,217,255,.08); }
   .agent-strip::-webkit-scrollbar { display:none; }
   .agent-strip .chip { flex:0 0 auto; padding:.32rem .7rem; font-size:.75rem;
     border-radius:999px; border:1px solid rgba(0,217,255,.22);
@@ -63,17 +50,14 @@
   .input-row textarea { flex:1; padding:.7rem .9rem;
     background:var(--bg-tertiary); border:1px solid rgba(0,217,255,.18);
     color:var(--text-primary); border-radius:22px; resize:none;
-    font-family:inherit; font-size:.95rem; line-height:1.4;
-    min-height:42px; max-height:130px; outline:none; }
-  .input-row textarea:focus { border-color:var(--accent-cyan); }
+    font-family:inherit; font-size:.95rem; min-height:42px; max-height:130px;
+    outline:none; }
   .send-btn-v3 { width:42px; height:42px; border-radius:50%;
     background:var(--gradient-neon); color:var(--bg-primary);
     display:flex; align-items:center; justify-content:center;
-    font-size:1.1rem; font-weight:800; flex-shrink:0;
-    box-shadow:0 6px 20px rgba(0,217,255,.3); }
-  .send-btn-v3:disabled { opacity:.55; cursor:wait; }
+    font-size:1.1rem; font-weight:800; }
   .weather-pill { display:flex; align-items:center; gap:.6rem;
-    padding:.5rem .9rem; margin:0 .75rem .4rem;
+    padding:.5rem .9rem; margin:.5rem .75rem;
     background:linear-gradient(135deg,rgba(0,217,255,.08),rgba(255,0,255,.04));
     border:1px solid rgba(0,217,255,.18); border-radius:12px;
     font-size:.85rem; color:var(--text-secondary); }
@@ -84,22 +68,17 @@
   .welcome { text-align:center; padding:1.5rem 1rem; max-width:560px; margin:auto; }
   .welcome h2 { font-size:1.7rem;
     background:var(--gradient-neon);
-    -webkit-background-clip:text; background-clip:text;
-    -webkit-text-fill-color:transparent; margin-bottom:.5rem; }
-  .welcome p { color:var(--text-secondary); font-size:.92rem; line-height:1.6; }
-  .quick-grid { margin-top:1.25rem;
-    display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:.6rem; }
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    margin-bottom:.5rem; }
+  .welcome p { color:var(--text-secondary); font-size:.92rem; }
+  .quick-grid { margin-top:1.25rem; display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:.6rem; }
   .quick { padding:.7rem .5rem; background:var(--bg-glass);
-    border:1px solid rgba(0,217,255,.18); border-radius:12px;
-    cursor:pointer; transition:all .2s; color:inherit; }
-  .quick:hover { border-color:var(--accent-cyan); transform:translateY(-2px); }
+    border:1px solid rgba(0,217,255,.18); border-radius:12px; cursor:pointer;
+    color:inherit; }
   .quick .e { font-size:1.25rem; }
-  .quick .n { font-size:.78rem; color:var(--accent-cyan); font-weight:600; margin-top:.2rem; }
-  .tool-pill { padding:.4rem .85rem; background:rgba(0,217,255,.05);
-    border:1px solid rgba(0,217,255,.22); color:#00d9ff;
-    border-radius:999px; font-size:.78rem; font-weight:600;
-    cursor:pointer; white-space:nowrap; }
-  .tool-pill:hover { background:rgba(0,217,255,.15); }
+  .quick .n { font-size:.78rem; color:var(--accent-cyan); font-weight:600;
+    margin-top:.2rem; }
 </style>
 </head>
 <body>
@@ -116,7 +95,6 @@
   <div class="nav-buttons">
     <span class="engine-badge">Imhotep Engine</span>
     <span id="user-display" style="color:var(--text-secondary); font-size:.85rem;">Guest</span>
-    <button class="nav-btn" onclick="openSatModal()" style="padding:.5rem 1rem;font-size:.82rem;">🛰️ Live</button>
     <button class="nav-btn" onclick="logout()" style="padding:.5rem 1rem;font-size:.82rem;">Sign Out</button>
   </div>
 </nav>
@@ -125,14 +103,12 @@
   <div class="chat-scroll" id="messages">
     <div class="welcome" id="welcome">
       <h2>Welcome to Imhotep</h2>
-      <p>Chat with 22 agents. Say <strong style="color:#00d9ff;">"Sasa"</strong> or <strong style="color:#00d9ff;">"Niaje"</strong> for Sheng mode. Every new visitor gets 3 free chats.</p>
+      <p>Chat with 22 agents. Say "Sasa" or "Niaje" for Sheng mode. 3 free chats for every visitor.</p>
       <div class="quick-grid">
         <button class="quick" onclick="pickAgent('generalist');sendPrompt('Hello Imhotep!')"><div class="e">🤖</div><div class="n">Generalist</div></button>
         <button class="quick" onclick="pickAgent('sheng');sendPrompt('Sasa! Niaje?')"><div class="e">🇰🇪</div><div class="n">Sheng</div></button>
-        <button class="quick" onclick="pickAgent('scientist');sendPrompt('Explain CRISPR gene editing')"><div class="e">🧬</div><div class="n">Scientist</div></button>
-        <button class="quick" onclick="pickAgent('coder');sendPrompt('Show me a Python async pattern')"><div class="e">💻</div><div class="n">Developer</div></button>
-        <button class="quick" onclick="pickAgent('activist');sendPrompt('How do we fight climate change?')"><div class="e">✊</div><div class="n">Activist</div></button>
-        <button class="quick" onclick="pickAgent('writer');sendPrompt('Write about Nairobi at dusk')"><div class="e">✍️</div><div class="n">Writer</div></button>
+        <button class="quick" onclick="pickAgent('scientist');sendPrompt('Explain CRISPR')"><div class="e">🧬</div><div class="n">Scientist</div></button>
+        <button class="quick" onclick="pickAgent('coder');sendPrompt('Python async pattern')"><div class="e">💻</div><div class="n">Developer</div></button>
       </div>
     </div>
   </div>
@@ -142,14 +118,12 @@
     <div style="flex:1;">
       <div><span class="wx-temp" id="wx-temp">—°C</span>
            <span class="wx-feel" id="wx-feel"></span></div>
-      <div class="wx-city" id="wx-city">—</div>
+      <div class="wx-city" id="wx-city">Loading…</div>
     </div>
-    <button id="wx-gps-btn" title="Use my exact GPS location"
-            style="background:transparent;border:1px solid rgba(0,217,255,.35);
-                   color:#00d9ff;border-radius:8px;padding:.35rem .65rem;
-                   font-size:.75rem;cursor:pointer;white-space:nowrap;">
-      📍 GPS
-    </button>
+    <button id="wx-gps-btn" style="background:transparent;
+            border:1px solid rgba(0,217,255,.35); color:#00d9ff;
+            border-radius:8px; padding:.35rem .65rem; font-size:.75rem;
+            cursor:pointer;">📍 GPS</button>
   </div>
 
   <div class="agent-strip" id="agent-strip">
@@ -158,132 +132,15 @@
     <button class="chip" data-agent="scientist" onclick="pickAgent('scientist')">🧬 Scientist</button>
     <button class="chip" data-agent="coder" onclick="pickAgent('coder')">💻 Developer</button>
     <button class="chip" data-agent="economist" onclick="pickAgent('economist')">💰 Economist</button>
-    <button class="chip" data-agent="entrepreneur" onclick="pickAgent('entrepreneur')">🚀 Entrepreneur</button>
-    <button class="chip" data-agent="philosopher" onclick="pickAgent('philosopher')">🤔 Philosopher</button>
     <button class="chip" data-agent="writer" onclick="pickAgent('writer')">✍️ Writer</button>
     <button class="chip" data-agent="analyst" onclick="pickAgent('analyst')">📊 Analyst</button>
-    <button class="chip" data-agent="legal" onclick="pickAgent('legal')">⚖️ Legal</button>
-    <button class="chip" data-agent="designer" onclick="pickAgent('designer')">🎨 Designer</button>
-    <button class="chip" data-agent="psychologist" onclick="pickAgent('psychologist')">🧠 Psychologist</button>
-    <button class="chip" data-agent="geographer" onclick="pickAgent('geographer')">🌍 Geographer</button>
-    <button class="chip" data-agent="historian" onclick="pickAgent('historian')">📜 Historian</button>
-    <button class="chip" data-agent="tutor" onclick="pickAgent('tutor')">🎓 Tutor</button>
-    <button class="chip" data-agent="medic" onclick="pickAgent('medic')">🩺 Medic</button>
-    <button class="chip" data-agent="engineer" onclick="pickAgent('engineer')">🛠️ Engineer</button>
-    <button class="chip" data-agent="agronomist" onclick="pickAgent('agronomist')">🌾 Agronomist</button>
-    <button class="chip" data-agent="inventor" onclick="pickAgent('inventor')">💡 Inventor</button>
-    <button class="chip" data-agent="civic" onclick="pickAgent('civic')">🏛️ Civic</button>
-    <button class="chip" data-agent="marketer" onclick="pickAgent('marketer')">📣 Marketer</button>
-    <button class="chip" data-agent="media" onclick="pickAgent('media')">🎥 Media</button>
-    <button class="chip" data-agent="activist" onclick="pickAgent('activist')">✊ Activist</button>
-    <button class="chip" data-agent="tongue-twister" onclick="pickAgent('tongue-twister')">👅 Tongue Twister</button>
+    <button class="chip" data-agent="philosopher" onclick="pickAgent('philosopher')">🤔 Philosopher</button>
   </div>
 
   <div class="input-row">
-    <textarea id="prompt" rows="1" placeholder="Ask Imhotep anything… (try 'Sasa' for Sheng)"
-      onkeydown="onKey(event)" oninput="autoGrow(this)"></textarea>
+    <textarea id="prompt" rows="1" placeholder="Ask Imhotep… (try 'Sasa')"
+      onkeydown="onKey(event)"></textarea>
     <button class="send-btn-v3" id="send-btn" onclick="sendChat()">➤</button>
-  </div>
-</div>
-
-<!-- ═══ KENYA TOOLS PANEL ═══ -->
-<div id="kenya-tools" style="
-  max-width:900px; margin:0 auto; padding:1.25rem .75rem 1rem;
-  border-top:1px solid rgba(0,217,255,.12);">
-  <div style="text-align:center; color:#00d9ff; font-size:.75rem;
-              font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-              margin-bottom:.75rem;">🇰🇪 Kenya Live Data</div>
-  <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem;
-              max-width:640px; margin:0 auto;">
-    <button class="tool-pill" onclick="showFires()">🔥 Active Fires</button>
-    <button class="tool-pill" onclick="showDrought()">🌾 Drought</button>
-    <button class="tool-pill" onclick="showNews()">📰 Kenya News</button>
-    <button class="tool-pill" onclick="openSatModal()">🛰️ Satellites</button>
-    <button class="tool-pill" onclick="showCounties()">🗺️ Counties</button>
-  </div>
-  <div id="tool-output" style="
-    max-width:640px; margin:1rem auto 0; display:none;
-    background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
-    border:1px solid rgba(0,217,255,.22); border-radius:12px;
-    padding:1rem; color:var(--text-secondary);
-    font-size:.82rem; line-height:1.6; text-align:left;"></div>
-</div>
-
-<!-- ═══ FOOTER ═══ -->
-<div style="text-align:center; padding:1.5rem 1rem;
-  border-top:1px solid rgba(0,217,255,.12);
-  color:var(--text-muted); font-size:.8rem; line-height:1.7;">
-  <div style="margin-bottom:.5rem;">
-    <span style="color:#00d9ff; font-weight:700;">⚡ IMHOTEP</span>
-    · Built by Samuel Kiragu in Mukuyu, Murang'a, Kenya 🇰🇪
-  </div>
-  <div style="margin-bottom:.5rem;">
-    🐛 Found a bug? Report to
-    <a href="tel:0748203553" style="color:#00d9ff; font-weight:700;">0748 203 553</a>
-  </div>
-  <div style="background:linear-gradient(135deg,rgba(0,217,255,.06),rgba(255,0,255,.03));
-    border:1px solid rgba(0,217,255,.22); border-radius:12px;
-    padding:.75rem 1rem; max-width:520px; margin:.75rem auto 0; text-align:left;">
-    <div style="color:#00d9ff; font-weight:700; font-size:.75rem;
-                letter-spacing:.06em; text-transform:uppercase; margin-bottom:.35rem;">
-      ⚙️ Continuous Improvement
-    </div>
-    <div style="color:var(--text-secondary); font-size:.78rem; line-height:1.55;">
-      Agent Sam is the first Kenyan autonomous model — an Ubuntu Linux brain
-      with 85+ tools, CFC auto-train, and ODE solvers. Because GPU compute is
-      scarce, Sam is <strong style="color:#ff9dd8;">online and offline</strong>
-      while we scale. <strong style="color:#00d9ff;">Imhotep stays online 24/7</strong>.
-      Thank you for your patience. 🙏
-    </div>
-  </div>
-</div>
-
-<!-- ═══ SATELLITE MODAL ═══ -->
-<div id="sat-modal" style="
-  display:none; position:fixed; inset:0; z-index:9999;
-  background:rgba(0,0,0,.85); backdrop-filter:blur(8px);
-  padding:1rem; overflow-y:auto;">
-  <div style="max-width:720px; margin:2rem auto;
-    background:var(--bg-secondary);
-    border:1px solid rgba(0,217,255,.25);
-    border-radius:16px; padding:1.25rem;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-      <h3 style="font-size:1.15rem; color:#00d9ff; margin:0;">🛰️ Live from Space</h3>
-      <button onclick="closeSatModal()"
-        style="background:transparent;border:1px solid rgba(0,217,255,.3);
-               color:#00d9ff;border-radius:8px;padding:.35rem .7rem;
-               font-size:.8rem;cursor:pointer;">✕ Close</button>
-    </div>
-    <div style="display:grid; gap:1rem;">
-      <div>
-        <div style="color:#ff9dd8; font-size:.75rem; font-weight:700;
-                    letter-spacing:.06em; text-transform:uppercase; margin-bottom:.4rem;">
-          🌍 Full Earth · DSCOVR
-        </div>
-        <img id="sat-earth" src="" alt="Earth"
-             style="width:100%; border-radius:12px;
-                    border:1px solid rgba(0,217,255,.2); display:block; min-height:200px;
-                    background:rgba(0,0,0,.3);">
-        <div id="sat-earth-meta" style="color:var(--text-muted);
-             font-size:.72rem; margin-top:.35rem;">Loading…</div>
-      </div>
-      <div>
-        <div style="color:#ff9dd8; font-size:.75rem; font-weight:700;
-                    letter-spacing:.06em; text-transform:uppercase; margin-bottom:.4rem;">
-          ☁️ Africa · GOES-16
-        </div>
-        <img id="sat-goes" src="" alt="GOES"
-             style="width:100%; border-radius:12px;
-                    border:1px solid rgba(0,217,255,.2); display:block; min-height:200px;
-                    background:rgba(0,0,0,.3);">
-        <div id="sat-goes-meta" style="color:var(--text-muted);
-             font-size:.72rem; margin-top:.35rem;">Loading…</div>
-      </div>
-    </div>
-    <div style="color:var(--text-muted); font-size:.7rem;
-                margin-top:1rem; text-align:center; line-height:1.5;">
-      Sources: NASA EPIC · NOAA GOES-16
-    </div>
   </div>
 </div>
 
@@ -292,80 +149,56 @@ const API = "https://imhotep-agentic-ai.onrender.com";
 let selectedAgent = "generalist";
 let busy = false;
 
-const THINKING_STAGES = [
-  "🌍 Connecting...", "🔍 Searching sources...", "🧠 Reasoning...",
-  "⚡ Activating...", "📝 Composing...", "✨ Polishing...",
-];
-
-// ═══════════════════════════════════════════════════════════════
-// ROTATING WEATHER — cycles through 47 Kenyan counties every 5s
-// ═══════════════════════════════════════════════════════════════
+// ── ROTATING WEATHER ──
 let _wxCounties = [];
 let _wxIndex = 0;
 let _wxTimer = null;
 
 async function startRotatingWeather() {
   const pill = document.getElementById("weather-pill");
-  if (!pill) return;
   pill.style.display = "flex";
   document.getElementById("wx-emoji").textContent = "🌍";
   document.getElementById("wx-temp").textContent = "…";
-  document.getElementById("wx-city").textContent = "Loading Kenya weather…";
+  document.getElementById("wx-city").textContent = "Loading Kenya weather";
 
-  // Try /weather/all-counties with 15s timeout
-  let counties = null;
+  let counties = [];
   try {
     const ctl = new AbortController();
-    const timer = setTimeout(() => ctl.abort(), 15000);
+    const timer = setTimeout(() => ctl.abort(), 20000);
     const r = await fetch(API + "/weather/all-counties", { signal: ctl.signal });
     clearTimeout(timer);
     const d = await r.json();
-    console.log("all-counties:", r.status, d.count);
-    if (d.ok && d.counties && d.counties.length > 0) {
-      counties = d.counties;
-    }
-  } catch (e) {
-    console.log("all-counties failed:", e.message);
-  }
+    if (d.ok && d.counties && d.counties.length > 0) counties = d.counties;
+  } catch (e) { console.log("all-counties failed:", e); }
 
-  // Fallback: fetch a small set of popular counties one by one
-  if (!counties || counties.length === 0) {
-    console.log("Using fallback county list");
+  if (counties.length === 0) {
+    // Fallback: 12 popular counties
+    const names = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret","Nyeri",
+                   "Machakos","Garissa","Turkana","Kakamega","Meru","Kisii"];
     document.getElementById("wx-city").textContent = "Loading popular counties…";
-    const fallback = ["Nairobi","Mombasa","Kisumu","Nakuru","Eldoret",
-                      "Nyeri","Machakos","Garissa","Turkana","Kakamega",
-                      "Meru","Kisii"];
-    counties = [];
-    await Promise.all(fallback.map(async (name) => {
+    for (const name of names) {
       try {
         const r = await fetch(API + "/weather", {
-          method: "POST",
-          headers: {"Content-Type":"application/json"},
+          method: "POST", headers: {"Content-Type":"application/json"},
           body: JSON.stringify({ city: name })
         });
         const d = await r.json();
-        if (d.ok) {
-          counties.push({
-            county: name,
-            temp: d.temp,
-            emoji: d.emoji || "🌤️",
-            condition_label: d.condition || "—",
-            feel: d.feel || ""
-          });
-        }
+        if (d.ok) counties.push({
+          county: name, temp: d.temp, emoji: d.emoji || "🌤️",
+          condition_label: d.condition || "—", feel: d.feel || ""
+        });
       } catch (e) {}
-    }));
+    }
   }
 
-  if (!counties || counties.length === 0) {
+  if (counties.length === 0) {
     document.getElementById("wx-emoji").textContent = "⚠️";
     document.getElementById("wx-temp").textContent = "Offline";
-    document.getElementById("wx-city").textContent =
-      "Weather data unavailable. Try again in a moment.";
+    document.getElementById("wx-city").textContent = "Weather unavailable";
     return;
   }
 
-  _wxCounties = counties.sort(() => Math.random() - 0.5);
+  _wxCounties = counties;
   _wxIndex = 0;
   showWxCard();
   if (_wxTimer) clearInterval(_wxTimer);
@@ -373,54 +206,46 @@ async function startRotatingWeather() {
     _wxIndex = (_wxIndex + 1) % _wxCounties.length;
     showWxCard();
   }, 5000);
-  console.log("rotating through", _wxCounties.length, "counties");
 }
 
 function showWxCard() {
   if (!_wxCounties.length) return;
   const c = _wxCounties[_wxIndex];
   document.getElementById("wx-emoji").textContent = c.emoji || "🌤️";
-  document.getElementById("wx-temp").textContent  = c.temp + "°C";
-  document.getElementById("wx-feel").textContent  = " · " + (c.feel || "");
-  document.getElementById("wx-city").textContent  = c.county + " County · " + c.condition_label;
+  document.getElementById("wx-temp").textContent = c.temp + "°C";
+  document.getElementById("wx-feel").textContent = " · " + (c.feel || "");
+  document.getElementById("wx-city").textContent = c.county + " · " + (c.condition_label || "");
 }
 
-function forceGPS() {
-  const city = document.getElementById("wx-city");
-  if (!navigator.geolocation) { city.textContent = "GPS not supported"; return; }
-  city.textContent = "📍 Locating…";
+async function forceGPS() {
+  if (!navigator.geolocation) return;
+  document.getElementById("wx-city").textContent = "📍 Locating…";
   navigator.geolocation.getCurrentPosition(
     async pos => {
-      const lat = pos.coords.latitude, lon = pos.coords.longitude;
       try {
         const r = await fetch(API + "/weather", {
           method: "POST", headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({lat, lon})
+          body: JSON.stringify({ lat: pos.coords.latitude, lon: pos.coords.longitude })
         });
         const d = await r.json();
         if (d.ok) {
           if (_wxTimer) clearInterval(_wxTimer);
-          _wxTimer = null;
           document.getElementById("wx-emoji").textContent = d.emoji || "🌤️";
-          document.getElementById("wx-temp").textContent  = d.temp + "°C";
-          document.getElementById("wx-feel").textContent  = " · " + (d.feel || "");
-          document.getElementById("wx-city").textContent  = "Your location · " + d.condition_label;
-          setTimeout(startRotatingWeather, 20000); // resume rotation after 20s
+          document.getElementById("wx-temp").textContent = d.temp + "°C";
+          document.getElementById("wx-feel").textContent = " · " + (d.feel || "");
+          document.getElementById("wx-city").textContent = "Your location · " + (d.condition || "");
+          setTimeout(startRotatingWeather, 20000);
         }
-      } catch (e) { city.textContent = "Using IP location"; startRotatingWeather(); }
+      } catch (e) { startRotatingWeather(); }
     },
-    err => { city.textContent = "Using IP location"; startRotatingWeather(); },
-    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    () => startRotatingWeather(),
+    { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════════════
+// ── AUTH ──
 async function checkAuth() {
-  const token = localStorage.getItem("imhotep_token");
-  const user  = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
-  const uid   = localStorage.getItem("imhotep_user_id");
+  let uid = localStorage.getItem("imhotep_user_id");
   if (!uid) {
     try {
       const r = await fetch(API + "/auth/guest");
@@ -429,13 +254,12 @@ async function checkAuth() {
         localStorage.setItem("imhotep_token", d.token);
         localStorage.setItem("imhotep_user_id", d.user_id);
         localStorage.setItem("imhotep_user", JSON.stringify({ name: "Guest" }));
-        localStorage.setItem("imhotep_mode", "guest");
-        document.getElementById("user-display").textContent = "Guest";
       }
     } catch (e) {}
-  } else {
-    document.getElementById("user-display").textContent = token ? (user.name || "User") : "Guest";
   }
+  const token = localStorage.getItem("imhotep_token");
+  const user = JSON.parse(localStorage.getItem("imhotep_user") || "{}");
+  document.getElementById("user-display").textContent = token ? (user.name || "Guest") : "Guest";
 }
 
 function pickAgent(a) {
@@ -444,23 +268,18 @@ function pickAgent(a) {
     c.classList.toggle("active", c.dataset.agent === a));
 }
 
-function autoGrow(el) {
-  el.style.height = "42px";
-  el.style.height = Math.min(el.scrollHeight, 130) + "px";
-}
-
 function escapeHtml(s) {
   return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 function formatReply(text) {
   let h = escapeHtml(text);
   h = h.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
-  h = h.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "<em>$1</em>");
   h = h.replace(/`([^`\n]+)`/g, "<code>$1</code>");
   h = h.replace(/\n/g, "<br>");
-  h = h.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank" rel="noopener">[source]</a>');
+  h = h.replace(/\[source:\s*([^\]]+)\]/gi, '<a href="$1" target="_blank">[source]</a>');
   return h;
 }
+
 function addBubble(text, cls, formatted) {
   const m = document.getElementById("messages");
   const w = document.getElementById("welcome"); if (w) w.remove();
@@ -470,25 +289,19 @@ function addBubble(text, cls, formatted) {
   m.appendChild(d); m.scrollTop = m.scrollHeight;
   return d;
 }
+
 function addThinking() {
   const m = document.getElementById("messages");
   const w = document.getElementById("welcome"); if (w) w.remove();
   const d = document.createElement("div");
   d.className = "thinking"; d.id = "thinking";
   d.innerHTML = '<span class="earth">🌍</span>' +
-    '<span class="think-text" id="think-text">' + THINKING_STAGES[0] + '</span>' +
-    '<span class="dots"><i></i><i></i><i></i></span>';
+    '<span class="think-text">Reasoning…</span>';
   m.appendChild(d); m.scrollTop = m.scrollHeight;
-  let i = 0;
-  d._interval = setInterval(() => {
-    i = (i + 1) % THINKING_STAGES.length;
-    const el = document.getElementById("think-text");
-    if (el) el.textContent = THINKING_STAGES[i];
-  }, 1400);
 }
 function removeThinking() {
   const t = document.getElementById("thinking");
-  if (t) { clearInterval(t._interval); t.remove(); }
+  if (t) t.remove();
 }
 
 async function sendChat() {
@@ -496,14 +309,15 @@ async function sendChat() {
   if (!v || busy) return;
   await sendPrompt(v);
 }
+
 async function sendPrompt(prompt) {
   if (busy) return;
   busy = true;
   const btn = document.getElementById("send-btn");
-  const ta  = document.getElementById("prompt");
+  const ta = document.getElementById("prompt");
   btn.disabled = true; btn.textContent = "…";
   addBubble(prompt, "user", false);
-  ta.value = ""; autoGrow(ta);
+  ta.value = "";
   addThinking();
   try {
     let uid = localStorage.getItem("imhotep_user_id");
@@ -524,8 +338,7 @@ async function sendPrompt(prompt) {
     if (!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
     removeThinking();
-    if (!data.ok) throw new Error(data.error || "unknown");
-    addBubble(data.reply, "bot", true);
+    addBubble(data.reply || "No reply", "bot", true);
   } catch (err) {
     removeThinking();
     addBubble("Error: " + err.message, "bot error", false);
@@ -538,38 +351,15 @@ function onKey(e) {
   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); }
 }
 function logout() {
-  ["imhotep_token","imhotep_user_id","imhotep_user","imhotep_mode"]
-    .forEach(k => localStorage.removeItem(k));
+  ["imhotep_token","imhotep_user_id","imhotep_user"].forEach(k => localStorage.removeItem(k));
   window.location.href = "auth.html";
 }
 
-// ── SATELLITE MODAL ──
-async function openSatModal() {
-  const modal = document.getElementById("sat-modal");
-  modal.style.display = "block";
-  document.body.style.overflow = "hidden";
-  try {
-    const r = await fetch(API + "/nasa/earth");
-    const d = await r.json();
-    if (d.ok && d.image_url) {
-      document.getElementById("sat-earth").src = API + "/img/proxy?url=" + encodeURIComponent(d.image_url);
-      document.getElementById("sat-earth-meta").textContent = "Frame: " + (d.date || "") + " · DSCOVR";
-    }
-  } catch (e) {}
-}
-function closeSatModal() {
-  document.getElementById("sat-modal").style.display = "none";
-  document.body.style.overflow = "";
-}
-
-// ── INIT ──
 window.addEventListener("DOMContentLoaded", () => {
   const b = document.getElementById("wx-gps-btn");
   if (b) b.addEventListener("click", forceGPS);
   checkAuth();
   startRotatingWeather();
-  // Refresh rotation every 10 min
-  setInterval(startRotatingWeather, 600000);
 });
 </script>
 </body>
