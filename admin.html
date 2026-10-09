@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin — Imhotep</title>
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:system-ui,-apple-system,sans-serif;background:#0a0e14;color:#dde7f0;}
+  .wrap{max-width:1200px;margin:0 auto;padding:2rem 1rem;}
+  h1{color:#00d9ff;font-size:1.8rem;margin-bottom:.25rem;}
+  .sub{color:#7a8896;font-size:.85rem;margin-bottom:2rem;}
+  .login{max-width:400px;margin:4rem auto;background:#141a22;border:1px solid rgba(0,217,255,.2);border-radius:16px;padding:2rem;text-align:center;}
+  .login h2{color:#00d9ff;margin:0 0 1rem;}
+  .login input{width:100%;padding:.75rem;background:#0a0e14;color:#fff;border:1px solid rgba(0,217,255,.3);border-radius:8px;font-size:1rem;margin-bottom:1rem;}
+  .login button{width:100%;padding:.85rem;background:linear-gradient(135deg,#00d9ff,#9000ff);color:#000;border:none;border-radius:8px;font-weight:800;font-size:1rem;cursor:pointer;}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
+  .stat{background:#141a22;border:1px solid rgba(0,217,255,.15);border-radius:12px;padding:1.25rem;text-align:center;}
+  .stat .n{font-size:2rem;font-weight:900;color:#00d9ff;}
+  .stat .l{font-size:.75rem;color:#7a8896;text-transform:uppercase;letter-spacing:.08em;margin-top:.25rem;}
+  .card{background:#141a22;border:1px solid rgba(0,217,255,.15);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;overflow-x:auto;}
+  .card h3{color:#00d9ff;margin:0 0 1rem;font-size:1.05rem;}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  th,td{padding:.6rem .75rem;text-align:left;border-bottom:1px solid rgba(0,217,255,.08);}
+  th{color:#7a8896;font-weight:600;text-transform:uppercase;font-size:.7rem;letter-spacing:.05em;}
+  tr:hover{background:rgba(0,217,255,.04);}
+  .tier{display:inline-block;padding:.15rem .5rem;border-radius:999px;font-size:.7rem;font-weight:700;}
+  .tier.guest{background:rgba(122,136,150,.2);color:#7a8896;}
+  .tier.free{background:rgba(0,217,255,.15);color:#00d9ff;}
+  .tier.paid{background:rgba(0,200,122,.15);color:#00c87a;}
+  .refresh{float:right;background:transparent;border:1px solid rgba(0,217,255,.3);color:#00d9ff;padding:.4rem .9rem;border-radius:6px;font-size:.8rem;cursor:pointer;}
+  .note{color:#7a8896;font-size:.75rem;margin-top:.75rem;font-style:italic;}
+  .err{color:#ff6b6b;font-size:.85rem;margin-top:.5rem;}
+  .chat-row{padding:.6rem 0;border-bottom:1px solid rgba(0,217,255,.08);font-size:.85rem;}
+  .chat-row .p{color:#00d9ff;font-weight:600;}
+  .chat-row .r{color:#7a8896;margin-top:.2rem;}
+  .chat-row .m{color:#7a8896;font-size:.7rem;margin-top:.15rem;}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="login-view">
+  <div class="login">
+    <h2>🔐 Admin Access</h2>
+    <input type="password" id="key-input" placeholder="Admin key" autocomplete="off">
+    <button onclick="login()">Sign In</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div class="wrap" id="panel-view" style="display:none;">
+  <h1>⚡ Imhotep Admin</h1>
+  <div class="sub">Live stats · <span id="ver">—</span></div>
+  <div class="stats" id="stats"></div>
+
+  <div class="card">
+    <h3>Top Agents <button class="refresh" onclick="loadAll()">↻ Refresh</button></h3>
+    <div id="top-agents"></div>
+    <div class="note">Data is in-memory — resets when the backend restarts.</div>
+  </div>
+
+  <div class="card">
+    <h3>Users (<span id="user-count">0</span>)</h3>
+    <table>
+      <thead><tr>
+        <th>Name</th><th>Email</th><th>Tier</th><th>Credits</th><th>Used</th><th>Chats</th><th>Created</th>
+      </tr></thead>
+      <tbody id="users-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Recent Chats (last 50)</h3>
+    <div id="chats-list"></div>
+  </div>
+</div>
+
+<script>
+const API = "https://imhotep-agentic-ai.onrender.com";
+let KEY = "";
+
+function login() {
+  const k = document.getElementById("key-input").value.trim();
+  if (!k) return;
+  KEY = k;
+  sessionStorage.setItem("imhotep_admin_key", k);
+  loadAll();
+}
+
+async function api(path) {
+  const sep = path.includes("?") ? "&" : "?";
+  const r = await fetch(API + path + sep + "key=" + encodeURIComponent(KEY));
+  if (r.status === 403) throw new Error("Wrong admin key");
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return await r.json();
+}
+
+async function loadAll() {
+  try {
+    const stats = await api("/admin/stats");
+    const health = await fetch(API + "/health").then(r => r.json());
+    document.getElementById("ver").textContent = "v" + (health.version || "?");
+
+    document.getElementById("stats").innerHTML = `
+      <div class="stat"><div class="n">${stats.users_total}</div><div class="l">Total Users</div></div>
+      <div class="stat"><div class="n">${stats.users_guest}</div><div class="l">Guests</div></div>
+      <div class="stat"><div class="n">${stats.users_paid}</div><div class="l">Paid</div></div>
+      <div class="stat"><div class="n">${stats.chats_total}</div><div class="l">Total Chats</div></div>
+      <div class="stat"><div class="n">${stats.credits_used_total}</div><div class="l">Credits Used</div></div>
+    `;
+
+    document.getElementById("top-agents").innerHTML =
+      stats.top_agents.length
+        ? stats.top_agents.map(a => `<div class="chat-row"><span class="p">${a.agent}</span> — ${a.chats} chats</div>`).join("")
+        : '<div class="note">No chats yet.</div>';
+
+    const users = await api("/admin/users");
+    document.getElementById("user-count").textContent = users.count;
+    document.getElementById("users-body").innerHTML = users.users.map(u => {
+      const t = u.tier || "";
+      const cls = t === "guest" ? "guest" : (t === "free" ? "free" : "paid");
+      return `<tr>
+        <td>${esc(u.name)}</td><td>${esc(u.email)}</td>
+        <td><span class="tier ${cls}">${t}</span></td>
+        <td>${u.credits}</td><td>${u.credits_used}</td><td>${u.chats}</td>
+        <td>${(u.created_at || "").slice(0,16).replace("T"," ")}</td>
+      </tr>`;
+    }).join("") || '<tr><td colspan="7" class="note">No users yet.</td></tr>';
+
+    const chats = await api("/admin/chats?limit=50");
+    document.getElementById("chats-list").innerHTML = chats.chats.map(c =>
+      `<div class="chat-row">
+        <div class="p">👤 ${esc((c.user_id||"").slice(0,20))}… · ${esc(c.agent||"?")}</div>
+        <div class="r">Q: ${esc((c.prompt||"").slice(0,120))}</div>
+        <div class="m">${(c.timestamp||"").slice(0,19).replace("T"," ")}</div>
+      </div>`
+    ).join("") || '<div class="note">No chats yet.</div>';
+
+    document.getElementById("login-view").style.display = "none";
+    document.getElementById("panel-view").style.display = "block";
+  } catch (e) {
+    document.getElementById("err").textContent = e.message;
+    document.getElementById("login-view").style.display = "block";
+    document.getElementById("panel-view").style.display = "none";
+  }
+}
+
+function esc(s) {
+  return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const saved = sessionStorage.getItem("imhotep_admin_key");
+  if (saved) { KEY = saved; document.getElementById("key-input").value = saved; loadAll(); }
+});
+</script>
+</body>
+</html>
